@@ -116,10 +116,18 @@ export function bootPortfolio(doc = document) {
   renderPortfolio(portfolioContent, doc);
 }
 
-if (typeof document !== 'undefined') {
-  document.addEventListener('DOMContentLoaded', () => {
-    bootPortfolio(document);
+export function registerPortfolioBoot(doc) {
+  if (typeof doc === 'undefined') {
+    return;
+  }
+
+  doc.addEventListener('DOMContentLoaded', () => {
+    bootPortfolio(doc);
   });
+}
+
+if (typeof document !== 'undefined') {
+  registerPortfolioBoot(document);
 }
 
 export { portfolioContent };

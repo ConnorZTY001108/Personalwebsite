@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import { portfolioContent } from '../../content.js';
 import {
   getResumeState,
+  registerPortfolioBoot,
   renderNavigation,
   renderStatPills,
   renderProjectCards,
@@ -193,7 +194,34 @@ test('renderPortfolio mounts the content and disables resume CTAs safely', () =>
   assert.match(mockDocument.getElementById('about-copy').innerHTML, /Master of Engineering student/);
   assert.match(mockDocument.getElementById('project-grid').innerHTML, /Vision-Assisted Arduino Robot Car/);
   assert.equal(mockDocument.getElementById('resume-button').href, '#resume');
+  assert.equal(mockDocument.getElementById('resume-button').textContent, 'Resume PDF coming soon');
+  assert.equal(mockDocument.getElementById('resume-button').classList.contains('is-disabled'), true);
   assert.equal(mockDocument.getElementById('resume-button').attributes['aria-disabled'], 'true');
+  assert.equal(mockDocument.getElementById('resume-card-button').textContent, 'Resume PDF coming soon');
+  assert.equal(mockDocument.getElementById('resume-card-button').classList.contains('is-disabled'), true);
   assert.equal(mockDocument.getElementById('resume-card-button').attributes['aria-disabled'], 'true');
+  assert.equal(
+    mockDocument.getElementById('resume-helper').textContent,
+    portfolioContent.resume.helperText,
+  );
   assert.match(mockDocument.getElementById('contact-list').innerHTML, /mailto:zhant173@mcmaster.ca/);
+});
+
+test('registerPortfolioBoot wires DOMContentLoaded to mount the portfolio', () => {
+  const mockDocument = createMockDocument();
+  let registeredHandler;
+
+  mockDocument.addEventListener = (eventName, handler) => {
+    assert.equal(eventName, 'DOMContentLoaded');
+    registeredHandler = handler;
+  };
+
+  registerPortfolioBoot(mockDocument);
+  assert.equal(typeof registeredHandler, 'function');
+
+  registeredHandler();
+
+  assert.equal(mockDocument.getElementById('site-name').textContent, 'Tianyu Zhang');
+  assert.equal(mockDocument.getElementById('resume-button').textContent, 'Resume PDF coming soon');
+  assert.equal(mockDocument.getElementById('resume-helper').textContent, portfolioContent.resume.helperText);
 });
