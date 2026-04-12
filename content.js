@@ -93,12 +93,12 @@ export const portfolioContent = {
     },
     {
       label: 'LinkedIn',
-      value: 'LinkedIn will be added soon',
-      href: '',
-      available: false,
+      value: 'linkedin.com/in/tianyu-zhang-9470a7266',
+      href: 'https://www.linkedin.com/in/tianyu-zhang-9470a7266/',
+      available: true,
     },
   ],
   footer: {
-    note: 'Built for internship applications and GitHub Pages.',
+    note: 'Copyright 2026 Tianyu Zhang. Open to internship opportunities.',
   },
 };

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tianyu Zhang | Internship Portfolio</title>
+    <meta
+      name="description"
+      content="English internship portfolio for Tianyu Zhang, featuring software engineering, backend, and full-stack projects."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header" id="top">
+      <div class="shell header-inner">
+        <a class="brand" href="#top" id="site-name">Tianyu Zhang</a>
+        <nav aria-label="Primary navigation">
+          <ul class="nav-list" id="nav-list"></ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero shell" id="hero">
+        <div class="hero-copy">
+          <p class="eyebrow" id="hero-availability"></p>
+          <h1 id="hero-name"></h1>
+          <p class="hero-headline" id="hero-headline"></p>
+          <p class="hero-intro" id="hero-intro"></p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#projects">View Projects</a>
+            <a class="button button-secondary" id="resume-button" href="#resume">Download Resume</a>
+          </div>
+          <p class="resume-helper" id="resume-helper"></p>
+        </div>
+
+        <div class="hero-visual">
+          <img
+            class="hero-art"
+            src="assets/placeholders/hero-shape.svg"
+            alt=""
+            aria-hidden="true"
+          />
+        </div>
+      </section>
+
+      <section class="about shell" id="about">
+        <div class="section-heading">
+          <p class="eyebrow">About</p>
+          <h2>Building practical software with clear engineering impact.</h2>
+        </div>
+        <div class="about-copy" id="about-copy"></div>
+        <ul class="stat-list" id="about-stats"></ul>
+      </section>
+
+      <section class="projects shell" id="projects">
+        <div class="section-heading">
+          <p class="eyebrow">Featured Projects</p>
+          <h2>Selected work across product engineering, data, and robotics.</h2>
+        </div>
+        <div class="project-grid" id="project-grid"></div>
+      </section>
+
+      <section class="resume shell" id="resume">
+        <div class="resume-card">
+          <p class="eyebrow">Resume</p>
+          <h2>Request the full PDF version.</h2>
+          <p id="resume-copy">
+            The portfolio is live first. The final downloadable PDF resume will be attached next.
+          </p>
+          <a class="button button-primary" id="resume-card-button" href="#resume">Download Resume</a>
+        </div>
+      </section>
+
+      <section class="contact shell" id="contact">
+        <div class="section-heading">
+          <p class="eyebrow">Contact</p>
+          <h2>Get in touch for internship opportunities.</h2>
+        </div>
+        <div class="contact-list" id="contact-list"></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell">
+        <p id="footer-note"></p>
+      </div>
+    </footer>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
