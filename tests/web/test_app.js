@@ -2,7 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { portfolioContent } from '../../content.js';
-import { getResumeState } from '../../app.js';
+import {
+  getResumeState,
+  renderNavigation,
+  renderStatPills,
+  renderProjectCards,
+  renderContactLinks,
+} from '../../app.js';
 
 test('portfolio content includes the fixed internship profile and three featured projects', () => {
   assert.equal(portfolioContent.profile.name, 'Tianyu Zhang');
@@ -91,4 +97,25 @@ test('placeholder SVG assets exist for the hero art and project previews', () =>
     fs.existsSync(new URL('../../assets/placeholders/portfolio-placeholder.svg', import.meta.url)),
     true,
   );
+});
+
+test('render helpers output the expected navigation, stat pills, and project cards', () => {
+  const navMarkup = renderNavigation(portfolioContent.navigation);
+  const statMarkup = renderStatPills(portfolioContent.about.stats);
+  const projectMarkup = renderProjectCards(portfolioContent.projects);
+
+  assert.match(navMarkup, /href="#about"/);
+  assert.match(statMarkup, /Performance-Focused Projects/);
+  assert.match(projectMarkup, /Industrial Process Modeling Platform/);
+  assert.match(projectMarkup, /40 seconds to 3 seconds/);
+  assert.match(projectMarkup, /assets\/placeholders\/portfolio-placeholder\.svg/);
+  assert.equal((projectMarkup.match(/class="project-card"/g) ?? []).length, 3);
+});
+
+test('contact rendering hides unavailable links', () => {
+  const contactMarkup = renderContactLinks(portfolioContent.contact);
+
+  assert.match(contactMarkup, /mailto:zhant173@mcmaster.ca/);
+  assert.match(contactMarkup, /github\.com\/ConnorZTY001108/);
+  assert.doesNotMatch(contactMarkup, /LinkedIn will be added soon/);
 });
