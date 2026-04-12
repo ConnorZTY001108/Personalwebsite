@@ -60,3 +60,23 @@ test('index shell defines the required sections and the module entrypoint', () =
   assert.ok(html.includes('id="contact-list"'));
   assert.ok(html.includes('<script type="module" src="./app.js"></script>'));
 });
+
+test('styles include smooth scrolling, disabled CTA styling, and a mobile breakpoint', () => {
+  const css = fs.readFileSync(new URL('../../styles.css', import.meta.url), 'utf8');
+
+  assert.match(css, /scroll-behavior:\s*smooth/);
+  assert.match(css, /\.button\.is-disabled/);
+  assert.match(css, /\.project-card:hover/);
+  assert.match(css, /@media\s*\(max-width:\s*800px\)/);
+});
+
+test('placeholder SVG assets exist for the hero art and project previews', () => {
+  assert.equal(
+    fs.existsSync(new URL('../../assets/placeholders/hero-shape.svg', import.meta.url)),
+    true,
+  );
+  assert.equal(
+    fs.existsSync(new URL('../../assets/placeholders/portfolio-placeholder.svg', import.meta.url)),
+    true,
+  );
+});

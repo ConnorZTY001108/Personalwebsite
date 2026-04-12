@@ -1,0 +1,390 @@
+:root {
+  --bg: #f5efe5;
+  --surface: rgba(255, 252, 247, 0.72);
+  --surface-strong: #fffaf3;
+  --text: #1e1c19;
+  --muted: #5c564d;
+  --line: rgba(30, 28, 25, 0.12);
+  --accent: #b85c38;
+  --accent-dark: #8f4428;
+  --shadow: 0 24px 60px rgba(39, 27, 18, 0.08);
+  --radius-lg: 28px;
+  --radius-md: 18px;
+  --radius-sm: 999px;
+  --shell: min(1120px, calc(100vw - 40px));
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Manrope', sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(184, 92, 56, 0.14), transparent 28%),
+    linear-gradient(180deg, #f7f1e7 0%, #efe5d7 100%);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.shell {
+  width: var(--shell);
+  margin: 0 auto;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(18px);
+  background: rgba(245, 239, 229, 0.74);
+  border-bottom: 1px solid var(--line);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 72px;
+}
+
+.brand,
+h1,
+h2,
+h3 {
+  font-family: 'Fraunces', serif;
+}
+
+.nav-list,
+.stat-list,
+.tag-list,
+.project-bullets {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav-list {
+  display: flex;
+  gap: 24px;
+}
+
+.hero,
+.about,
+.projects,
+.resume,
+.contact {
+  padding: 88px 0;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 36px;
+  align-items: center;
+  min-height: calc(100vh - 72px);
+}
+
+.eyebrow {
+  margin: 0 0 14px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(3rem, 8vw, 5.8rem);
+  line-height: 0.94;
+}
+
+.hero-headline {
+  margin: 18px 0 12px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.hero-intro,
+.about-copy p,
+#resume-copy,
+#footer-note {
+  font-size: 1.02rem;
+  line-height: 1.75;
+  color: var(--muted);
+}
+
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  border: 1px solid transparent;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+}
+
+.button-primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 18px 32px rgba(184, 92, 56, 0.22);
+}
+
+.button-primary:hover {
+  background: var(--accent-dark);
+}
+
+.button-secondary {
+  background: var(--surface-strong);
+  border-color: var(--line);
+}
+
+.button.is-disabled {
+  opacity: 0.58;
+  pointer-events: none;
+  box-shadow: none;
+}
+
+.resume-helper {
+  min-height: 24px;
+  margin-top: 12px;
+  color: var(--muted);
+}
+
+.hero-visual,
+.resume-card,
+.contact-card,
+.project-card {
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.hero-visual {
+  padding: 26px;
+}
+
+.hero-art {
+  width: 100%;
+  min-height: 420px;
+  object-fit: cover;
+  border-radius: calc(var(--radius-lg) - 8px);
+}
+
+.section-heading {
+  max-width: 760px;
+  margin-bottom: 28px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  line-height: 1.05;
+}
+
+.about-copy {
+  display: grid;
+  gap: 16px;
+  max-width: 760px;
+}
+
+.stat-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.stat-pill,
+.tag-list li {
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 250, 243, 0.86);
+  border: 1px solid var(--line);
+}
+
+.project-grid {
+  display: grid;
+  gap: 24px;
+}
+
+.project-card {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.95fr) 1.05fr;
+  overflow: hidden;
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.project-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 30px 80px rgba(39, 27, 18, 0.12);
+}
+
+.project-media {
+  margin: 0;
+  min-height: 100%;
+  background: linear-gradient(180deg, rgba(184, 92, 56, 0.16), rgba(30, 28, 25, 0.06));
+}
+
+.project-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.project-copy {
+  padding: 28px;
+}
+
+.project-copy h3 {
+  margin: 0 0 12px;
+  font-size: 2rem;
+}
+
+.project-summary {
+  margin: 0 0 18px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.project-bullets {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
+  color: var(--text);
+}
+
+.project-bullets li {
+  padding-left: 18px;
+  position: relative;
+  line-height: 1.65;
+}
+
+.project-bullets li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.resume-card {
+  padding: 32px;
+}
+
+.contact-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+}
+
+.contact-card {
+  padding: 24px;
+  transition: transform 180ms ease;
+}
+
+.contact-card:hover {
+  transform: translateY(-2px);
+}
+
+.contact-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+}
+
+.contact-value {
+  display: block;
+  margin-top: 10px;
+  font-size: 1.05rem;
+}
+
+.site-footer {
+  padding: 0 0 48px;
+}
+
+.button:focus-visible,
+.contact-card:focus-visible,
+.nav-list a:focus-visible {
+  outline: 3px solid rgba(184, 92, 56, 0.35);
+  outline-offset: 3px;
+}
+
+@media (max-width: 800px) {
+  .header-inner {
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    padding: 14px 0;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding-top: 48px;
+  }
+
+  .project-card {
+    grid-template-columns: 1fr;
+  }
+
+  .project-copy,
+  .resume-card {
+    padding: 22px;
+  }
+
+  .hero,
+  .about,
+  .projects,
+  .resume,
+  .contact {
+    padding: 64px 0;
+  }
+}
