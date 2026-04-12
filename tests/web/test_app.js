@@ -123,6 +123,28 @@ test('render helpers output the expected navigation, stat pills, and project car
   assert.equal((projectMarkup.match(/class="project-card"/g) ?? []).length, 3);
 });
 
+test('renderProjectCards falls back to the placeholder image and onerror handler', () => {
+  const projectMarkup = renderProjectCards([
+    {
+      kicker: 'Fallback check',
+      title: 'Broken Image Project',
+      summary: 'Tests the image fallback path.',
+      image: {
+        src: '',
+        alt: 'Broken preview',
+      },
+      bullets: ['One bullet'],
+      stack: ['Test'],
+    },
+  ]);
+
+  assert.match(projectMarkup, /assets\/placeholders\/portfolio-placeholder\.svg/);
+  assert.match(
+    projectMarkup,
+    /onerror="this\.onerror=null;this\.src='assets\/placeholders\/portfolio-placeholder\.svg';"/,
+  );
+});
+
 test('contact rendering hides unavailable links', () => {
   const contactMarkup = renderContactLinks(portfolioContent.contact);
 
@@ -154,6 +176,9 @@ function createMockElement() {
     },
     removeAttribute(name) {
       delete this.attributes[name];
+      if (name === 'href') {
+        this.href = '';
+      }
     },
   };
 }
@@ -193,13 +218,17 @@ test('renderPortfolio mounts the content and disables resume CTAs safely', () =>
   assert.match(mockDocument.getElementById('nav-list').innerHTML, /Projects/);
   assert.match(mockDocument.getElementById('about-copy').innerHTML, /Master of Engineering student/);
   assert.match(mockDocument.getElementById('project-grid').innerHTML, /Vision-Assisted Arduino Robot Car/);
-  assert.equal(mockDocument.getElementById('resume-button').href, '#resume');
+  assert.equal(mockDocument.getElementById('resume-button').href, '');
   assert.equal(mockDocument.getElementById('resume-button').textContent, 'Resume PDF coming soon');
   assert.equal(mockDocument.getElementById('resume-button').classList.contains('is-disabled'), true);
   assert.equal(mockDocument.getElementById('resume-button').attributes['aria-disabled'], 'true');
+  assert.equal(mockDocument.getElementById('resume-button').attributes.href, undefined);
+  assert.equal(mockDocument.getElementById('resume-button').attributes.tabindex, '-1');
   assert.equal(mockDocument.getElementById('resume-card-button').textContent, 'Resume PDF coming soon');
   assert.equal(mockDocument.getElementById('resume-card-button').classList.contains('is-disabled'), true);
   assert.equal(mockDocument.getElementById('resume-card-button').attributes['aria-disabled'], 'true');
+  assert.equal(mockDocument.getElementById('resume-card-button').attributes.href, undefined);
+  assert.equal(mockDocument.getElementById('resume-card-button').attributes.tabindex, '-1');
   assert.equal(
     mockDocument.getElementById('resume-helper').textContent,
     portfolioContent.resume.helperText,
@@ -209,6 +238,7 @@ test('renderPortfolio mounts the content and disables resume CTAs safely', () =>
 
 test('registerPortfolioBoot wires DOMContentLoaded to mount the portfolio', () => {
   const mockDocument = createMockDocument();
+  mockDocument.readyState = 'loading';
   let registeredHandler;
 
   mockDocument.addEventListener = (eventName, handler) => {
@@ -221,6 +251,23 @@ test('registerPortfolioBoot wires DOMContentLoaded to mount the portfolio', () =
 
   registeredHandler();
 
+  assert.equal(mockDocument.getElementById('site-name').textContent, 'Tianyu Zhang');
+  assert.equal(mockDocument.getElementById('resume-button').textContent, 'Resume PDF coming soon');
+  assert.equal(mockDocument.getElementById('resume-helper').textContent, portfolioContent.resume.helperText);
+});
+
+test('registerPortfolioBoot mounts immediately when the document is already ready', () => {
+  const mockDocument = createMockDocument();
+  mockDocument.readyState = 'interactive';
+  let addEventListenerCalled = false;
+
+  mockDocument.addEventListener = () => {
+    addEventListenerCalled = true;
+  };
+
+  registerPortfolioBoot(mockDocument);
+
+  assert.equal(addEventListenerCalled, false);
   assert.equal(mockDocument.getElementById('site-name').textContent, 'Tianyu Zhang');
   assert.equal(mockDocument.getElementById('resume-button').textContent, 'Resume PDF coming soon');
   assert.equal(mockDocument.getElementById('resume-helper').textContent, portfolioContent.resume.helperText);

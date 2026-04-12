@@ -29,12 +29,18 @@ export function renderStatPills(stats) {
 }
 
 export function renderProjectCards(projects) {
+  const fallbackImageSrc = 'assets/placeholders/portfolio-placeholder.svg';
+
   return projects
     .map(
       (project) => `
         <article class="project-card">
           <figure class="project-media">
-            <img src="${project.image.src}" alt="${project.image.alt}" />
+            <img
+              src="${project.image.src || fallbackImageSrc}"
+              alt="${project.image.alt}"
+              onerror="this.onerror=null;this.src='${fallbackImageSrc}';"
+            />
           </figure>
           <div class="project-copy">
             <p class="eyebrow">${project.kicker}</p>
@@ -81,14 +87,17 @@ function applyResumeState(doc, resumeState) {
   const helper = doc.getElementById('resume-helper');
 
   [heroButton, cardButton].forEach((button) => {
-    button.href = resumeState.href;
     button.textContent = resumeState.label;
 
     if (resumeState.isDisabled) {
       button.classList.add('is-disabled');
+      button.removeAttribute('href');
+      button.setAttribute('tabindex', '-1');
       button.setAttribute('aria-disabled', 'true');
     } else {
       button.classList.remove('is-disabled');
+      button.href = resumeState.href;
+      button.removeAttribute('tabindex');
       button.removeAttribute('aria-disabled');
     }
   });
@@ -118,6 +127,11 @@ export function bootPortfolio(doc = document) {
 
 export function registerPortfolioBoot(doc) {
   if (typeof doc === 'undefined') {
+    return;
+  }
+
+  if (doc.readyState !== 'loading') {
+    bootPortfolio(doc);
     return;
   }
 
