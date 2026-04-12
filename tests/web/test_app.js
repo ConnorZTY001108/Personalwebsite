@@ -161,17 +161,21 @@ test('renderProjectCards falls back to the placeholder image and onerror handler
   );
 });
 
-test('contact rendering hides unavailable links', () => {
+test('contact rendering includes available email and external profile links', () => {
   const contactMarkup = renderContactLinks(portfolioContent.contact);
 
-  assert.equal((contactMarkup.match(/class="contact-card"/g) ?? []).length, 2);
+  assert.equal((contactMarkup.match(/class="contact-card"/g) ?? []).length, 3);
   assert.match(contactMarkup, /mailto:zhant173@mcmaster.ca/);
   assert.match(
     contactMarkup,
     /<a class="contact-card" href="https:\/\/github\.com\/ConnorZTY001108" target="_blank" rel="noreferrer">/,
   );
   assert.match(contactMarkup, /github\.com\/ConnorZTY001108/);
-  assert.doesNotMatch(contactMarkup, /LinkedIn will be added soon/);
+  assert.match(
+    contactMarkup,
+    /<a class="contact-card" href="https:\/\/www\.linkedin\.com\/in\/tianyu-zhang-9470a7266\/" target="_blank" rel="noreferrer">/,
+  );
+  assert.match(contactMarkup, /linkedin\.com\/in\/tianyu-zhang-9470a7266/);
 });
 
 function createMockElement() {
