@@ -40,6 +40,8 @@ test('resume state returns a disabled CTA when no PDF is available', () => {
 test('index shell defines the required sections and the module entrypoint', () => {
   const html = fs.readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
 
+  assert.ok(html.includes('<link rel="stylesheet" href="./styles.css" />'));
+  assert.ok(html.includes('src="assets/placeholders/hero-shape.svg"'));
   assert.ok(html.includes('id="site-name"'));
   assert.ok(html.includes('id="nav-list"'));
   assert.ok(html.includes('id="hero-availability"'));
@@ -59,6 +61,16 @@ test('index shell defines the required sections and the module entrypoint', () =
   assert.ok(html.includes('id="project-grid"'));
   assert.ok(html.includes('id="contact-list"'));
   assert.ok(html.includes('<script type="module" src="./app.js"></script>'));
+});
+
+test('portfolio project images resolve to existing files', () => {
+  for (const project of portfolioContent.projects) {
+    assert.equal(
+      fs.existsSync(new URL(`../../${project.image.src}`, import.meta.url)),
+      true,
+      project.slug,
+    );
+  }
 });
 
 test('styles include smooth scrolling, disabled CTA styling, and a mobile breakpoint', () => {
