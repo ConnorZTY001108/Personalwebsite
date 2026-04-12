@@ -34,6 +34,10 @@ test('portfolio content includes the fixed internship profile and three featured
     portfolioContent.contact.find((entry) => entry.label === 'Email')?.href,
     'mailto:zhant173@mcmaster.ca',
   );
+  assert.equal(
+    portfolioContent.footer.note,
+    'Copyright 2026 Tianyu Zhang. Open to internship opportunities.',
+  );
 });
 
 test('resume state returns a disabled CTA when no PDF is available', () => {
@@ -43,6 +47,18 @@ test('resume state returns a disabled CTA when no PDF is available', () => {
   assert.equal(state.href, '#resume');
   assert.equal(state.label, 'Resume PDF coming soon');
   assert.match(state.helperText, /PDF version will be added/i);
+});
+
+test('resume state returns an active CTA when the PDF is available', () => {
+  const state = getResumeState({
+    ...portfolioContent.resume,
+    available: true,
+  });
+
+  assert.equal(state.isDisabled, false);
+  assert.equal(state.href, 'assets/resume/Tianyu_Zhang_Resume.pdf');
+  assert.equal(state.label, 'Download Resume');
+  assert.equal(state.helperText, '');
 });
 
 test('index shell defines the required sections and the module entrypoint', () => {

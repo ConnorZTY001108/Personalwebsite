@@ -99,6 +99,6 @@ export const portfolioContent = {
     },
   ],
   footer: {
-    note: 'Built for internship applications and GitHub Pages.',
+    note: 'Copyright 2026 Tianyu Zhang. Open to internship opportunities.',
   },
 };
