@@ -5,10 +5,26 @@ import { getResumeState } from '../../app.js';
 
 test('portfolio content includes the fixed internship profile and three featured projects', () => {
   assert.equal(portfolioContent.profile.name, 'Tianyu Zhang');
+  assert.equal(portfolioContent.profile.headline, 'M.Eng Student in Systems and Technology');
+  assert.equal(portfolioContent.profile.availability, 'Open to internship opportunities');
   assert.equal(portfolioContent.navigation.length, 3);
-  assert.equal(portfolioContent.projects.length, 3);
+  assert.deepEqual(
+    portfolioContent.projects.map((project) => project.slug),
+    ['process-platform', 'robot-car', 'analytics-dashboard'],
+  );
+  assert.deepEqual(
+    portfolioContent.projects.map((project) => project.title),
+    [
+      'Industrial Process Modeling Platform',
+      'Vision-Assisted Arduino Robot Car',
+      'Consumer Behaviour Analytics Dashboard',
+    ],
+  );
   assert.equal(portfolioContent.resume.available, false);
-  assert.equal(portfolioContent.contact[0].href, 'mailto:zhant173@mcmaster.ca');
+  assert.equal(
+    portfolioContent.contact.find((entry) => entry.label === 'Email')?.href,
+    'mailto:zhant173@mcmaster.ca',
+  );
 });
 
 test('resume state returns a disabled CTA when no PDF is available', () => {
