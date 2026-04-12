@@ -71,4 +71,55 @@ export function renderContactLinks(items) {
     .join('');
 }
 
+function renderAboutParagraphs(paragraphs) {
+  return paragraphs.map((text) => `<p>${text}</p>`).join('');
+}
+
+function applyResumeState(doc, resumeState) {
+  const heroButton = doc.getElementById('resume-button');
+  const cardButton = doc.getElementById('resume-card-button');
+  const helper = doc.getElementById('resume-helper');
+
+  [heroButton, cardButton].forEach((button) => {
+    button.href = resumeState.href;
+    button.textContent = resumeState.label;
+
+    if (resumeState.isDisabled) {
+      button.classList.add('is-disabled');
+      button.setAttribute('aria-disabled', 'true');
+    } else {
+      button.classList.remove('is-disabled');
+      button.removeAttribute('aria-disabled');
+    }
+  });
+
+  helper.textContent = resumeState.helperText;
+}
+
+export function renderPortfolio(content = portfolioContent, doc = document) {
+  doc.getElementById('site-name').textContent = content.profile.name;
+  doc.getElementById('nav-list').innerHTML = renderNavigation(content.navigation);
+  doc.getElementById('hero-availability').textContent = content.profile.availability;
+  doc.getElementById('hero-name').textContent = content.profile.name;
+  doc.getElementById('hero-headline').textContent = content.profile.headline;
+  doc.getElementById('hero-intro').textContent = content.profile.intro;
+  doc.getElementById('about-copy').innerHTML = renderAboutParagraphs(content.about.paragraphs);
+  doc.getElementById('about-stats').innerHTML = renderStatPills(content.about.stats);
+  doc.getElementById('project-grid').innerHTML = renderProjectCards(content.projects);
+  doc.getElementById('contact-list').innerHTML = renderContactLinks(content.contact);
+  doc.getElementById('footer-note').textContent = content.footer.note;
+
+  applyResumeState(doc, getResumeState(content.resume));
+}
+
+export function bootPortfolio(doc = document) {
+  renderPortfolio(portfolioContent, doc);
+}
+
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+    bootPortfolio(document);
+  });
+}
+
 export { portfolioContent };

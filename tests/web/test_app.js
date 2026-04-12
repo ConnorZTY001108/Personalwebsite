@@ -8,6 +8,7 @@ import {
   renderStatPills,
   renderProjectCards,
   renderContactLinks,
+  renderPortfolio,
 } from '../../app.js';
 
 test('portfolio content includes the fixed internship profile and three featured projects', () => {
@@ -132,4 +133,67 @@ test('contact rendering hides unavailable links', () => {
   );
   assert.match(contactMarkup, /github\.com\/ConnorZTY001108/);
   assert.doesNotMatch(contactMarkup, /LinkedIn will be added soon/);
+});
+
+function createMockElement() {
+  const classStore = new Set();
+
+  return {
+    textContent: '',
+    innerHTML: '',
+    href: '',
+    attributes: {},
+    classList: {
+      add: (...names) => names.forEach((name) => classStore.add(name)),
+      remove: (...names) => names.forEach((name) => classStore.delete(name)),
+      contains: (name) => classStore.has(name),
+    },
+    setAttribute(name, value) {
+      this.attributes[name] = value;
+    },
+    removeAttribute(name) {
+      delete this.attributes[name];
+    },
+  };
+}
+
+function createMockDocument() {
+  const ids = [
+    'site-name',
+    'nav-list',
+    'hero-availability',
+    'hero-name',
+    'hero-headline',
+    'hero-intro',
+    'about-copy',
+    'about-stats',
+    'project-grid',
+    'resume-button',
+    'resume-card-button',
+    'resume-helper',
+    'contact-list',
+    'footer-note',
+  ];
+
+  const nodes = new Map(ids.map((id) => [id, createMockElement()]));
+
+  return {
+    getElementById(id) {
+      return nodes.get(id);
+    },
+  };
+}
+
+test('renderPortfolio mounts the content and disables resume CTAs safely', () => {
+  const mockDocument = createMockDocument();
+  renderPortfolio(portfolioContent, mockDocument);
+
+  assert.equal(mockDocument.getElementById('site-name').textContent, 'Tianyu Zhang');
+  assert.match(mockDocument.getElementById('nav-list').innerHTML, /Projects/);
+  assert.match(mockDocument.getElementById('about-copy').innerHTML, /Master of Engineering student/);
+  assert.match(mockDocument.getElementById('project-grid').innerHTML, /Vision-Assisted Arduino Robot Car/);
+  assert.equal(mockDocument.getElementById('resume-button').href, '#resume');
+  assert.equal(mockDocument.getElementById('resume-button').attributes['aria-disabled'], 'true');
+  assert.equal(mockDocument.getElementById('resume-card-button').attributes['aria-disabled'], 'true');
+  assert.match(mockDocument.getElementById('contact-list').innerHTML, /mailto:zhant173@mcmaster.ca/);
 });
