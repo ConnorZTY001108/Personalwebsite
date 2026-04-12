@@ -104,9 +104,18 @@ test('render helpers output the expected navigation, stat pills, and project car
   const statMarkup = renderStatPills(portfolioContent.about.stats);
   const projectMarkup = renderProjectCards(portfolioContent.projects);
 
-  assert.match(navMarkup, /href="#about"/);
+  assert.equal((navMarkup.match(/<li>/g) ?? []).length, portfolioContent.navigation.length);
+  assert.match(navMarkup, /<li><a href="#about">About<\/a><\/li>.*<li><a href="#projects">Projects<\/a><\/li>.*<li><a href="#contact">Contact<\/a><\/li>/s);
+  assert.equal((statMarkup.match(/class="stat-pill"/g) ?? []).length, portfolioContent.about.stats.length);
   assert.match(statMarkup, /Performance-Focused Projects/);
+  assert.match(projectMarkup, /class="project-card"/);
+  assert.match(projectMarkup, /class="project-media"/);
+  assert.match(projectMarkup, /class="project-copy"/);
+  assert.match(projectMarkup, /class="project-bullets"/);
+  assert.match(projectMarkup, /class="tag-list"/);
   assert.match(projectMarkup, /Industrial Process Modeling Platform/);
+  assert.match(projectMarkup, /Vision-Assisted Arduino Robot Car/);
+  assert.match(projectMarkup, /Consumer Behaviour Analytics Dashboard/);
   assert.match(projectMarkup, /40 seconds to 3 seconds/);
   assert.match(projectMarkup, /assets\/placeholders\/portfolio-placeholder\.svg/);
   assert.equal((projectMarkup.match(/class="project-card"/g) ?? []).length, 3);
@@ -115,7 +124,12 @@ test('render helpers output the expected navigation, stat pills, and project car
 test('contact rendering hides unavailable links', () => {
   const contactMarkup = renderContactLinks(portfolioContent.contact);
 
+  assert.equal((contactMarkup.match(/class="contact-card"/g) ?? []).length, 2);
   assert.match(contactMarkup, /mailto:zhant173@mcmaster.ca/);
+  assert.match(
+    contactMarkup,
+    /<a class="contact-card" href="https:\/\/github\.com\/ConnorZTY001108" target="_blank" rel="noreferrer">/,
+  );
   assert.match(contactMarkup, /github\.com\/ConnorZTY001108/);
   assert.doesNotMatch(contactMarkup, /LinkedIn will be added soon/);
 });
