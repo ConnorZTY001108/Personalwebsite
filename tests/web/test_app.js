@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import { portfolioContent } from '../../content.js';
 import { getResumeState } from '../../app.js';
 
@@ -34,4 +35,16 @@ test('resume state returns a disabled CTA when no PDF is available', () => {
   assert.equal(state.href, '#resume');
   assert.equal(state.label, 'Resume PDF coming soon');
   assert.match(state.helperText, /PDF version will be added/i);
+});
+
+test('index shell defines the required sections and the module entrypoint', () => {
+  const html = fs.readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
+
+  assert.ok(html.includes('id="about"'));
+  assert.ok(html.includes('id="projects"'));
+  assert.ok(html.includes('id="resume"'));
+  assert.ok(html.includes('id="contact"'));
+  assert.ok(html.includes('id="project-grid"'));
+  assert.ok(html.includes('id="contact-list"'));
+  assert.ok(html.includes('<script type="module" src="./app.js"></script>'));
 });
