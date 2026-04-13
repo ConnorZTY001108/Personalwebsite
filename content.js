@@ -21,8 +21,10 @@ export const portfolioContent = {
   projects: [
     {
       slug: 'process-platform',
+      href: 'projects/process-platform.html',
       kicker: 'Featured Project',
       title: 'Industrial Process Modeling Platform',
+      subtitle: 'Performance improvements for a research process-modeling platform',
       summary:
         'Improved a research modeling platform by replacing slow full-model save flows with faster incremental updates and batched result handling.',
       bullets: [
@@ -35,11 +37,20 @@ export const portfolioContent = {
         src: 'assets/placeholders/portfolio-placeholder.svg',
         alt: 'Placeholder preview for the Industrial Process Modeling Platform project',
       },
+      detailSections: {
+        overview: '',
+        challenge: '',
+        approach: '',
+        outcome: '',
+      },
+      gallery: [],
     },
     {
       slug: 'robot-car',
+      href: 'projects/robot-car.html',
       kicker: 'Featured Project',
       title: 'Vision-Assisted Arduino Robot Car',
+      subtitle: 'Browser-based robotics control with computer vision assistance',
       summary:
         'Built a browser-driven robotics workflow that combines teleoperation, telemetry, and host-side computer vision feedback.',
       bullets: [
@@ -52,11 +63,20 @@ export const portfolioContent = {
         src: 'assets/placeholders/portfolio-placeholder.svg',
         alt: 'Placeholder preview for the Vision-Assisted Arduino Robot Car project',
       },
+      detailSections: {
+        overview: '',
+        challenge: '',
+        approach: '',
+        outcome: '',
+      },
+      gallery: [],
     },
     {
       slug: 'analytics-dashboard',
+      href: 'projects/analytics-dashboard.html',
       kicker: 'Featured Project',
       title: 'Consumer Behaviour Analytics Dashboard',
+      subtitle: 'Retail analytics dashboard for interpretable business insights',
       summary:
         'Turned shopping data into practical decision support with interpretable models and a Grafana dashboard.',
       bullets: [
@@ -69,6 +89,13 @@ export const portfolioContent = {
         src: 'assets/placeholders/portfolio-placeholder.svg',
         alt: 'Placeholder preview for the Consumer Behaviour Analytics Dashboard project',
       },
+      detailSections: {
+        overview: '',
+        challenge: '',
+        approach: '',
+        outcome: '',
+      },
+      gallery: [],
     },
   ],
   resume: {

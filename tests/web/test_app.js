@@ -40,6 +40,47 @@ test('portfolio content includes the fixed internship profile and three featured
   );
 });
 
+test('project content includes detail-page metadata for all three featured projects', () => {
+  assert.deepEqual(
+    portfolioContent.projects.map((project) => project.href),
+    [
+      'projects/process-platform.html',
+      'projects/robot-car.html',
+      'projects/analytics-dashboard.html',
+    ],
+  );
+
+  const processProject = portfolioContent.projects.find(
+    (project) => project.slug === 'process-platform',
+  );
+  const robotProject = portfolioContent.projects.find((project) => project.slug === 'robot-car');
+  const analyticsProject = portfolioContent.projects.find(
+    (project) => project.slug === 'analytics-dashboard',
+  );
+
+  assert.equal(
+    processProject.subtitle,
+    'Performance improvements for a research process-modeling platform',
+  );
+  assert.equal(
+    robotProject.subtitle,
+    'Browser-based robotics control with computer vision assistance',
+  );
+  assert.equal(
+    analyticsProject.subtitle,
+    'Retail analytics dashboard for interpretable business insights',
+  );
+
+  assert.deepEqual(Object.keys(processProject.detailSections), [
+    'overview',
+    'challenge',
+    'approach',
+    'outcome',
+  ]);
+  assert.deepEqual(robotProject.gallery, []);
+  assert.deepEqual(analyticsProject.gallery, []);
+});
+
 test('resume state returns a disabled CTA when no PDF is available', () => {
   const state = getResumeState(portfolioContent.resume);
 
