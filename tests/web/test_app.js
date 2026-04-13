@@ -136,6 +136,33 @@ test('index shell defines the required sections and the module entrypoint', () =
   assert.ok(html.includes('<script type="module" src="./app.js"></script>'));
 });
 
+test('detail page shells exist for all three projects and declare their slug', () => {
+  const detailPages = [
+    ['process-platform', '../../projects/process-platform.html'],
+    ['robot-car', '../../projects/robot-car.html'],
+    ['analytics-dashboard', '../../projects/analytics-dashboard.html'],
+  ];
+
+  for (const [slug, file] of detailPages) {
+    const html = fs.readFileSync(new URL(file, import.meta.url), 'utf8');
+
+    assert.match(html, new RegExp(`data-project-slug="${slug}"`));
+    assert.match(html, /href="\.\.\/styles\.css"/);
+    assert.match(html, /id="back-home-link"/);
+    assert.match(html, /href="\.\.\/index\.html#projects"/);
+    assert.match(html, /id="detail-title"/);
+    assert.match(html, /id="detail-subtitle"/);
+    assert.match(html, /id="detail-hero-tags"/);
+    assert.match(html, /id="detail-overview-body"/);
+    assert.match(html, /id="detail-challenge-body"/);
+    assert.match(html, /id="detail-approach-body"/);
+    assert.match(html, /id="detail-stack"/);
+    assert.match(html, /id="detail-gallery"/);
+    assert.match(html, /id="detail-outcome-body"/);
+    assert.match(html, /src="\.\.\/project-detail\.js"/);
+  }
+});
+
 test('portfolio project images resolve to existing files', () => {
   for (const project of portfolioContent.projects) {
     assert.equal(
@@ -211,6 +238,26 @@ test('renderProjectCards falls back to the placeholder image and onerror handler
     projectMarkup,
     /onerror="this\.onerror=null;this\.src='assets\/placeholders\/portfolio-placeholder\.svg';"/,
   );
+});
+
+test('renderProjectCards avoids undefined detail hrefs when a project slug is missing', () => {
+  const projectMarkup = renderProjectCards([
+    {
+      href: '',
+      kicker: 'Fallback check',
+      title: 'No Slug Project',
+      summary: 'Tests the detail href fallback path.',
+      image: {
+        src: '',
+        alt: 'Missing slug preview',
+      },
+      bullets: ['One bullet'],
+      stack: ['Test'],
+    },
+  ]);
+
+  assert.doesNotMatch(projectMarkup, /projects\/undefined\.html/);
+  assert.match(projectMarkup, /href="#projects"/);
 });
 
 test('contact rendering includes available email and external profile links', () => {

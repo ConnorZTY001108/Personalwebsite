@@ -28,13 +28,25 @@ export function renderStatPills(stats) {
   return stats.map((item) => `<li class="stat-pill">${item}</li>`).join('');
 }
 
+export function getProjectPageHref(project) {
+  if (project.href) {
+    return project.href;
+  }
+
+  if (project.slug) {
+    return `projects/${project.slug}.html`;
+  }
+
+  return '#projects';
+}
+
 export function renderProjectCards(projects) {
   const fallbackImageSrc = 'assets/placeholders/portfolio-placeholder.svg';
 
   return projects
     .map(
       (project) => {
-        const detailHref = `projects/${project.slug}.html`;
+        const detailHref = getProjectPageHref(project);
 
         return `
           <a class="project-card" href="${detailHref}">
