@@ -179,12 +179,19 @@ test('portfolio project images resolve to existing files', () => {
   }
 });
 
-test('styles include smooth scrolling, disabled CTA styling, and a mobile breakpoint', () => {
+test('styles include focus treatment for project cards, detail-page layout hooks, and a mobile breakpoint', () => {
   const css = fs.readFileSync(new URL('../../styles.css', import.meta.url), 'utf8');
 
   assert.match(css, /scroll-behavior:\s*smooth/);
   assert.match(css, /\.button\.is-disabled/);
   assert.match(css, /\.project-card:hover/);
+  assert.match(css, /\.project-card:focus-visible/);
+  assert.match(css, /\.detail-topbar\b/);
+  assert.match(css, /\.detail-shell\b/);
+  assert.match(css, /\.detail-hero\b/);
+  assert.match(css, /\.detail-section\b/);
+  assert.match(css, /\.detail-gallery\b/);
+  assert.match(css, /\.gallery-placeholder\b/);
   assert.match(css, /@media\s*\(max-width:\s*800px\)/);
 });
 
@@ -518,5 +525,28 @@ test('registerProjectDetailBoot mounts immediately when the detail document is r
   assert.equal(
     mockDocument.getElementById('detail-title').textContent,
     'Consumer Behaviour Analytics Dashboard',
+  );
+});
+
+test('registerProjectDetailBoot waits for DOMContentLoaded when the detail document is loading', () => {
+  const mockDocument = createMockDetailDocument('robot-car');
+  mockDocument.readyState = 'loading';
+  let registeredHandler;
+
+  mockDocument.addEventListener = (eventName, handler) => {
+    assert.equal(eventName, 'DOMContentLoaded');
+    registeredHandler = handler;
+  };
+
+  registerProjectDetailBoot(mockDocument);
+
+  assert.equal(typeof registeredHandler, 'function');
+  assert.equal(mockDocument.getElementById('detail-title').textContent, '');
+
+  registeredHandler();
+
+  assert.equal(
+    mockDocument.getElementById('detail-title').textContent,
+    'Vision-Assisted Arduino Robot Car',
   );
 });

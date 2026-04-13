@@ -255,6 +255,13 @@ h3 {
   box-shadow: 0 30px 80px rgba(39, 27, 18, 0.12);
 }
 
+.project-card:focus-visible {
+  outline: 3px solid rgba(184, 92, 56, 0.35);
+  outline-offset: 4px;
+  transform: translateY(-4px);
+  box-shadow: 0 30px 80px rgba(39, 27, 18, 0.16);
+}
+
 .project-media {
   margin: 0;
   min-height: 100%;
@@ -350,8 +357,97 @@ h3 {
   padding: 0 0 48px;
 }
 
+.detail-page {
+  min-height: 100vh;
+}
+
+.detail-topbar {
+  padding: 36px 0 0;
+}
+
+.detail-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: var(--accent-dark);
+}
+
+.detail-shell {
+  display: grid;
+  gap: 24px;
+  padding: 28px 0 88px;
+}
+
+.detail-hero,
+.detail-section {
+  padding: 32px;
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+
+.detail-hero h1,
+.detail-section h2 {
+  margin: 0;
+}
+
+.detail-subtitle {
+  margin: 18px 0 24px;
+  max-width: 760px;
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.detail-section {
+  display: grid;
+  gap: 18px;
+}
+
+.detail-body {
+  min-height: 28px;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--muted);
+}
+
+.detail-body[data-empty='true']::before {
+  content: 'Details coming soon.';
+  font-style: italic;
+  color: rgba(92, 86, 77, 0.78);
+}
+
+.detail-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+}
+
+.gallery-placeholder,
+.gallery-item {
+  overflow: hidden;
+  min-height: 240px;
+  border-radius: calc(var(--radius-lg) - 10px);
+  background: linear-gradient(180deg, rgba(184, 92, 56, 0.12), rgba(30, 28, 25, 0.05));
+}
+
+.gallery-placeholder {
+  display: grid;
+  place-items: center;
+}
+
+.gallery-placeholder img,
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .button:focus-visible,
 .contact-card:focus-visible,
+.detail-back-link:focus-visible,
 .nav-list a:focus-visible {
   outline: 3px solid rgba(184, 92, 56, 0.35);
   outline-offset: 3px;
@@ -376,7 +472,9 @@ h3 {
   }
 
   .project-copy,
-  .resume-card {
+  .resume-card,
+  .detail-hero,
+  .detail-section {
     padding: 22px;
   }
 
@@ -386,5 +484,13 @@ h3 {
   .resume,
   .contact {
     padding: 64px 0;
+  }
+
+  .detail-topbar {
+    padding-top: 24px;
+  }
+
+  .detail-shell {
+    padding-bottom: 64px;
   }
 }
