@@ -21,7 +21,6 @@ export const portfolioContent = {
   projects: [
     {
       slug: 'process-platform',
-      href: 'projects/process-platform.html',
       kicker: 'Featured Project',
       title: 'Industrial Process Modeling Platform',
       subtitle: 'Performance improvements for a research process-modeling platform',
@@ -47,7 +46,6 @@ export const portfolioContent = {
     },
     {
       slug: 'robot-car',
-      href: 'projects/robot-car.html',
       kicker: 'Featured Project',
       title: 'Vision-Assisted Arduino Robot Car',
       subtitle: 'Browser-based robotics control with computer vision assistance',
@@ -73,7 +71,6 @@ export const portfolioContent = {
     },
     {
       slug: 'analytics-dashboard',
-      href: 'projects/analytics-dashboard.html',
       kicker: 'Featured Project',
       title: 'Consumer Behaviour Analytics Dashboard',
       subtitle: 'Retail analytics dashboard for interpretable business insights',

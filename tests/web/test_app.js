@@ -41,44 +41,52 @@ test('portfolio content includes the fixed internship profile and three featured
 });
 
 test('project content includes detail-page metadata for all three featured projects', () => {
-  assert.deepEqual(
-    portfolioContent.projects.map((project) => project.href),
+  const expectedProjects = new Map([
     [
-      'projects/process-platform.html',
-      'projects/robot-car.html',
-      'projects/analytics-dashboard.html',
+      'process-platform',
+      {
+        title: 'Industrial Process Modeling Platform',
+        subtitle: 'Performance improvements for a research process-modeling platform',
+      },
     ],
-  );
-
-  const processProject = portfolioContent.projects.find(
-    (project) => project.slug === 'process-platform',
-  );
-  const robotProject = portfolioContent.projects.find((project) => project.slug === 'robot-car');
-  const analyticsProject = portfolioContent.projects.find(
-    (project) => project.slug === 'analytics-dashboard',
-  );
-
-  assert.equal(
-    processProject.subtitle,
-    'Performance improvements for a research process-modeling platform',
-  );
-  assert.equal(
-    robotProject.subtitle,
-    'Browser-based robotics control with computer vision assistance',
-  );
-  assert.equal(
-    analyticsProject.subtitle,
-    'Retail analytics dashboard for interpretable business insights',
-  );
-
-  assert.deepEqual(Object.keys(processProject.detailSections), [
-    'overview',
-    'challenge',
-    'approach',
-    'outcome',
+    [
+      'robot-car',
+      {
+        title: 'Vision-Assisted Arduino Robot Car',
+        subtitle: 'Browser-based robotics control with computer vision assistance',
+      },
+    ],
+    [
+      'analytics-dashboard',
+      {
+        title: 'Consumer Behaviour Analytics Dashboard',
+        subtitle: 'Retail analytics dashboard for interpretable business insights',
+      },
+    ],
   ]);
-  assert.deepEqual(robotProject.gallery, []);
-  assert.deepEqual(analyticsProject.gallery, []);
+
+  assert.equal(portfolioContent.projects.length, expectedProjects.size);
+
+  for (const project of portfolioContent.projects) {
+    const expected = expectedProjects.get(project.slug);
+
+    assert.ok(expected, `Unexpected project slug: ${project.slug}`);
+    assert.equal(project.href, undefined);
+    assert.equal(project.title, expected.title);
+    assert.equal(project.subtitle, expected.subtitle);
+    assert.ok(project.summary.length > 0);
+    assert.deepEqual(project.gallery, []);
+    assert.deepEqual(Object.keys(project.detailSections).sort(), [
+      'approach',
+      'challenge',
+      'outcome',
+      'overview',
+    ]);
+    assert.deepEqual(
+      Object.values(project.detailSections),
+      ['', '', '', ''],
+    );
+  }
 });
 
 test('resume state returns a disabled CTA when no PDF is available', () => {
