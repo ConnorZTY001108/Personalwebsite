@@ -11,6 +11,12 @@ import {
   renderContactLinks,
   renderPortfolio,
 } from '../../app.js';
+import {
+  getProjectBySlug,
+  getProjectDetailState,
+  renderProjectDetail,
+  registerProjectDetailBoot,
+} from '../../project-detail.js';
 
 test('portfolio content includes the fixed internship profile and three featured projects', () => {
   assert.equal(portfolioContent.profile.name, 'Tianyu Zhang');
@@ -329,6 +335,56 @@ function createMockDocument() {
   };
 }
 
+function createMockDetailElement() {
+  const classStore = new Set();
+
+  return {
+    textContent: '',
+    innerHTML: '',
+    href: '',
+    attributes: {},
+    classList: {
+      add: (...names) => names.forEach((name) => classStore.add(name)),
+      remove: (...names) => names.forEach((name) => classStore.delete(name)),
+      contains: (name) => classStore.has(name),
+    },
+    setAttribute(name, value) {
+      this.attributes[name] = value;
+    },
+    removeAttribute(name) {
+      delete this.attributes[name];
+    },
+  };
+}
+
+function createMockDetailDocument(slug = 'process-platform') {
+  const ids = [
+    'back-home-link',
+    'detail-title',
+    'detail-subtitle',
+    'detail-hero-tags',
+    'detail-overview-body',
+    'detail-challenge-body',
+    'detail-approach-body',
+    'detail-stack',
+    'detail-gallery',
+    'detail-outcome-body',
+  ];
+
+  const nodes = new Map(ids.map((id) => [id, createMockDetailElement()]));
+
+  return {
+    body: {
+      dataset: {
+        projectSlug: slug,
+      },
+    },
+    getElementById(id) {
+      return nodes.get(id);
+    },
+  };
+}
+
 test('renderPortfolio mounts the content and disables resume CTAs safely', () => {
   const mockDocument = createMockDocument();
   renderPortfolio(portfolioContent, mockDocument);
@@ -390,4 +446,77 @@ test('registerPortfolioBoot mounts immediately when the document is already read
   assert.equal(mockDocument.getElementById('site-name').textContent, 'Tianyu Zhang');
   assert.equal(mockDocument.getElementById('resume-button').textContent, 'Resume PDF coming soon');
   assert.equal(mockDocument.getElementById('resume-helper').textContent, portfolioContent.resume.helperText);
+});
+
+test('detail helpers resolve project records and a safe missing-project state', () => {
+  assert.equal(getProjectBySlug('robot-car').title, 'Vision-Assisted Arduino Robot Car');
+  assert.equal(getProjectBySlug('missing-project'), null);
+
+  const foundState = getProjectDetailState('robot-car');
+  const missingState = getProjectDetailState('missing-project');
+
+  assert.equal(foundState.isMissing, false);
+  assert.equal(foundState.project.slug, 'robot-car');
+  assert.equal(missingState.isMissing, true);
+  assert.equal(missingState.title, 'Project not found');
+  assert.equal(missingState.backHref, '../index.html#projects');
+});
+
+test('renderProjectDetail mounts the selected project with empty-body and gallery fallbacks', () => {
+  const mockDocument = createMockDetailDocument('process-platform');
+
+  renderProjectDetail(mockDocument);
+
+  assert.equal(
+    mockDocument.getElementById('back-home-link').href,
+    '../index.html#projects',
+  );
+  assert.equal(
+    mockDocument.getElementById('detail-title').textContent,
+    'Industrial Process Modeling Platform',
+  );
+  assert.equal(
+    mockDocument.getElementById('detail-subtitle').textContent,
+    'Performance improvements for a research process-modeling platform',
+  );
+  assert.match(mockDocument.getElementById('detail-hero-tags').innerHTML, /TypeScript/);
+  assert.equal(
+    mockDocument.getElementById('detail-overview-body').attributes['data-empty'],
+    'true',
+  );
+  assert.match(
+    mockDocument.getElementById('detail-gallery').innerHTML,
+    /gallery-placeholder/,
+  );
+});
+
+test('renderProjectDetail mounts a safe fallback when the slug is unknown', () => {
+  const mockDocument = createMockDetailDocument('missing-project');
+
+  renderProjectDetail(mockDocument);
+
+  assert.equal(mockDocument.getElementById('detail-title').textContent, 'Project not found');
+  assert.match(
+    mockDocument.getElementById('detail-subtitle').textContent,
+    /Return to the homepage/i,
+  );
+  assert.equal(
+    mockDocument.getElementById('back-home-link').href,
+    '../index.html#projects',
+  );
+});
+
+test('registerProjectDetailBoot mounts immediately when the detail document is ready', () => {
+  const mockDocument = createMockDetailDocument('analytics-dashboard');
+  mockDocument.readyState = 'interactive';
+  mockDocument.addEventListener = () => {
+    throw new Error('detail page should mount immediately when ready');
+  };
+
+  registerProjectDetailBoot(mockDocument);
+
+  assert.equal(
+    mockDocument.getElementById('detail-title').textContent,
+    'Consumer Behaviour Analytics Dashboard',
+  );
 });
