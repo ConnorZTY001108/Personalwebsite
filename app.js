@@ -33,28 +33,32 @@ export function renderProjectCards(projects) {
 
   return projects
     .map(
-      (project) => `
-        <article class="project-card">
-          <figure class="project-media">
-            <img
-              src="${project.image.src || fallbackImageSrc}"
-              alt="${project.image.alt}"
-              onerror="this.onerror=null;this.src='${fallbackImageSrc}';"
-            />
-          </figure>
-          <div class="project-copy">
-            <p class="eyebrow">${project.kicker}</p>
-            <h3>${project.title}</h3>
-            <p class="project-summary">${project.summary}</p>
-            <ul class="project-bullets">
-              ${project.bullets.map((bullet) => `<li>${bullet}</li>`).join('')}
-            </ul>
-            <ul class="tag-list">
-              ${project.stack.map((tag) => `<li>${tag}</li>`).join('')}
-            </ul>
-          </div>
-        </article>
-      `,
+      (project) => {
+        const detailHref = `projects/${project.slug}.html`;
+
+        return `
+          <a class="project-card" href="${detailHref}">
+            <figure class="project-media">
+              <img
+                src="${project.image.src || fallbackImageSrc}"
+                alt="${project.image.alt}"
+                onerror="this.onerror=null;this.src='${fallbackImageSrc}';"
+              />
+            </figure>
+            <div class="project-copy">
+              <p class="eyebrow">${project.kicker}</p>
+              <h3>${project.title}</h3>
+              <p class="project-summary">${project.summary}</p>
+              <ul class="project-bullets">
+                ${project.bullets.map((bullet) => `<li>${bullet}</li>`).join('')}
+              </ul>
+              <ul class="tag-list">
+                ${project.stack.map((tag) => `<li>${tag}</li>`).join('')}
+              </ul>
+            </div>
+          </a>
+        `;
+      },
     )
     .join('');
 }

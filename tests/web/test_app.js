@@ -186,6 +186,9 @@ test('render helpers output the expected navigation, stat pills, and project car
   assert.match(projectMarkup, /40 seconds to 3 seconds/);
   assert.match(projectMarkup, /assets\/placeholders\/portfolio-placeholder\.svg/);
   assert.equal((projectMarkup.match(/class="project-card"/g) ?? []).length, 3);
+  assert.match(projectMarkup, /<a class="project-card" href="projects\/process-platform\.html">/);
+  assert.match(projectMarkup, /<a class="project-card" href="projects\/robot-car\.html">/);
+  assert.match(projectMarkup, /<a class="project-card" href="projects\/analytics-dashboard\.html">/);
 });
 
 test('renderProjectCards falls back to the placeholder image and onerror handler', () => {
