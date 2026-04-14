@@ -1,3 +1,68 @@
+const processPlatformGalleryItems = [
+  { title: 'Start Menu', file: 'start_menu.png' },
+  { title: 'UI Overview', file: 'ui_overview.png' },
+  { title: 'Computation Panel', file: 'Computation Pane.png' },
+  { title: 'Material Editor', file: 'MaterialEditor.png' },
+  { title: 'Data Export', file: 'DataExport.png' },
+  { title: 'Excel Data', file: 'ExcelData.png' },
+  { title: 'Stream Data', file: 'StramData.png' },
+  { title: 'TP Setup', file: 'TPset.png' },
+  { title: 'TP Settings', file: 'TPseting.png' },
+  { title: 'Cost Breakdown', file: 'Cost.png' },
+];
+
+function renderProcessPlatformGallery(items) {
+  const cards = items
+    .map(
+      ({ title, file }) => `
+        <button
+          type="button"
+          class="gallery-card"
+          data-gallery-item
+          data-gallery-title="${title}"
+          data-gallery-src="../assets/Industrial Process Modeling Platform/${file}"
+          aria-label="Open ${title} screenshot"
+        >
+          <img
+            src="../assets/Industrial Process Modeling Platform/${file}"
+            alt="${title} screenshot"
+            loading="lazy"
+            draggable="false"
+          />
+          <span class="gallery-card-title">${title}</span>
+        </button>
+      `,
+    )
+    .join('');
+
+  return `
+    <div class="project-gallery" data-gallery-root>
+      <div class="project-gallery-track" data-gallery-track aria-label="Process platform screenshots">
+        ${cards}
+      </div>
+      <div class="gallery-preview" data-gallery-preview aria-hidden="true">
+        <button
+          type="button"
+          class="gallery-preview-scrim"
+          data-gallery-close
+          tabindex="-1"
+          aria-label="Close screenshot preview"
+        ></button>
+        <div class="gallery-preview-panel" role="dialog" aria-modal="true" aria-labelledby="gallery-preview-title">
+          <button type="button" class="gallery-preview-close" data-gallery-close aria-label="Close screenshot preview">
+            Close
+          </button>
+          <img data-gallery-preview-image alt="" />
+          <div class="gallery-preview-copy">
+            <p class="gallery-preview-kicker">Screenshot Preview</p>
+            <h3 id="gallery-preview-title" data-gallery-preview-title></h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 export const portfolioContent = {
   profile: {
     name: 'Tianyu Zhang',
@@ -53,6 +118,7 @@ export const portfolioContent = {
             Instead of describing a plant with large Excel tables, users can place models on a canvas, connect them
             with streams, and understand the structure of the system much more quickly.
           </p>
+          ${renderProcessPlatformGallery(processPlatformGalleryItems)}
           <p>
             The platform supports the day-to-day workflow around those diagrams as well: users can create and load
             networks, save their work, import and export a complete network as JSON, review computation history, and

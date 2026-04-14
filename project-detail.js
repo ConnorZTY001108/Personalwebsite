@@ -43,6 +43,171 @@ function mountDetailBody(node, text) {
   node.setAttribute('data-empty', 'true');
 }
 
+function setupProcessPlatformGallery(doc, projectDetail) {
+  if (typeof projectDetail.querySelector !== 'function') {
+    return;
+  }
+
+  const root = projectDetail.querySelector('[data-gallery-root]');
+  const track = root?.querySelector('[data-gallery-track]');
+  const preview = root?.querySelector('[data-gallery-preview]');
+  const previewPanel = root?.querySelector('.gallery-preview-panel');
+  const previewImage = root?.querySelector('[data-gallery-preview-image]');
+  const previewTitle = root?.querySelector('[data-gallery-preview-title]');
+  const previewClose = root?.querySelector('.gallery-preview-close');
+  const win = doc.defaultView;
+
+  if (!root || !track || !preview || !previewPanel || !previewImage || !previewTitle || !previewClose) {
+    return;
+  }
+
+  const state = {
+    activePreview: null,
+    dragPointerId: null,
+    dragStartX: 0,
+    dragStartScrollLeft: 0,
+    didDrag: false,
+    suppressClick: false,
+    restoreFocusTo: null,
+  };
+
+  const closePreview = () => {
+    if (state.activePreview === null) {
+      return;
+    }
+
+    preview.classList.remove('is-open');
+    preview.setAttribute('aria-hidden', 'true');
+    doc.body?.classList?.remove('gallery-modal-open');
+    state.activePreview = null;
+    previewImage.removeAttribute('src');
+    previewImage.removeAttribute('alt');
+    previewTitle.textContent = '';
+    state.restoreFocusTo?.focus?.();
+    state.restoreFocusTo = null;
+  };
+
+  const openPreview = (item) => {
+    const title = item.dataset.galleryTitle || item.querySelector('img')?.alt || 'Screenshot';
+    const src = item.dataset.gallerySrc || item.querySelector('img')?.getAttribute('src');
+
+    if (!src) {
+      return;
+    }
+
+    state.restoreFocusTo = typeof doc.activeElement?.focus === 'function' ? doc.activeElement : null;
+    state.activePreview = item;
+    previewImage.src = src;
+    previewImage.alt = title;
+    previewTitle.textContent = title;
+    preview.classList.add('is-open');
+    preview.setAttribute('aria-hidden', 'false');
+    doc.body?.classList?.add('gallery-modal-open');
+    previewClose.focus?.();
+  };
+
+  const resetDragState = () => {
+    if (state.dragPointerId !== null) {
+      track.classList.remove('is-dragging');
+    }
+
+    state.dragPointerId = null;
+    state.didDrag = false;
+    if (state.suppressClick) {
+      setTimeout(() => {
+        state.suppressClick = false;
+      }, 0);
+    }
+  };
+
+  track.addEventListener('pointerdown', (event) => {
+    if (event.pointerType !== 'mouse' || event.button !== 0) {
+      return;
+    }
+
+    state.dragPointerId = event.pointerId;
+    state.dragStartX = event.clientX;
+    state.dragStartScrollLeft = track.scrollLeft;
+    state.didDrag = false;
+    state.suppressClick = false;
+    track.classList.add('is-dragging');
+    track.setPointerCapture?.(event.pointerId);
+  });
+
+  track.addEventListener('pointermove', (event) => {
+    if (state.dragPointerId !== event.pointerId) {
+      return;
+    }
+
+    const deltaX = event.clientX - state.dragStartX;
+
+    if (Math.abs(deltaX) > 6) {
+      state.didDrag = true;
+    }
+
+    if (state.didDrag) {
+      track.scrollLeft = state.dragStartScrollLeft - deltaX;
+    }
+  });
+
+  track.addEventListener('pointerup', (event) => {
+    if (state.dragPointerId !== event.pointerId) {
+      return;
+    }
+
+    if (state.didDrag) {
+      state.suppressClick = true;
+    }
+
+    track.releasePointerCapture?.(event.pointerId);
+    resetDragState();
+  });
+
+  track.addEventListener('pointercancel', (event) => {
+    if (state.dragPointerId !== event.pointerId) {
+      return;
+    }
+
+    track.releasePointerCapture?.(event.pointerId);
+    resetDragState();
+  });
+
+  track.addEventListener('click', (event) => {
+    if (state.suppressClick) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      return;
+    }
+
+    const item = event.target.closest?.('[data-gallery-item]');
+
+    if (!item) {
+      return;
+    }
+
+    event.preventDefault();
+    openPreview(item);
+  });
+
+  preview.addEventListener('click', (event) => {
+    if (event.target.closest?.('[data-gallery-close]')) {
+      closePreview();
+    }
+  });
+
+  win?.addEventListener('keydown', (event) => {
+    if (event.key === 'Tab' && state.activePreview !== null) {
+      event.preventDefault();
+      previewClose.focus?.();
+      return;
+    }
+
+    if (event.key === 'Escape') {
+      closePreview();
+    }
+  });
+}
+
 export function renderProjectDetail(doc = document, content = portfolioContent) {
   const slug = doc.body?.dataset?.projectSlug ?? '';
   const state = getProjectDetailState(slug, content);
@@ -75,6 +240,10 @@ export function renderProjectDetail(doc = document, content = portfolioContent) 
   mountDetailBody(challenge, state.project.detailSections.challenge);
   mountDetailBody(approach, state.project.detailSections.approach);
   mountDetailBody(outcome, state.project.detailSections.outcome);
+
+  if (state.project.slug === 'process-platform') {
+    setupProcessPlatformGallery(doc, projectDetail);
+  }
 }
 
 export function registerProjectDetailBoot(doc) {

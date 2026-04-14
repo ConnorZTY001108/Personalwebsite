@@ -519,6 +519,24 @@ test('renderProjectDetail mounts the selected project with project detail and em
   );
 });
 
+test('renderProjectDetail includes the process-platform overview gallery contract', () => {
+  const mockDocument = createMockDetailDocument('process-platform');
+
+  renderProjectDetail(mockDocument);
+
+  const overviewMarkup = mockDocument.getElementById('detail-project-body').innerHTML;
+
+  assert.match(overviewMarkup, /data-gallery-root/);
+  assert.match(overviewMarkup, /data-gallery-track/);
+  assert.match(overviewMarkup, /gallery-preview/);
+  assert.match(overviewMarkup, /Start Menu/);
+  assert.match(overviewMarkup, /UI Overview/);
+  assert.match(overviewMarkup, /assets\/Industrial Process Modeling Platform\//);
+  assert.match(overviewMarkup, /Computation Panel/);
+  assert.match(overviewMarkup, /Material Editor/);
+  assert.match(overviewMarkup, /Data Export/);
+});
+
 test('renderProjectDetail mounts a safe fallback when the slug is unknown', () => {
   const mockDocument = createMockDetailDocument('missing-project');
 
