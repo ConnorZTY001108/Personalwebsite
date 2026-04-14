@@ -85,13 +85,15 @@ test('project content includes detail-page metadata for all three featured proje
     assert.deepEqual(Object.keys(project.detailSections).sort(), [
       'approach',
       'challenge',
-        'outcome',
-        'projectDetail',
-      ]);
+      'outcome',
+      'projectDetail',
+    ]);
 
     if (project.slug === 'process-platform') {
+      assert.match(project.summary, /McMaster capstone/i);
       assert.match(project.summary, /interactive canvas/i);
       assert.match(project.detailSections.projectDetail, /Excel/i);
+      assert.match(project.detailSections.challenge, /reliable enough for repeated use/i);
       assert.match(project.detailSections.challenge, /MongoDB and PostgreSQL/i);
       assert.match(project.detailSections.approach, /schema version/i);
       assert.match(project.detailSections.outcome, /McMaster University/i);
@@ -167,13 +169,23 @@ test('detail page shells exist for all three projects and declare their slug', (
     assert.match(html, /href="\.\.\/index\.html#projects"/);
     assert.match(html, /id="detail-title"/);
     assert.match(html, /id="detail-subtitle"/);
-    assert.match(html, />Project Detail</);
     assert.match(html, /id="detail-project-body"/);
     assert.match(html, /id="detail-challenge-body"/);
     assert.match(html, /id="detail-approach-body"/);
     assert.match(html, /id="detail-stack"/);
     assert.match(html, /id="detail-outcome-body"/);
     assert.match(html, /src="\.\.\/project-detail\.js"/);
+
+    if (slug === 'process-platform') {
+      assert.match(html, />Project Overview</);
+      assert.match(html, />My Contribution</);
+      assert.match(html, />Outcome</);
+    } else {
+      assert.match(html, />Project Detail</);
+      assert.match(html, />Challenge</);
+      assert.match(html, />Approach</);
+      assert.match(html, />Outcome</);
+    }
   }
 });
 
@@ -497,6 +509,7 @@ test('renderProjectDetail mounts the selected project with project detail and em
   assert.match(mockDocument.getElementById('detail-stack').innerHTML, /TypeScript/);
   assert.match(mockDocument.getElementById('detail-stack').innerHTML, /React Flow/);
   assert.match(mockDocument.getElementById('detail-project-body').innerHTML, /Excel/i);
+  assert.match(mockDocument.getElementById('detail-challenge-body').innerHTML, /reliable enough for repeated use/i);
   assert.match(mockDocument.getElementById('detail-challenge-body').innerHTML, /MongoDB and PostgreSQL/i);
   assert.match(mockDocument.getElementById('detail-approach-body').innerHTML, /auto-upgrade logic/i);
   assert.match(mockDocument.getElementById('detail-outcome-body').innerHTML, /McMaster University/i);

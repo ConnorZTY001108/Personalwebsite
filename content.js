@@ -25,11 +25,11 @@ export const portfolioContent = {
       title: 'Industrial Process Modeling Platform',
       subtitle: 'A full-stack web app for drawing, saving, and computing industrial process diagrams',
       summary:
-        'Built a visual process-modeling platform that replaces hard-to-read Excel workflows with an interactive canvas, reusable subnetworks, and computation support.',
+        'For a McMaster capstone team, I helped build a visual process-modeling platform that replaces hard-to-read Excel workflows with an interactive canvas and reusable subnetworks.',
       bullets: [
         'Replaced spreadsheet-style process descriptions with a node-and-edge modeling workflow.',
-        'Supported save/load, import/export, reusable subnetworks, and computation result history.',
-        'Improved reliability with safer saves, schema upgrades for older files, and more maintainable data flows.',
+        'Built save/load, import/export, reusable subnetworks, and computation history support for real project use.',
+        'Improved reliability with safer saves, schema upgrades for older files, and cleaner data flows.',
       ],
       stack: [
         'TypeScript',
@@ -58,37 +58,32 @@ export const portfolioContent = {
             networks, save their work, import and export a complete network as JSON, review computation history, and
             reuse repeated parts of a process as subnetwork blueprints.
           </p>
-          <p>
-            My work focused on the parts that make the product practical in real use. I improved save and data
-            persistence flows, made old diagrams safer to open after schema changes, and helped turn the platform
-            into something that is easier to demo, maintain, and explain to non-specialists.
-          </p>
         `,
         challenge: `
           <p>
-            The main difficulty was that a “diagram” was not just a picture. A single save or load action had to keep
-            the visual canvas, node settings, time-period data, nested subnetworks, and computation results consistent
-            across both MongoDB and PostgreSQL.
+            My main contribution was making the platform reliable enough for repeated use. A single save or load
+            action had to keep the visual canvas, node settings, time-period data, nested subnetworks, and
+            computation results consistent across both MongoDB and PostgreSQL.
           </p>
           <p>
-            Another challenge was backward compatibility. As the project evolved, older saved diagrams and exported
-            JSON files could break when the data format changed, which is a serious problem for a tool people rely on
-            to reopen previous work.
+            I also handled backward compatibility. As the project evolved, older saved diagrams and exported JSON
+            files could break when the data format changed, which is a serious problem for a tool people rely on to
+            reopen previous work.
           </p>
           <p>
-            At the same time, the product had to stay understandable for users who think in terms of factory processes,
-            not internal data models. The system needed to feel simpler than the Excel-based workflow it was replacing,
-            not more technical.
+            At the same time, the product had to stay understandable for users who think in terms of factory
+            processes, not internal data models. The system needed to feel simpler than the Excel-based workflow it
+            was replacing, not more technical.
           </p>
         `,
         approach: `
           <p>
-            On the frontend, I used React, React Flow, and Redux to build the visual editor and dashboard experience.
+            I used React, React Flow, and Redux on the frontend to build the visual editor and dashboard experience.
             On the backend, I used Node.js, Express, and Prisma to manage APIs, persistence, authentication, import
             and export flows, and solver-related result handling.
           </p>
           <p>
-            I helped organize the data so the canvas layout stayed lightweight while node configurations, time-period
+            I organized the data so the canvas layout stayed lightweight while node configurations, time-period
             records, and computation results were stored and synchronized more safely. I also added full-network
             snapshot import/export and duplication so an entire process model could move as one package instead of
             breaking into partial files.
