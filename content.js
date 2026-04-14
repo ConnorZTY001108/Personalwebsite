@@ -70,8 +70,15 @@ export const portfolioContent = {
     name: 'Tianyu Zhang',
     headline: 'M.Eng Student in Systems and Technology',
     intro:
-      'I build software that makes complex workflows faster, clearer, and easier to use. I am currently looking for internship opportunities in software engineering, backend development, and full-stack product work.',
+      'I build practical software for product, backend, and workflow systems where clarity, reliability, and engineering judgment matter.',
     availability: 'Open to internship opportunities',
+    heroPanel: {
+      label: 'featured_focus',
+      title: 'Industrial Process Modeling Platform',
+      summary:
+        'Full-stack workflow tool with safer save paths, schema upgrades, reusable subnetworks, and computation history support.',
+      items: ['React / Redux', 'Node.js / Prisma', 'Reliability-first delivery'],
+    },
   },
   navigation: [
     { id: 'about', label: 'About' },
