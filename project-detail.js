@@ -50,6 +50,9 @@ function setupProcessPlatformGallery(doc, projectDetail) {
 
   const root = projectDetail.querySelector('[data-gallery-root]');
   const track = root?.querySelector('[data-gallery-track]');
+  const items = Array.from(
+    track?.querySelectorAll?.('[data-gallery-item]') ?? root?.querySelectorAll?.('[data-gallery-item]') ?? [],
+  );
   const preview = root?.querySelector('[data-gallery-preview]');
   const previewPanel = root?.querySelector('.gallery-preview-panel');
   const previewImage = root?.querySelector('[data-gallery-preview-image]');
@@ -57,7 +60,7 @@ function setupProcessPlatformGallery(doc, projectDetail) {
   const previewClose = root?.querySelector('.gallery-preview-close');
   const win = doc.defaultView;
 
-  if (!root || !track || !preview || !previewPanel || !previewImage || !previewTitle || !previewClose) {
+  if (!root || !track || items.length === 0 || !preview || !previewPanel || !previewImage || !previewTitle || !previewClose) {
     return;
   }
 
@@ -172,21 +175,16 @@ function setupProcessPlatformGallery(doc, projectDetail) {
     resetDragState();
   });
 
-  track.addEventListener('click', (event) => {
-    if (state.suppressClick) {
+  items.forEach((item) => {
+    item.addEventListener('click', (event) => {
+      if (state.suppressClick) {
+        event.preventDefault();
+        return;
+      }
+
       event.preventDefault();
-      event.stopImmediatePropagation();
-      return;
-    }
-
-    const item = event.target.closest?.('[data-gallery-item]');
-
-    if (!item) {
-      return;
-    }
-
-    event.preventDefault();
-    openPreview(item);
+      openPreview(event.currentTarget ?? item);
+    });
   });
 
   preview.addEventListener('click', (event) => {

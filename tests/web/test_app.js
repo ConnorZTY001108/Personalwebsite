@@ -213,6 +213,9 @@ test('styles include focus treatment for project cards, detail-page layout hooks
   assert.match(css, /\.detail-section-head\b/);
   assert.match(css, /\.detail-stack-block\b/);
   assert.match(css, /\.detail-stack-label\b/);
+  assert.match(css, /\.project-gallery-track\s*{[^}]*gap:\s*0/s);
+  assert.match(css, /\.gallery-card\s*{[^}]*border-radius:\s*0/s);
+  assert.match(css, /\.gallery-card img\s*{[^}]*border-radius:\s*0/s);
   assert.match(css, /@media\s*\(max-width:\s*800px\)/);
 });
 
@@ -412,6 +415,153 @@ function createMockDetailDocument(slug = 'process-platform') {
   };
 }
 
+function createInteractiveNode() {
+  const classStore = new Set();
+  const listeners = new Map();
+  const attributes = {};
+
+  return {
+    attributes,
+    classList: {
+      add: (...names) => names.forEach((name) => classStore.add(name)),
+      remove: (...names) => names.forEach((name) => classStore.delete(name)),
+      contains: (name) => classStore.has(name),
+    },
+    dataset: {},
+    innerHTML: '',
+    scrollLeft: 0,
+    textContent: '',
+    addEventListener(name, handler) {
+      listeners.set(name, handler);
+    },
+    dispatch(name, event = {}) {
+      const handler = listeners.get(name);
+
+      if (handler) {
+        handler(event);
+      }
+    },
+    focus() {
+      this.wasFocused = true;
+    },
+    querySelector() {
+      return null;
+    },
+    querySelectorAll() {
+      return [];
+    },
+    releasePointerCapture() {},
+    removeAttribute(name) {
+      delete attributes[name];
+      delete this[name];
+    },
+    setAttribute(name, value) {
+      attributes[name] = value;
+      this[name] = value;
+    },
+    setPointerCapture() {},
+  };
+}
+
+function createInteractiveDetailDocument() {
+  const document = createMockDetailDocument('process-platform');
+  const galleryRoot = createInteractiveNode();
+  const galleryTrack = createInteractiveNode();
+  const galleryPreview = createInteractiveNode();
+  const galleryPreviewPanel = createInteractiveNode();
+  const galleryPreviewImage = createInteractiveNode();
+  const galleryPreviewTitle = createInteractiveNode();
+  const galleryPreviewClose = createInteractiveNode();
+  const galleryItem = createInteractiveNode();
+  const keydownListeners = new Map();
+
+  galleryItem.dataset.galleryTitle = 'Start Menu';
+  galleryItem.dataset.gallerySrc =
+    '../assets/Industrial Process Modeling Platform/start_menu.png';
+  galleryItem.querySelector = (selector) => {
+    if (selector === 'img') {
+      return {
+        alt: 'Start Menu screenshot',
+        getAttribute(name) {
+          return name === 'src'
+            ? '../assets/Industrial Process Modeling Platform/start_menu.png'
+            : '';
+        },
+      };
+    }
+
+    return null;
+  };
+
+  galleryTrack.querySelectorAll = (selector) => {
+    if (selector === '[data-gallery-item]') {
+      return [galleryItem];
+    }
+
+    return [];
+  };
+
+  galleryRoot.querySelector = (selector) => {
+    if (selector === '[data-gallery-track]') {
+      return galleryTrack;
+    }
+
+    if (selector === '[data-gallery-preview]') {
+      return galleryPreview;
+    }
+
+    if (selector === '.gallery-preview-panel') {
+      return galleryPreviewPanel;
+    }
+
+    if (selector === '[data-gallery-preview-image]') {
+      return galleryPreviewImage;
+    }
+
+    if (selector === '[data-gallery-preview-title]') {
+      return galleryPreviewTitle;
+    }
+
+    if (selector === '.gallery-preview-close') {
+      return galleryPreviewClose;
+    }
+
+    return null;
+  };
+
+  galleryRoot.querySelectorAll = (selector) => {
+    if (selector === '[data-gallery-item]') {
+      return [galleryItem];
+    }
+
+    return [];
+  };
+
+  document.body.classList = createInteractiveNode().classList;
+  document.defaultView = {
+    addEventListener(name, handler) {
+      keydownListeners.set(name, handler);
+    },
+  };
+  document.getElementById('detail-project-body').querySelector = (selector) => {
+    if (selector === '[data-gallery-root]') {
+      return galleryRoot;
+    }
+
+    return null;
+  };
+
+  return {
+    document,
+    galleryItem,
+    galleryPreview,
+    galleryPreviewImage,
+    galleryPreviewTitle,
+    galleryPreviewClose,
+    keydownListeners,
+  };
+}
+
 test('renderPortfolio mounts the content and disables resume CTAs safely', () => {
   const mockDocument = createMockDocument();
   renderPortfolio(portfolioContent, mockDocument);
@@ -535,6 +685,41 @@ test('renderProjectDetail includes the process-platform overview gallery contrac
   assert.match(overviewMarkup, /Computation Panel/);
   assert.match(overviewMarkup, /Material Editor/);
   assert.match(overviewMarkup, /Data Export/);
+  assert.ok(
+    overviewMarkup.indexOf('subnetwork blueprints') < overviewMarkup.indexOf('data-gallery-root'),
+    'expected the overview gallery to appear after the descriptive paragraphs',
+  );
+});
+
+test('renderProjectDetail wires process-platform gallery cards to open and close the preview', () => {
+  const {
+    document,
+    galleryItem,
+    galleryPreview,
+    galleryPreviewImage,
+    galleryPreviewTitle,
+    galleryPreviewClose,
+    keydownListeners,
+  } = createInteractiveDetailDocument();
+
+  renderProjectDetail(document);
+
+  galleryItem.dispatch('click', {
+    currentTarget: galleryItem,
+    preventDefault() {},
+  });
+
+  assert.equal(galleryPreview.classList.contains('is-open'), true);
+  assert.equal(
+    galleryPreviewImage.src,
+    '../assets/Industrial Process Modeling Platform/start_menu.png',
+  );
+  assert.equal(galleryPreviewTitle.textContent, 'Start Menu');
+  assert.equal(galleryPreviewClose.wasFocused, true);
+
+  keydownListeners.get('keydown')?.({ key: 'Escape' });
+
+  assert.equal(galleryPreview.classList.contains('is-open'), false);
 });
 
 test('renderProjectDetail mounts a safe fallback when the slug is unknown', () => {

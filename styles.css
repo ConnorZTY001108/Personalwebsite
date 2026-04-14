@@ -456,15 +456,15 @@ h3 {
 
 .project-gallery {
   display: grid;
-  gap: 14px;
-  margin: 4px 0 6px;
+  gap: 12px;
+  margin: 18px 0 0;
 }
 
 .project-gallery-track {
   display: flex;
-  gap: 16px;
+  gap: 0;
   overflow-x: auto;
-  padding: 4px 4px 14px;
+  padding: 0 0 14px;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   overscroll-behavior-x: contain;
@@ -483,26 +483,26 @@ h3 {
 }
 
 .gallery-card {
-  flex: 0 0 clamp(220px, 30vw, 320px);
+  position: relative;
+  flex: 0 0 clamp(280px, 38vw, 460px);
   display: grid;
-  gap: 12px;
-  padding: 12px;
+  gap: 0;
+  padding: 0;
   text-align: left;
   border: 0;
-  border-radius: calc(var(--radius-lg) - 10px);
-  background: rgba(255, 250, 243, 0.96);
-  box-shadow: 0 16px 40px rgba(39, 27, 18, 0.1);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
   scroll-snap-align: start;
   cursor: pointer;
   transition:
     transform 200ms ease,
-    box-shadow 200ms ease,
-    background 200ms ease;
+    opacity 200ms ease;
 }
 
 .gallery-card:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 26px 52px rgba(39, 27, 18, 0.15);
+  z-index: 1;
+  transform: scale(1.02);
 }
 
 .gallery-card:focus-visible {
@@ -513,13 +513,14 @@ h3 {
 .gallery-card img {
   width: 100%;
   margin: 0;
-  border-radius: calc(var(--radius-lg) - 14px);
+  border-radius: 0;
   box-shadow: none;
   aspect-ratio: 4 / 3;
   object-fit: cover;
 }
 
 .gallery-card-title {
+  padding-top: 12px;
   font-weight: 700;
   line-height: 1.25;
   color: var(--text);
@@ -566,7 +567,7 @@ h3 {
   width: 100%;
   max-height: 72vh;
   margin: 0;
-  border-radius: calc(var(--radius-lg) - 12px);
+  border-radius: 0;
   object-fit: contain;
   background: #111;
   box-shadow: none;
@@ -661,11 +662,11 @@ h3 {
   }
 
   .project-gallery-track {
-    gap: 12px;
+    gap: 0;
   }
 
   .gallery-card {
-    flex-basis: min(80vw, 300px);
+    flex-basis: min(84vw, 360px);
   }
 
   .gallery-preview {

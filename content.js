@@ -118,12 +118,12 @@ export const portfolioContent = {
             Instead of describing a plant with large Excel tables, users can place models on a canvas, connect them
             with streams, and understand the structure of the system much more quickly.
           </p>
-          ${renderProcessPlatformGallery(processPlatformGalleryItems)}
           <p>
             The platform supports the day-to-day workflow around those diagrams as well: users can create and load
             networks, save their work, import and export a complete network as JSON, review computation history, and
             reuse repeated parts of a process as subnetwork blueprints.
           </p>
+          ${renderProcessPlatformGallery(processPlatformGalleryItems)}
         `,
         challenge: `
           <p>
