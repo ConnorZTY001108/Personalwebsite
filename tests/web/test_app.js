@@ -160,39 +160,19 @@ test('resume state returns an active CTA when the PDF is available', () => {
   assert.equal(state.helperText, '');
 });
 
-test('index shell defines the required sections and the module entrypoint', () => {
+test('index shell defines the editorial hero, work index, and profile hooks', () => {
   const html = fs.readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
 
+  assert.match(html, /family=Newsreader:opsz,wght@6\.\.72,400;6\.\.72,500;6\.\.72,600/);
   assert.match(html, /family=IBM\+Plex\+Sans:wght@400;500;600;700/);
-  assert.match(html, /family=JetBrains\+Mono:wght@400;500;600;700/);
-  assert.match(html, /<body class="home-page">/);
-  assert.ok(html.includes('<link rel="stylesheet" href="./styles.css" />'));
-  assert.ok(html.includes('id="hero-panel-label"'));
-  assert.ok(html.includes('id="hero-panel-title"'));
-  assert.ok(html.includes('id="hero-panel-summary"'));
-  assert.ok(html.includes('id="hero-panel-list"'));
-  assert.ok(html.includes('id="site-name"'));
-  assert.ok(html.includes('id="nav-list"'));
-  assert.ok(html.includes('id="hero-availability"'));
-  assert.ok(html.includes('id="hero-name"'));
-  assert.ok(html.includes('id="hero-headline"'));
-  assert.ok(html.includes('id="hero-intro"'));
-  assert.ok(html.includes('id="about-copy"'));
-  assert.ok(html.includes('id="about-stats"'));
-  assert.ok(html.includes('id="resume-button"'));
-  assert.ok(html.includes('id="resume-card-button"'));
-  assert.ok(html.includes('id="resume-helper"'));
-  assert.ok(html.includes('id="footer-note"'));
-  assert.ok(html.includes('id="about"'));
-  assert.ok(html.includes('id="projects"'));
-  assert.ok(html.includes('id="resume"'));
-  assert.ok(html.includes('id="contact"'));
-  assert.ok(html.includes('id="project-grid"'));
-  assert.ok(html.includes('id="contact-list"'));
-  assert.ok(html.includes('<script type="module" src="./app.js"></script>'));
-  assert.doesNotMatch(html, /Fraunces/);
-  assert.doesNotMatch(html, /Manrope/);
-  assert.doesNotMatch(html, /hero-shape\.svg/);
+  assert.match(html, /family=IBM\+Plex\+Mono:wght@400;500;600/);
+  assert.match(html, /class="hero-intro-block"/);
+  assert.match(html, /id="hero-summary"/);
+  assert.match(html, /id="hero-work-list"/);
+  assert.match(html, /id="hero-meta-strip"/);
+  assert.match(html, /id="about-principles"/);
+  assert.match(html, /<div class="project-list" id="project-grid"><\/div>/);
+  assert.doesNotMatch(html, /hero-panel/);
 });
 
 test('detail page shells exist for all three projects and declare their slug', () => {

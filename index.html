@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
@@ -28,58 +28,59 @@
 
     <main>
       <section class="hero shell" id="hero">
-        <div class="hero-copy">
+        <div class="hero-intro-block">
           <p class="eyebrow" id="hero-availability"></p>
           <h1 id="hero-name"></h1>
           <p class="hero-headline" id="hero-headline"></p>
-          <p class="hero-intro" id="hero-intro"></p>
+          <p class="hero-summary" id="hero-summary"></p>
           <div class="hero-actions">
-            <a class="button button-primary" href="#projects">View Projects</a>
+            <a class="button button-primary" href="#projects">Selected Work</a>
             <a class="button button-secondary" id="resume-button" href="#resume">Download Resume</a>
           </div>
           <p class="resume-helper" id="resume-helper"></p>
         </div>
 
-        <div class="hero-panel">
-          <p class="hero-panel-label" id="hero-panel-label"></p>
-          <h2 class="hero-panel-title" id="hero-panel-title"></h2>
-          <p class="hero-panel-summary" id="hero-panel-summary"></p>
-          <ul class="hero-panel-list" id="hero-panel-list"></ul>
-        </div>
+        <aside class="hero-work-index" aria-labelledby="hero-work-index-title">
+          <p class="eyebrow">Selected Work</p>
+          <h2 id="hero-work-index-title">Proof of work, up front.</h2>
+          <ol class="hero-work-list" id="hero-work-list"></ol>
+        </aside>
+
+        <ul class="hero-meta-strip" id="hero-meta-strip"></ul>
       </section>
 
       <section class="about shell" id="about">
         <div class="section-heading">
-          <p class="eyebrow">profile</p>
-          <h2>Engineering work shaped by reliability, clarity, and useful systems.</h2>
+          <p class="eyebrow">Profile</p>
+          <h2>Engineering with product judgment, clear systems, and reliable delivery.</h2>
         </div>
-        <div class="about-copy" id="about-copy"></div>
-        <ul class="stat-list" id="about-stats"></ul>
+        <div class="about-layout">
+          <div class="about-copy" id="about-copy"></div>
+          <ol class="about-principles" id="about-principles"></ol>
+        </div>
       </section>
 
       <section class="projects shell" id="projects">
         <div class="section-heading">
-          <p class="eyebrow">project index</p>
-          <h2>Selected work across workflow software, robotics, and applied analytics.</h2>
+          <p class="eyebrow">Selected Work</p>
+          <h2>Featured systems, interfaces, and applied software work.</h2>
         </div>
-        <div class="project-grid" id="project-grid"></div>
+        <div class="project-list" id="project-grid"></div>
       </section>
 
       <section class="resume shell" id="resume">
-        <div class="resume-card">
+        <div class="resume-panel">
           <p class="eyebrow">Resume</p>
           <h2>Request the full PDF version.</h2>
-          <p id="resume-copy">
-            The portfolio is live first. The final downloadable PDF resume will be attached next.
-          </p>
+          <p id="resume-copy">The portfolio is live first. The final downloadable PDF resume will be attached next.</p>
           <a class="button button-primary" id="resume-card-button" href="#resume">Download Resume</a>
         </div>
       </section>
 
       <section class="contact shell" id="contact">
         <div class="section-heading">
-          <p class="eyebrow">contact endpoints</p>
-          <h2>Reach out for software engineering internship opportunities.</h2>
+          <p class="eyebrow">Contact</p>
+          <h2>Available for internship roles in software engineering, backend, and product systems work.</h2>
         </div>
         <div class="contact-list" id="contact-list"></div>
       </section>
