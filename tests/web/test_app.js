@@ -171,9 +171,13 @@ test('index shell defines the editorial hero, work index, and profile hooks', ()
   assert.match(html, /class="hero-intro-block"/);
   assert.match(html, /id="site-name"/);
   assert.match(html, /id="nav-list"/);
+  assert.match(html, /id="hero-availability"/);
+  assert.match(html, /id="hero-name"/);
+  assert.match(html, /id="hero-headline"/);
   assert.match(html, /id="hero-summary"/);
   assert.match(html, /id="hero-work-list"/);
   assert.match(html, /id="hero-meta-strip"/);
+  assert.match(html, /id="about-copy"/);
   assert.match(html, /id="about-principles"/);
   assert.match(html, /<div class="project-list" id="project-grid"><\/div>/);
   assert.match(html, /id="resume-button"/);
