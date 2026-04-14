@@ -81,12 +81,12 @@ test('project content includes detail-page metadata for all three featured proje
     assert.equal(project.title, expected.title);
     assert.equal(project.subtitle, expected.subtitle);
     assert.ok(project.summary.length > 0);
-    assert.deepEqual(project.gallery, []);
+    assert.equal(project.gallery, undefined);
     assert.deepEqual(Object.keys(project.detailSections).sort(), [
       'approach',
       'challenge',
       'outcome',
-      'overview',
+      'projectDetail',
     ]);
     assert.deepEqual(
       Object.values(project.detailSections),
@@ -158,12 +158,11 @@ test('detail page shells exist for all three projects and declare their slug', (
     assert.match(html, /href="\.\.\/index\.html#projects"/);
     assert.match(html, /id="detail-title"/);
     assert.match(html, /id="detail-subtitle"/);
-    assert.match(html, /id="detail-hero-tags"/);
-    assert.match(html, /id="detail-overview-body"/);
+    assert.match(html, />Project Detail</);
+    assert.match(html, /id="detail-project-body"/);
     assert.match(html, /id="detail-challenge-body"/);
     assert.match(html, /id="detail-approach-body"/);
     assert.match(html, /id="detail-stack"/);
-    assert.match(html, /id="detail-gallery"/);
     assert.match(html, /id="detail-outcome-body"/);
     assert.match(html, /src="\.\.\/project-detail\.js"/);
   }
@@ -190,8 +189,9 @@ test('styles include focus treatment for project cards, detail-page layout hooks
   assert.match(css, /\.detail-shell\b/);
   assert.match(css, /\.detail-hero\b/);
   assert.match(css, /\.detail-section\b/);
-  assert.match(css, /\.detail-gallery\b/);
-  assert.match(css, /\.gallery-placeholder\b/);
+  assert.match(css, /\.detail-section-head\b/);
+  assert.match(css, /\.detail-stack-block\b/);
+  assert.match(css, /\.detail-stack-label\b/);
   assert.match(css, /@media\s*\(max-width:\s*800px\)/);
 });
 
@@ -369,12 +369,10 @@ function createMockDetailDocument(slug = 'process-platform') {
     'back-home-link',
     'detail-title',
     'detail-subtitle',
-    'detail-hero-tags',
-    'detail-overview-body',
+    'detail-project-body',
     'detail-challenge-body',
     'detail-approach-body',
     'detail-stack',
-    'detail-gallery',
     'detail-outcome-body',
   ];
 
@@ -469,7 +467,7 @@ test('detail helpers resolve project records and a safe missing-project state', 
   assert.equal(missingState.backHref, '../index.html#projects');
 });
 
-test('renderProjectDetail mounts the selected project with empty-body and gallery fallbacks', () => {
+test('renderProjectDetail mounts the selected project with project detail and embedded stack placeholders', () => {
   const mockDocument = createMockDetailDocument('process-platform');
 
   renderProjectDetail(mockDocument);
@@ -486,14 +484,10 @@ test('renderProjectDetail mounts the selected project with empty-body and galler
     mockDocument.getElementById('detail-subtitle').textContent,
     'Performance improvements for a research process-modeling platform',
   );
-  assert.match(mockDocument.getElementById('detail-hero-tags').innerHTML, /TypeScript/);
+  assert.match(mockDocument.getElementById('detail-stack').innerHTML, /TypeScript/);
   assert.equal(
-    mockDocument.getElementById('detail-overview-body').attributes['data-empty'],
+    mockDocument.getElementById('detail-project-body').attributes['data-empty'],
     'true',
-  );
-  assert.match(
-    mockDocument.getElementById('detail-gallery').innerHTML,
-    /gallery-placeholder/,
   );
 });
 
@@ -510,6 +504,11 @@ test('renderProjectDetail mounts a safe fallback when the slug is unknown', () =
   assert.equal(
     mockDocument.getElementById('back-home-link').href,
     '../index.html#projects',
+  );
+  assert.equal(mockDocument.getElementById('detail-stack').innerHTML, '');
+  assert.equal(
+    mockDocument.getElementById('detail-project-body').attributes['data-empty'],
+    'true',
   );
 });
 

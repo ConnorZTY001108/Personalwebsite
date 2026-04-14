@@ -37,12 +37,11 @@ export const portfolioContent = {
         alt: 'Placeholder preview for the Industrial Process Modeling Platform project',
       },
       detailSections: {
-        overview: '',
+        projectDetail: '',
         challenge: '',
         approach: '',
         outcome: '',
       },
-      gallery: [],
     },
     {
       slug: 'robot-car',
@@ -62,12 +61,11 @@ export const portfolioContent = {
         alt: 'Placeholder preview for the Vision-Assisted Arduino Robot Car project',
       },
       detailSections: {
-        overview: '',
+        projectDetail: '',
         challenge: '',
         approach: '',
         outcome: '',
       },
-      gallery: [],
     },
     {
       slug: 'analytics-dashboard',
@@ -87,12 +85,11 @@ export const portfolioContent = {
         alt: 'Placeholder preview for the Consumer Behaviour Analytics Dashboard project',
       },
       detailSections: {
-        overview: '',
+        projectDetail: '',
         challenge: '',
         approach: '',
         outcome: '',
       },
-      gallery: [],
     },
   ],
   resume: {
