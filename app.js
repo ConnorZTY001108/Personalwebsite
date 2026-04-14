@@ -139,22 +139,38 @@ function applyResumeState(doc, resumeState) {
   helper.textContent = resumeState.helperText;
 }
 
+function setNodeText(doc, id, value) {
+  const node = doc.getElementById(id);
+
+  if (node) {
+    node.textContent = value;
+  }
+}
+
+function setNodeHTML(doc, id, value) {
+  const node = doc.getElementById(id);
+
+  if (node) {
+    node.innerHTML = value;
+  }
+}
+
 export function renderPortfolio(content = portfolioContent, doc = document) {
-  doc.getElementById('site-name').textContent = content.profile.name;
-  doc.getElementById('nav-list').innerHTML = renderNavigation(content.navigation);
-  doc.getElementById('hero-availability').textContent = content.profile.availability;
-  doc.getElementById('hero-name').textContent = content.profile.name;
-  doc.getElementById('hero-headline').textContent = content.profile.headline;
-  doc.getElementById('hero-intro').textContent = content.profile.intro;
-  doc.getElementById('hero-panel-label').textContent = content.profile.heroPanel.label;
-  doc.getElementById('hero-panel-title').textContent = content.profile.heroPanel.title;
-  doc.getElementById('hero-panel-summary').textContent = content.profile.heroPanel.summary;
-  doc.getElementById('hero-panel-list').innerHTML = renderHeroPanelItems(content.profile.heroPanel.items);
-  doc.getElementById('about-copy').innerHTML = renderAboutParagraphs(content.about.paragraphs);
-  doc.getElementById('about-stats').innerHTML = renderStatPills(content.about.stats);
-  doc.getElementById('project-grid').innerHTML = renderProjectCards(content.projects);
-  doc.getElementById('contact-list').innerHTML = renderContactLinks(content.contact);
-  doc.getElementById('footer-note').textContent = content.footer.note;
+  setNodeText(doc, 'site-name', content.profile.name);
+  setNodeHTML(doc, 'nav-list', renderNavigation(content.navigation));
+  setNodeText(doc, 'hero-availability', content.profile.availability);
+  setNodeText(doc, 'hero-name', content.profile.name);
+  setNodeText(doc, 'hero-headline', content.profile.headline);
+  setNodeText(doc, 'hero-intro', content.profile.intro);
+  setNodeText(doc, 'hero-panel-label', content.profile.heroPanel.label);
+  setNodeText(doc, 'hero-panel-title', content.profile.heroPanel.title);
+  setNodeText(doc, 'hero-panel-summary', content.profile.heroPanel.summary);
+  setNodeHTML(doc, 'hero-panel-list', renderHeroPanelItems(content.profile.heroPanel.items));
+  setNodeHTML(doc, 'about-copy', renderAboutParagraphs(content.about.paragraphs));
+  setNodeHTML(doc, 'about-stats', renderStatPills(content.about.stats));
+  setNodeHTML(doc, 'project-grid', renderProjectCards(content.projects));
+  setNodeHTML(doc, 'contact-list', renderContactLinks(content.contact));
+  setNodeText(doc, 'footer-note', content.footer.note);
 
   applyResumeState(doc, getResumeState(content.resume));
 }

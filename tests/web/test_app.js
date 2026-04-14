@@ -7,6 +7,7 @@ import {
   registerPortfolioBoot,
   renderNavigation,
   renderStatPills,
+  renderHeroPanelItems,
   renderProjectCards,
   renderContactLinks,
   renderPortfolio,
@@ -259,12 +260,19 @@ test('placeholder SVG assets exist for the hero art and project previews', () =>
 test('render helpers output the expected navigation, stat pills, and project cards', () => {
   const navMarkup = renderNavigation(portfolioContent.navigation);
   const statMarkup = renderStatPills(portfolioContent.about.stats);
+  const heroMarkup = renderHeroPanelItems(portfolioContent.profile.heroPanel.items);
   const projectMarkup = renderProjectCards(portfolioContent.projects);
 
   assert.equal((navMarkup.match(/<li>/g) ?? []).length, portfolioContent.navigation.length);
   assert.match(navMarkup, /<li><a href="#about">About<\/a><\/li>.*<li><a href="#projects">Projects<\/a><\/li>.*<li><a href="#contact">Contact<\/a><\/li>/s);
   assert.equal((statMarkup.match(/class="stat-pill"/g) ?? []).length, portfolioContent.about.stats.length);
   assert.match(statMarkup, /Performance-Focused Projects/);
+  assert.match(heroMarkup, /<span class="hero-panel-index">01<\/span>/);
+  assert.match(heroMarkup, /<span class="hero-panel-index">02<\/span>/);
+  assert.match(heroMarkup, /<span class="hero-panel-index">03<\/span>/);
+  assert.match(heroMarkup, /<strong>React \/ Redux<\/strong>/);
+  assert.match(heroMarkup, /<strong>Node\.js \/ Prisma<\/strong>/);
+  assert.match(heroMarkup, /<strong>Reliability-first delivery<\/strong>/);
   assert.match(projectMarkup, /class="project-card"/);
   assert.match(projectMarkup, /class="project-media"/);
   assert.match(projectMarkup, /class="project-copy"/);
@@ -345,6 +353,36 @@ test('contact rendering includes available email and external profile links', ()
     /<a class="contact-card" href="https:\/\/www\.linkedin\.com\/in\/tianyu-zhang-9470a7266\/" target="_blank" rel="noreferrer">/,
   );
   assert.match(contactMarkup, /linkedin\.com\/in\/tianyu-zhang-9470a7266/);
+});
+
+test('renderPortfolio skips missing hero-panel nodes without throwing', () => {
+  const nodes = new Map([
+    ['site-name', createMockElement()],
+    ['nav-list', createMockElement()],
+    ['hero-availability', createMockElement()],
+    ['hero-name', createMockElement()],
+    ['hero-headline', createMockElement()],
+    ['hero-intro', createMockElement()],
+    ['about-copy', createMockElement()],
+    ['about-stats', createMockElement()],
+    ['project-grid', createMockElement()],
+    ['resume-button', createMockElement()],
+    ['resume-card-button', createMockElement()],
+    ['resume-helper', createMockElement()],
+    ['contact-list', createMockElement()],
+    ['footer-note', createMockElement()],
+  ]);
+
+  const mockDocument = {
+    getElementById(id) {
+      return nodes.get(id) ?? null;
+    },
+  };
+
+  assert.doesNotThrow(() => renderPortfolio(portfolioContent, mockDocument));
+  assert.equal(nodes.get('site-name').textContent, 'Tianyu Zhang');
+  assert.equal(nodes.get('hero-name').textContent, 'Tianyu Zhang');
+  assert.match(nodes.get('project-grid').innerHTML, /class="project-card"/);
 });
 
 function createMockElement() {
