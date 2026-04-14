@@ -78,15 +78,6 @@ export const portfolioContent = {
       'Full-Stack + Backend',
       'Open to internships',
     ],
-    intro:
-      'I build practical software for product, backend, and workflow systems where clarity, reliability, and engineering judgment matter.',
-    heroPanel: {
-      label: 'featured_focus',
-      title: 'Industrial Process Modeling Platform',
-      summary:
-        'Full-stack workflow tool with safer save paths, schema upgrades, reusable subnetworks, and computation history support.',
-      items: ['React / Redux', 'Node.js / Prisma', 'Reliability-first delivery'],
-    },
   },
   navigation: [
     { id: 'about', label: 'About' },
@@ -98,7 +89,6 @@ export const portfolioContent = {
       'I work best on products where the interface and the system design have to support each other: workflow tools, internal platforms, and data-heavy software that people actually use to make decisions.',
       'My recent projects sit at the intersection of frontend clarity, backend reliability, and practical delivery. I care about making complex tools easier to trust, easier to understand, and easier to extend.',
     ],
-    stats: ['M.Eng Student', 'Full-Stack + Backend', 'Performance-Focused Projects'],
     principles: [
       {
         title: 'Structure the interface around the real workflow',

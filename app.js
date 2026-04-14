@@ -24,23 +24,6 @@ export function renderNavigation(items) {
     .join('');
 }
 
-export function renderStatPills(stats) {
-  return stats.map((item) => `<li class="stat-pill">${item}</li>`).join('');
-}
-
-export function renderHeroPanelItems(items) {
-  return items
-    .map(
-      (item, index) => `
-        <li>
-          <span class="hero-panel-index">${String(index + 1).padStart(2, '0')}</span>
-          <strong>${item}</strong>
-        </li>
-      `,
-    )
-    .join('');
-}
-
 export function renderHeroWorkIndex(projects) {
   return projects
     .map(
@@ -199,16 +182,10 @@ export function renderPortfolio(content = portfolioContent, doc = document) {
   setNodeText(doc, 'hero-availability', content.profile.availability);
   setNodeText(doc, 'hero-name', content.profile.name);
   setNodeText(doc, 'hero-headline', content.profile.headline);
-  setNodeText(doc, 'hero-intro', content.profile.intro);
-  setNodeText(doc, 'hero-panel-label', content.profile.heroPanel.label);
-  setNodeText(doc, 'hero-panel-title', content.profile.heroPanel.title);
-  setNodeText(doc, 'hero-panel-summary', content.profile.heroPanel.summary);
-  setNodeHTML(doc, 'hero-panel-list', renderHeroPanelItems(content.profile.heroPanel.items));
   setNodeText(doc, 'hero-summary', content.profile.summary);
   setNodeHTML(doc, 'hero-work-list', renderHeroWorkIndex(content.projects));
   setNodeHTML(doc, 'hero-meta-strip', renderMetaStrip(content.profile.metaStrip));
   setNodeHTML(doc, 'about-copy', renderAboutParagraphs(content.about.paragraphs));
-  setNodeHTML(doc, 'about-stats', renderStatPills(content.about.stats));
   setNodeHTML(doc, 'about-principles', renderPrinciples(content.about.principles));
   setNodeHTML(doc, 'project-grid', renderProjectCards(content.projects));
   setNodeHTML(doc, 'contact-list', renderContactLinks(content.contact));

@@ -77,6 +77,9 @@ test('portfolio content exposes editorial systems homepage fields', () => {
   assert.match(portfolioContent.projects[0].result, /schema upgrades/i);
   assert.equal(portfolioContent.projects[1].domain, 'Robotics Interface');
   assert.match(portfolioContent.projects[2].result, /0\.83 accuracy/i);
+  assert.equal('intro' in portfolioContent.profile, false);
+  assert.equal('heroPanel' in portfolioContent.profile, false);
+  assert.equal('stats' in portfolioContent.about, false);
 });
 
 test('project content includes detail-page metadata for all three featured projects', () => {
@@ -251,6 +254,8 @@ test('styles include the editorial homepage typography, layout, and responsive h
   assert.match(css, /\.principle-item\b/);
   assert.match(css, /\.project-list\b/);
   assert.match(css, /\.project-feature\b/);
+  assert.match(css, /\.project-feature:hover/);
+  assert.match(css, /\.project-feature:focus-visible/);
   assert.match(css, /\.project-feature-media\b/);
   assert.match(css, /\.project-result\b/);
   assert.match(css, /\.project-link-label\b/);
@@ -325,6 +330,7 @@ test('render helpers output the editorial work index, meta strip, principles, an
   assert.match(projectMarkup, /class="project-domain"/);
   assert.match(projectMarkup, /class="project-result"/);
   assert.match(projectMarkup, /class="project-link-label"/);
+  assert.match(projectMarkup, /href="projects\/process-platform\.html"/);
 });
 
 test('renderProjectCards avoids undefined detail hrefs when a project slug is missing', () => {
@@ -674,6 +680,7 @@ test('renderPortfolio mounts the current shell and editorial fields while disabl
     mockDocument.getElementById('about-principles').innerHTML,
     /Make complex systems readable/,
   );
+  assert.match(mockDocument.getElementById('about-copy').innerHTML, /workflow tools, internal platforms/i);
   assert.match(mockDocument.getElementById('project-grid').innerHTML, /Vision-Assisted Arduino Robot Car/);
   assert.equal(mockDocument.getElementById('resume-button').href, '');
   assert.equal(mockDocument.getElementById('resume-button').textContent, 'Resume PDF coming soon');
