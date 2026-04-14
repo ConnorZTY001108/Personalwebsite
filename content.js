@@ -23,24 +23,100 @@ export const portfolioContent = {
       slug: 'process-platform',
       kicker: 'Featured Project',
       title: 'Industrial Process Modeling Platform',
-      subtitle: 'Performance improvements for a research process-modeling platform',
+      subtitle: 'A full-stack web app for drawing, saving, and computing industrial process diagrams',
       summary:
-        'Improved a research modeling platform by replacing slow full-model save flows with faster incremental updates and batched result handling.',
+        'Built a visual process-modeling platform that replaces hard-to-read Excel workflows with an interactive canvas, reusable subnetworks, and computation support.',
       bullets: [
-        'Reduced save time from 40 seconds to 3 seconds.',
-        'Reduced post-computation processing time from 30 seconds to 4 seconds.',
-        'Contributed through a GitHub-based branch workflow with 50+ commits.',
+        'Replaced spreadsheet-style process descriptions with a node-and-edge modeling workflow.',
+        'Supported save/load, import/export, reusable subnetworks, and computation result history.',
+        'Improved reliability with safer saves, schema upgrades for older files, and more maintainable data flows.',
       ],
-      stack: ['TypeScript', 'React', 'Node.js', 'Express.js', 'MongoDB', 'PostgreSQL'],
+      stack: [
+        'TypeScript',
+        'React',
+        'React Flow',
+        'Redux',
+        'Node.js',
+        'Express.js',
+        'Prisma',
+        'MongoDB',
+        'PostgreSQL',
+      ],
       image: {
         src: 'assets/placeholders/portfolio-placeholder.svg',
         alt: 'Placeholder preview for the Industrial Process Modeling Platform project',
       },
       detailSections: {
-        projectDetail: '',
-        challenge: '',
-        approach: '',
-        outcome: '',
+        projectDetail: `
+          <p>
+            This project is a full-stack web platform for building industrial process diagrams in a visual way.
+            Instead of describing a plant with large Excel tables, users can place models on a canvas, connect them
+            with streams, and understand the structure of the system much more quickly.
+          </p>
+          <p>
+            The platform supports the day-to-day workflow around those diagrams as well: users can create and load
+            networks, save their work, import and export a complete network as JSON, review computation history, and
+            reuse repeated parts of a process as subnetwork blueprints.
+          </p>
+          <p>
+            My work focused on the parts that make the product practical in real use. I improved save and data
+            persistence flows, made old diagrams safer to open after schema changes, and helped turn the platform
+            into something that is easier to demo, maintain, and explain to non-specialists.
+          </p>
+        `,
+        challenge: `
+          <p>
+            The main difficulty was that a “diagram” was not just a picture. A single save or load action had to keep
+            the visual canvas, node settings, time-period data, nested subnetworks, and computation results consistent
+            across both MongoDB and PostgreSQL.
+          </p>
+          <p>
+            Another challenge was backward compatibility. As the project evolved, older saved diagrams and exported
+            JSON files could break when the data format changed, which is a serious problem for a tool people rely on
+            to reopen previous work.
+          </p>
+          <p>
+            At the same time, the product had to stay understandable for users who think in terms of factory processes,
+            not internal data models. The system needed to feel simpler than the Excel-based workflow it was replacing,
+            not more technical.
+          </p>
+        `,
+        approach: `
+          <p>
+            On the frontend, I used React, React Flow, and Redux to build the visual editor and dashboard experience.
+            On the backend, I used Node.js, Express, and Prisma to manage APIs, persistence, authentication, import
+            and export flows, and solver-related result handling.
+          </p>
+          <p>
+            I helped organize the data so the canvas layout stayed lightweight while node configurations, time-period
+            records, and computation results were stored and synchronized more safely. I also added full-network
+            snapshot import/export and duplication so an entire process model could move as one package instead of
+            breaking into partial files.
+          </p>
+          <p>
+            To improve reliability, I added schema version stamping and auto-upgrade logic with backup creation,
+            safer save flows with deduplication guards and ID remapping, reusable subnetwork blueprints, and run
+            history management for computation results.
+          </p>
+        `,
+        outcome: `
+          <p>
+            The result is a platform that is much easier to explain in an interview setting: users can visually build
+            and manage process networks instead of working through hard-to-read spreadsheets.
+          </p>
+          <p>
+            The system now supports an end-to-end workflow that includes creating diagrams, editing them on a visual
+            canvas, saving and reopening work, importing and exporting complete snapshots, reusing subnetworks, and
+            reviewing computation runs and outputs.
+          </p>
+          <p>
+            Recent engineering work also made the platform more robust by reducing save latency, preserving
+            compatibility for older diagrams, and lowering the risk of data loss during complex save or upgrade flows.
+          </p>
+          <p>
+            This project was delivered as Team 18&apos;s capstone for SFWRENG 4G06 at McMaster University.
+          </p>
+        `,
       },
     },
     {

@@ -52,7 +52,7 @@ test('project content includes detail-page metadata for all three featured proje
       'process-platform',
       {
         title: 'Industrial Process Modeling Platform',
-        subtitle: 'Performance improvements for a research process-modeling platform',
+        subtitle: 'A full-stack web app for drawing, saving, and computing industrial process diagrams',
       },
     ],
     [
@@ -85,13 +85,22 @@ test('project content includes detail-page metadata for all three featured proje
     assert.deepEqual(Object.keys(project.detailSections).sort(), [
       'approach',
       'challenge',
-      'outcome',
-      'projectDetail',
-    ]);
-    assert.deepEqual(
-      Object.values(project.detailSections),
-      ['', '', '', ''],
-    );
+        'outcome',
+        'projectDetail',
+      ]);
+
+    if (project.slug === 'process-platform') {
+      assert.match(project.summary, /interactive canvas/i);
+      assert.match(project.detailSections.projectDetail, /Excel/i);
+      assert.match(project.detailSections.challenge, /MongoDB and PostgreSQL/i);
+      assert.match(project.detailSections.approach, /schema version/i);
+      assert.match(project.detailSections.outcome, /McMaster University/i);
+    } else {
+      assert.deepEqual(
+        Object.values(project.detailSections),
+        ['', '', '', ''],
+      );
+    }
   }
 });
 
@@ -223,7 +232,8 @@ test('render helpers output the expected navigation, stat pills, and project car
   assert.match(projectMarkup, /Industrial Process Modeling Platform/);
   assert.match(projectMarkup, /Vision-Assisted Arduino Robot Car/);
   assert.match(projectMarkup, /Consumer Behaviour Analytics Dashboard/);
-  assert.match(projectMarkup, /40 seconds to 3 seconds/);
+  assert.match(projectMarkup, /interactive canvas/i);
+  assert.match(projectMarkup, /schema upgrades for older files/i);
   assert.match(projectMarkup, /assets\/placeholders\/portfolio-placeholder\.svg/);
   assert.equal((projectMarkup.match(/class="project-card"/g) ?? []).length, 3);
   assert.match(projectMarkup, /<a class="project-card" href="projects\/process-platform\.html">/);
@@ -482,12 +492,17 @@ test('renderProjectDetail mounts the selected project with project detail and em
   );
   assert.equal(
     mockDocument.getElementById('detail-subtitle').textContent,
-    'Performance improvements for a research process-modeling platform',
+    'A full-stack web app for drawing, saving, and computing industrial process diagrams',
   );
   assert.match(mockDocument.getElementById('detail-stack').innerHTML, /TypeScript/);
+  assert.match(mockDocument.getElementById('detail-stack').innerHTML, /React Flow/);
+  assert.match(mockDocument.getElementById('detail-project-body').innerHTML, /Excel/i);
+  assert.match(mockDocument.getElementById('detail-challenge-body').innerHTML, /MongoDB and PostgreSQL/i);
+  assert.match(mockDocument.getElementById('detail-approach-body').innerHTML, /auto-upgrade logic/i);
+  assert.match(mockDocument.getElementById('detail-outcome-body').innerHTML, /McMaster University/i);
   assert.equal(
     mockDocument.getElementById('detail-project-body').attributes['data-empty'],
-    'true',
+    undefined,
   );
 });
 
