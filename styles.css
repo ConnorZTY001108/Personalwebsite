@@ -236,10 +236,10 @@ body.home-page .eyebrow {
   color: var(--muted);
 }
 
-.hero-panel,
-.resume-card,
-.contact-card,
-.home-page .project-card {
+body.home-page .hero-panel,
+body.home-page .resume-card,
+body.home-page .contact-card,
+body.home-page .project-card {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
@@ -264,14 +264,14 @@ body.home-page .hero {
   gap: 28px;
 }
 
-.hero-panel {
+body.home-page .hero-panel {
   display: grid;
   gap: 18px;
   align-self: stretch;
   padding: 28px;
 }
 
-.hero-panel-label {
+body.home-page .hero-panel-label {
   margin: 0;
   font-size: 0.78rem;
   font-weight: 600;
@@ -280,19 +280,19 @@ body.home-page .hero {
   color: var(--accent);
 }
 
-.hero-panel-title {
+body.home-page .hero-panel-title {
   margin: 0;
   font-size: clamp(1.8rem, 3vw, 2.45rem);
   line-height: 1.1;
 }
 
-.hero-panel-summary {
+body.home-page .hero-panel-summary {
   margin: 0;
   color: var(--muted);
   line-height: 1.7;
 }
 
-.hero-panel-list {
+body.home-page .hero-panel-list {
   display: grid;
   gap: 14px;
   margin: 0;
@@ -300,7 +300,7 @@ body.home-page .hero {
   list-style: none;
 }
 
-.hero-panel-list li {
+body.home-page .hero-panel-list li {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 14px;
@@ -309,7 +309,7 @@ body.home-page .hero {
   border-top: 1px solid var(--line);
 }
 
-.hero-panel-index {
+body.home-page .hero-panel-index {
   color: var(--accent);
 }
 
@@ -374,19 +374,19 @@ body.home-page .project-card {
     box-shadow 220ms ease;
 }
 
-.project-card:hover {
+body.home-page .project-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 26px 52px rgba(15, 23, 42, 0.12);
 }
 
-.project-card:focus-visible {
+body.home-page .project-card:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 4px;
   transform: translateY(-4px);
   box-shadow: 0 26px 52px rgba(15, 23, 42, 0.16);
 }
 
-.project-meta-row {
+body.home-page .project-meta-row {
   grid-area: meta;
   display: flex;
   align-items: center;
@@ -397,14 +397,14 @@ body.home-page .project-card {
   background: linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(249, 250, 251, 0.88));
 }
 
-.project-index,
-.project-command {
+body.home-page .project-index,
+body.home-page .project-command {
   font-size: 0.76rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.project-command {
+body.home-page .project-command {
   color: var(--accent);
 }
 
@@ -488,14 +488,14 @@ body.home-page .resume-card {
   gap: 18px;
 }
 
-.contact-card {
+body.home-page .contact-card {
   display: grid;
   gap: 12px;
   padding: 24px;
   transition: transform 180ms ease;
 }
 
-.contact-card:hover {
+body.home-page .contact-card:hover {
   transform: translateY(-2px);
 }
 
@@ -508,7 +508,7 @@ body.home-page .resume-card {
   color: var(--accent);
 }
 
-.contact-type {
+body.home-page .contact-type {
   display: block;
   font-size: 0.78rem;
   letter-spacing: 0.08em;
