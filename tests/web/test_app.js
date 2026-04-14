@@ -166,12 +166,22 @@ test('index shell defines the editorial hero, work index, and profile hooks', ()
   assert.match(html, /family=Newsreader:opsz,wght@6\.\.72,400;6\.\.72,500;6\.\.72,600/);
   assert.match(html, /family=IBM\+Plex\+Sans:wght@400;500;600;700/);
   assert.match(html, /family=IBM\+Plex\+Mono:wght@400;500;600/);
+  assert.match(html, /<body class="home-page">/);
+  assert.match(html, /<link rel="stylesheet" href="\.\/styles\.css" \/>/);
   assert.match(html, /class="hero-intro-block"/);
+  assert.match(html, /id="site-name"/);
+  assert.match(html, /id="nav-list"/);
   assert.match(html, /id="hero-summary"/);
   assert.match(html, /id="hero-work-list"/);
   assert.match(html, /id="hero-meta-strip"/);
   assert.match(html, /id="about-principles"/);
   assert.match(html, /<div class="project-list" id="project-grid"><\/div>/);
+  assert.match(html, /id="resume-button"/);
+  assert.match(html, /id="resume-card-button"/);
+  assert.match(html, /id="resume-helper"/);
+  assert.match(html, /id="contact-list"/);
+  assert.match(html, /id="footer-note"/);
+  assert.match(html, /<script type="module" src="\.\/app\.js"><\/script>/);
   assert.doesNotMatch(html, /hero-panel/);
 });
 
