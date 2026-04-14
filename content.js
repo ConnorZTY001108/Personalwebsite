@@ -68,10 +68,18 @@ function renderProcessPlatformGallery(items) {
 export const portfolioContent = {
   profile: {
     name: 'Tianyu Zhang',
-    headline: 'M.Eng Student in Systems and Technology',
+    availability: 'Open to software engineering internship opportunities',
+    headline: 'Software engineer for workflow systems, product tooling, and applied backend work',
+    summary:
+      'I turn messy operational workflows into software that feels clear to use, reliable to maintain, and credible in real engineering settings.',
+    metaStrip: [
+      'Hamilton, Ontario',
+      'M.Eng, McMaster University',
+      'Full-Stack + Backend',
+      'Open to internships',
+    ],
     intro:
       'I build practical software for product, backend, and workflow systems where clarity, reliability, and engineering judgment matter.',
-    availability: 'Open to internship opportunities',
     heroPanel: {
       label: 'featured_focus',
       title: 'Industrial Process Modeling Platform',
@@ -87,14 +95,30 @@ export const portfolioContent = {
   ],
   about: {
     paragraphs: [
-      'I am a Master of Engineering student at McMaster University with project experience across full-stack applications, data systems, and applied software for robotics workflows.',
-      'My recent work focuses on performance-sensitive product improvements, practical system design, and building software that is useful in real operational settings.',
+      'I work best on products where the interface and the system design have to support each other: workflow tools, internal platforms, and data-heavy software that people actually use to make decisions.',
+      'My recent projects sit at the intersection of frontend clarity, backend reliability, and practical delivery. I care about making complex tools easier to trust, easier to understand, and easier to extend.',
     ],
     stats: ['M.Eng Student', 'Full-Stack + Backend', 'Performance-Focused Projects'],
+    principles: [
+      {
+        title: 'Structure the interface around the real workflow',
+        description: 'Build the experience around how people actually move through the task, not around internal implementation details.',
+      },
+      {
+        title: 'Treat reliability as product work',
+        description: 'Safer saves, compatibility layers, and stable data handling matter because they change whether people can trust the tool.',
+      },
+      {
+        title: 'Make complex systems readable',
+        description: 'Use naming, hierarchy, and reduction so technical software still feels understandable under real use.',
+      },
+    ],
   },
   projects: [
     {
       slug: 'process-platform',
+      domain: 'Workflow Software',
+      result: 'Safer saves, schema upgrades, and reusable subnetworks for a capstone process tool.',
       kicker: 'Featured Project',
       title: 'Industrial Process Modeling Platform',
       subtitle: 'A full-stack web app for drawing, saving, and computing industrial process diagrams',
@@ -191,6 +215,8 @@ export const portfolioContent = {
     },
     {
       slug: 'robot-car',
+      domain: 'Robotics Interface',
+      result: 'Browser control, live telemetry, and vision-assisted driving feedback in one loop.',
       kicker: 'Featured Project',
       title: 'Vision-Assisted Arduino Robot Car',
       subtitle: 'Browser-based robotics control with computer vision assistance',
@@ -215,6 +241,8 @@ export const portfolioContent = {
     },
     {
       slug: 'analytics-dashboard',
+      domain: 'Applied Analytics',
+      result: 'Interpretable retail insights with 0.83 accuracy and dashboard-ready KPI views.',
       kicker: 'Featured Project',
       title: 'Consumer Behaviour Analytics Dashboard',
       subtitle: 'Retail analytics dashboard for interpretable business insights',

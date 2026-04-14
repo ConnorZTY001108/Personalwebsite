@@ -41,6 +41,43 @@ export function renderHeroPanelItems(items) {
     .join('');
 }
 
+export function renderHeroWorkIndex(projects) {
+  return projects
+    .map(
+      (project, index) => `
+        <li class="hero-work-item">
+          <span class="hero-work-number">${String(index + 1).padStart(2, '0')}</span>
+          <div class="hero-work-copy">
+            <p class="hero-work-domain">${project.domain}</p>
+            <h3>${project.title}</h3>
+            <p class="hero-work-result">${project.result}</p>
+          </div>
+        </li>
+      `,
+    )
+    .join('');
+}
+
+export function renderMetaStrip(items) {
+  return items.map((item) => `<li class="hero-meta-item">${item}</li>`).join('');
+}
+
+export function renderPrinciples(items) {
+  return items
+    .map(
+      (item, index) => `
+        <li class="principle-item">
+          <span class="principle-number">${String(index + 1).padStart(2, '0')}</span>
+          <div>
+            <h3>${item.title}</h3>
+            <p>${item.description}</p>
+          </div>
+        </li>
+      `,
+    )
+    .join('');
+}
+
 export function getProjectPageHref(project) {
   if (project.href) {
     return project.href;
@@ -62,21 +99,14 @@ export function renderProjectCards(projects) {
       const projectNumber = String(index + 1).padStart(2, '0');
 
       return `
-        <a class="project-card" href="${detailHref}">
-          <div class="project-meta-row">
-            <span class="project-index">project_${projectNumber}</span>
-            <span class="project-command">open_case_study</span>
-          </div>
-          <figure class="project-media">
-            <img
-              src="${project.image.src || fallbackImageSrc}"
-              alt="${project.image.alt}"
-              onerror="this.onerror=null;this.src='${fallbackImageSrc}';"
-            />
-          </figure>
-          <div class="project-copy">
-            <p class="eyebrow">${project.kicker}</p>
+        <a class="project-feature" href="${detailHref}">
+          <div class="project-feature-copy">
+            <div class="project-feature-head">
+              <span class="project-number">${projectNumber}</span>
+              <p class="project-domain">${project.domain}</p>
+            </div>
             <h3>${project.title}</h3>
+            <p class="project-result">${project.result}</p>
             <p class="project-summary">${project.summary}</p>
             <ul class="project-bullets">
               ${project.bullets.map((bullet) => `<li>${bullet}</li>`).join('')}
@@ -84,7 +114,15 @@ export function renderProjectCards(projects) {
             <ul class="tag-list">
               ${project.stack.map((tag) => `<li>${tag}</li>`).join('')}
             </ul>
+            <span class="project-link-label">Open project</span>
           </div>
+          <figure class="project-feature-media">
+            <img
+              src="${project.image.src || fallbackImageSrc}"
+              alt="${project.image.alt}"
+              onerror="this.onerror=null;this.src='${fallbackImageSrc}';"
+            />
+          </figure>
         </a>
       `;
     })
@@ -161,13 +199,11 @@ export function renderPortfolio(content = portfolioContent, doc = document) {
   setNodeText(doc, 'hero-availability', content.profile.availability);
   setNodeText(doc, 'hero-name', content.profile.name);
   setNodeText(doc, 'hero-headline', content.profile.headline);
-  setNodeText(doc, 'hero-intro', content.profile.intro);
-  setNodeText(doc, 'hero-panel-label', content.profile.heroPanel.label);
-  setNodeText(doc, 'hero-panel-title', content.profile.heroPanel.title);
-  setNodeText(doc, 'hero-panel-summary', content.profile.heroPanel.summary);
-  setNodeHTML(doc, 'hero-panel-list', renderHeroPanelItems(content.profile.heroPanel.items));
+  setNodeText(doc, 'hero-summary', content.profile.summary);
+  setNodeHTML(doc, 'hero-work-list', renderHeroWorkIndex(content.projects));
+  setNodeHTML(doc, 'hero-meta-strip', renderMetaStrip(content.profile.metaStrip));
   setNodeHTML(doc, 'about-copy', renderAboutParagraphs(content.about.paragraphs));
-  setNodeHTML(doc, 'about-stats', renderStatPills(content.about.stats));
+  setNodeHTML(doc, 'about-principles', renderPrinciples(content.about.principles));
   setNodeHTML(doc, 'project-grid', renderProjectCards(content.projects));
   setNodeHTML(doc, 'contact-list', renderContactLinks(content.contact));
   setNodeText(doc, 'footer-note', content.footer.note);
