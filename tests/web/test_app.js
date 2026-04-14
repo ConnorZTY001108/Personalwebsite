@@ -374,13 +374,11 @@ test('renderPortfolio skips missing editorial nodes without throwing and still m
     ['hero-availability', createMockElement()],
     ['hero-name', createMockElement()],
     ['hero-headline', createMockElement()],
-    ['hero-intro', createMockElement()],
-    ['hero-panel-label', createMockElement()],
-    ['hero-panel-title', createMockElement()],
-    ['hero-panel-summary', createMockElement()],
-    ['hero-panel-list', createMockElement()],
+    ['hero-summary', createMockElement()],
+    ['hero-work-list', createMockElement()],
+    ['hero-meta-strip', createMockElement()],
     ['about-copy', createMockElement()],
-    ['about-stats', createMockElement()],
+    ['about-principles', createMockElement()],
     ['project-grid', createMockElement()],
     ['resume-button', createMockElement()],
     ['resume-card-button', createMockElement()],
@@ -398,12 +396,9 @@ test('renderPortfolio skips missing editorial nodes without throwing and still m
   assert.doesNotThrow(() => renderPortfolio(portfolioContent, mockDocument));
   assert.equal(nodes.get('site-name').textContent, 'Tianyu Zhang');
   assert.equal(nodes.get('hero-name').textContent, 'Tianyu Zhang');
-  assert.equal(
-    nodes.get('hero-panel-label').textContent,
-    'featured_focus',
-  );
-  assert.match(nodes.get('hero-panel-list').innerHTML, /Reliability-first delivery/);
-  assert.match(nodes.get('about-stats').innerHTML, /Performance-Focused Projects/);
+  assert.match(nodes.get('hero-work-list').innerHTML, /Industrial Process Modeling Platform/);
+  assert.match(nodes.get('hero-meta-strip').innerHTML, /Open to internships/);
+  assert.match(nodes.get('about-principles').innerHTML, /Treat reliability as product work/);
   assert.match(nodes.get('project-grid').innerHTML, /class="project-feature"/);
 });
 
@@ -439,16 +434,10 @@ function createMockDocument() {
     'hero-availability',
     'hero-name',
     'hero-headline',
-    'hero-intro',
-    'hero-panel-label',
-    'hero-panel-title',
-    'hero-panel-summary',
-    'hero-panel-list',
     'hero-summary',
     'hero-work-list',
     'hero-meta-strip',
     'about-copy',
-    'about-stats',
     'about-principles',
     'project-grid',
     'resume-button',
@@ -670,26 +659,6 @@ test('renderPortfolio mounts the current shell and editorial fields while disabl
   assert.equal(mockDocument.getElementById('site-name').textContent, 'Tianyu Zhang');
   assert.match(mockDocument.getElementById('nav-list').innerHTML, /Projects/);
   assert.equal(
-    mockDocument.getElementById('hero-intro').textContent,
-    portfolioContent.profile.intro,
-  );
-  assert.equal(
-    mockDocument.getElementById('hero-panel-label').textContent,
-    'featured_focus',
-  );
-  assert.equal(
-    mockDocument.getElementById('hero-panel-title').textContent,
-    'Industrial Process Modeling Platform',
-  );
-  assert.match(
-    mockDocument.getElementById('hero-panel-summary').textContent,
-    /safer save paths/i,
-  );
-  assert.match(
-    mockDocument.getElementById('hero-panel-list').innerHTML,
-    /Reliability-first delivery/,
-  );
-  assert.equal(
     mockDocument.getElementById('hero-summary').textContent,
     'I turn messy operational workflows into software that feels clear to use, reliable to maintain, and credible in real engineering settings.',
   );
@@ -705,7 +674,6 @@ test('renderPortfolio mounts the current shell and editorial fields while disabl
     mockDocument.getElementById('about-principles').innerHTML,
     /Make complex systems readable/,
   );
-  assert.match(mockDocument.getElementById('about-stats').innerHTML, /Performance-Focused Projects/);
   assert.match(mockDocument.getElementById('project-grid').innerHTML, /Vision-Assisted Arduino Robot Car/);
   assert.equal(mockDocument.getElementById('resume-button').href, '');
   assert.equal(mockDocument.getElementById('resume-button').textContent, 'Resume PDF coming soon');
