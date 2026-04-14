@@ -22,6 +22,16 @@ test('portfolio content includes the fixed internship profile and three featured
   assert.equal(portfolioContent.profile.name, 'Tianyu Zhang');
   assert.equal(portfolioContent.profile.headline, 'M.Eng Student in Systems and Technology');
   assert.equal(portfolioContent.profile.availability, 'Open to internship opportunities');
+  assert.equal(portfolioContent.profile.heroPanel.label, 'featured_focus');
+  assert.equal(
+    portfolioContent.profile.heroPanel.title,
+    'Industrial Process Modeling Platform',
+  );
+  assert.deepEqual(portfolioContent.profile.heroPanel.items, [
+    'React / Redux',
+    'Node.js / Prisma',
+    'Reliability-first delivery',
+  ]);
   assert.equal(portfolioContent.navigation.length, 3);
   assert.deepEqual(
     portfolioContent.projects.map((project) => project.slug),
@@ -130,8 +140,14 @@ test('resume state returns an active CTA when the PDF is available', () => {
 test('index shell defines the required sections and the module entrypoint', () => {
   const html = fs.readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
 
+  assert.match(html, /family=IBM\+Plex\+Sans:wght@400;500;600;700/);
+  assert.match(html, /family=JetBrains\+Mono:wght@400;500;600;700/);
+  assert.match(html, /<body class="home-page">/);
   assert.ok(html.includes('<link rel="stylesheet" href="./styles.css" />'));
-  assert.ok(html.includes('src="assets/placeholders/hero-shape.svg"'));
+  assert.ok(html.includes('id="hero-panel-label"'));
+  assert.ok(html.includes('id="hero-panel-title"'));
+  assert.ok(html.includes('id="hero-panel-summary"'));
+  assert.ok(html.includes('id="hero-panel-list"'));
   assert.ok(html.includes('id="site-name"'));
   assert.ok(html.includes('id="nav-list"'));
   assert.ok(html.includes('id="hero-availability"'));
@@ -151,6 +167,9 @@ test('index shell defines the required sections and the module entrypoint', () =
   assert.ok(html.includes('id="project-grid"'));
   assert.ok(html.includes('id="contact-list"'));
   assert.ok(html.includes('<script type="module" src="./app.js"></script>'));
+  assert.doesNotMatch(html, /Fraunces/);
+  assert.doesNotMatch(html, /Manrope/);
+  assert.doesNotMatch(html, /hero-shape\.svg/);
 });
 
 test('detail page shells exist for all three projects and declare their slug', () => {
@@ -203,6 +222,13 @@ test('styles include focus treatment for project cards, gallery ribbon hooks, an
   const css = fs.readFileSync(new URL('../../styles.css', import.meta.url), 'utf8');
 
   assert.match(css, /scroll-behavior:\s*smooth/);
+  assert.match(css, /body\.home-page\s*{/);
+  assert.match(css, /\.hero-panel\b/);
+  assert.match(css, /\.hero-panel-list\b/);
+  assert.match(css, /\.project-index\b/);
+  assert.match(css, /\.project-command\b/);
+  assert.match(css, /\.contact-type\b/);
+  assert.match(css, /\.home-page\s+\.project-card\s*{/);
   assert.match(css, /\.button\.is-disabled/);
   assert.match(css, /\.project-card:hover/);
   assert.match(css, /\.project-card:focus-visible/);
@@ -244,9 +270,14 @@ test('render helpers output the expected navigation, stat pills, and project car
   assert.match(projectMarkup, /class="project-copy"/);
   assert.match(projectMarkup, /class="project-bullets"/);
   assert.match(projectMarkup, /class="tag-list"/);
+  assert.match(projectMarkup, /class="project-index"/);
+  assert.match(projectMarkup, /class="project-command"/);
   assert.match(projectMarkup, /Industrial Process Modeling Platform/);
   assert.match(projectMarkup, /Vision-Assisted Arduino Robot Car/);
   assert.match(projectMarkup, /Consumer Behaviour Analytics Dashboard/);
+  assert.match(projectMarkup, /project_01/);
+  assert.match(projectMarkup, /project_02/);
+  assert.match(projectMarkup, /project_03/);
   assert.match(projectMarkup, /interactive canvas/i);
   assert.match(projectMarkup, /schema upgrades for older files/i);
   assert.match(projectMarkup, /assets\/placeholders\/portfolio-placeholder\.svg/);
@@ -302,6 +333,7 @@ test('contact rendering includes available email and external profile links', ()
   const contactMarkup = renderContactLinks(portfolioContent.contact);
 
   assert.equal((contactMarkup.match(/class="contact-card"/g) ?? []).length, 3);
+  assert.match(contactMarkup, /class="contact-type"/);
   assert.match(contactMarkup, /mailto:zhant173@mcmaster.ca/);
   assert.match(
     contactMarkup,
@@ -348,6 +380,10 @@ function createMockDocument() {
     'hero-name',
     'hero-headline',
     'hero-intro',
+    'hero-panel-label',
+    'hero-panel-title',
+    'hero-panel-summary',
+    'hero-panel-list',
     'about-copy',
     'about-stats',
     'project-grid',
@@ -569,6 +605,22 @@ test('renderPortfolio mounts the content and disables resume CTAs safely', () =>
 
   assert.equal(mockDocument.getElementById('site-name').textContent, 'Tianyu Zhang');
   assert.match(mockDocument.getElementById('nav-list').innerHTML, /Projects/);
+  assert.equal(
+    mockDocument.getElementById('hero-panel-label').textContent,
+    'featured_focus',
+  );
+  assert.equal(
+    mockDocument.getElementById('hero-panel-title').textContent,
+    'Industrial Process Modeling Platform',
+  );
+  assert.match(
+    mockDocument.getElementById('hero-panel-summary').textContent,
+    /safer save paths/i,
+  );
+  assert.match(
+    mockDocument.getElementById('hero-panel-list').innerHTML,
+    /Reliability-first delivery/,
+  );
   assert.match(mockDocument.getElementById('about-copy').innerHTML, /Master of Engineering student/);
   assert.match(mockDocument.getElementById('project-grid').innerHTML, /Vision-Assisted Arduino Robot Car/);
   assert.equal(mockDocument.getElementById('resume-button').href, '');
