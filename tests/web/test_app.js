@@ -167,17 +167,18 @@ test('index shell defines the required sections and the module entrypoint', () =
   assert.match(html, /family=JetBrains\+Mono:wght@400;500;600;700/);
   assert.match(html, /<body class="home-page">/);
   assert.ok(html.includes('<link rel="stylesheet" href="./styles.css" />'));
-  assert.ok(html.includes('id="hero-panel-label"') || html.includes('id="hero-summary"'));
-  assert.ok(html.includes('id="hero-panel-title"') || html.includes('id="hero-work-list"'));
-  assert.ok(html.includes('id="hero-panel-summary"') || html.includes('id="hero-meta-strip"'));
-  assert.ok(html.includes('id="hero-panel-list"') || html.includes('id="hero-work-list"'));
+  assert.ok(html.includes('id="hero-panel-label"'));
+  assert.ok(html.includes('id="hero-panel-title"'));
+  assert.ok(html.includes('id="hero-panel-summary"'));
+  assert.ok(html.includes('id="hero-panel-list"'));
   assert.ok(html.includes('id="site-name"'));
   assert.ok(html.includes('id="nav-list"'));
   assert.ok(html.includes('id="hero-availability"'));
   assert.ok(html.includes('id="hero-name"'));
   assert.ok(html.includes('id="hero-headline"'));
+  assert.ok(html.includes('id="hero-intro"'));
   assert.ok(html.includes('id="about-copy"'));
-  assert.ok(html.includes('id="about-stats"') || html.includes('id="about-principles"'));
+  assert.ok(html.includes('id="about-stats"'));
   assert.ok(html.includes('id="resume-button"'));
   assert.ok(html.includes('id="resume-card-button"'));
   assert.ok(html.includes('id="resume-helper"'));
@@ -245,15 +246,15 @@ test('styles include focus treatment for project cards, gallery ribbon hooks, an
 
   assert.match(css, /scroll-behavior:\s*smooth/);
   assert.match(css, /body\.home-page\s*{/);
-  assert.ok(/\.hero-panel\b|\.hero-work-item\b/.test(css));
-  assert.ok(/\.hero-panel-list\b|\.hero-meta-item\b/.test(css));
-  assert.ok(/\.project-index\b|\.project-number\b/.test(css));
-  assert.ok(/\.project-command\b|\.project-domain\b/.test(css));
-  assert.ok(/\.home-page\s+\.project-card\s*{|\.project-feature\b/.test(css));
-  assert.ok(/\.project-card:hover|\.project-feature:hover/.test(css));
-  assert.ok(/\.project-card:focus-visible|\.project-feature:focus-visible/.test(css));
+  assert.match(css, /\.hero-panel\b/);
+  assert.match(css, /\.hero-panel-list\b/);
+  assert.match(css, /\.project-index\b/);
+  assert.match(css, /\.project-command\b/);
   assert.match(css, /\.contact-type\b/);
+  assert.match(css, /\.home-page\s+\.project-card\s*{/);
   assert.match(css, /\.button\.is-disabled/);
+  assert.match(css, /\.project-card:hover/);
+  assert.match(css, /\.project-card:focus-visible/);
   assert.match(css, /\.detail-topbar\b/);
   assert.match(css, /\.detail-shell\b/);
   assert.match(css, /\.detail-hero\b/);
@@ -281,7 +282,9 @@ test('placeholder SVG assets exist for the hero art and project previews', () =>
 test('renderProjectCards falls back to the placeholder image and onerror handler', () => {
   const projectMarkup = renderProjectCards([
     {
+      domain: 'Fallback Domain',
       kicker: 'Fallback check',
+      result: 'Fallback result',
       title: 'Broken Image Project',
       summary: 'Tests the image fallback path.',
       image: {
@@ -324,8 +327,10 @@ test('render helpers output the editorial work index, meta strip, principles, an
 test('renderProjectCards avoids undefined detail hrefs when a project slug is missing', () => {
   const projectMarkup = renderProjectCards([
     {
+      domain: 'Fallback Domain',
       href: '',
       kicker: 'Fallback check',
+      result: 'Fallback result',
       title: 'No Slug Project',
       summary: 'Tests the detail href fallback path.',
       image: {
@@ -359,18 +364,20 @@ test('contact rendering includes available email and external profile links', ()
   assert.match(contactMarkup, /linkedin\.com\/in\/tianyu-zhang-9470a7266/);
 });
 
-test('renderPortfolio skips missing homepage nodes without throwing', () => {
+test('renderPortfolio skips missing editorial nodes without throwing and still mounts the current shell', () => {
   const nodes = new Map([
     ['site-name', createMockElement()],
     ['nav-list', createMockElement()],
     ['hero-availability', createMockElement()],
     ['hero-name', createMockElement()],
     ['hero-headline', createMockElement()],
-    ['hero-summary', createMockElement()],
-    ['hero-work-list', createMockElement()],
-    ['hero-meta-strip', createMockElement()],
+    ['hero-intro', createMockElement()],
+    ['hero-panel-label', createMockElement()],
+    ['hero-panel-title', createMockElement()],
+    ['hero-panel-summary', createMockElement()],
+    ['hero-panel-list', createMockElement()],
     ['about-copy', createMockElement()],
-    ['about-principles', createMockElement()],
+    ['about-stats', createMockElement()],
     ['project-grid', createMockElement()],
     ['resume-button', createMockElement()],
     ['resume-card-button', createMockElement()],
@@ -388,6 +395,12 @@ test('renderPortfolio skips missing homepage nodes without throwing', () => {
   assert.doesNotThrow(() => renderPortfolio(portfolioContent, mockDocument));
   assert.equal(nodes.get('site-name').textContent, 'Tianyu Zhang');
   assert.equal(nodes.get('hero-name').textContent, 'Tianyu Zhang');
+  assert.equal(
+    nodes.get('hero-panel-label').textContent,
+    'featured_focus',
+  );
+  assert.match(nodes.get('hero-panel-list').innerHTML, /Reliability-first delivery/);
+  assert.match(nodes.get('about-stats').innerHTML, /Performance-Focused Projects/);
   assert.match(nodes.get('project-grid').innerHTML, /class="project-feature"/);
 });
 
@@ -423,10 +436,16 @@ function createMockDocument() {
     'hero-availability',
     'hero-name',
     'hero-headline',
+    'hero-intro',
+    'hero-panel-label',
+    'hero-panel-title',
+    'hero-panel-summary',
+    'hero-panel-list',
     'hero-summary',
     'hero-work-list',
     'hero-meta-strip',
     'about-copy',
+    'about-stats',
     'about-principles',
     'project-grid',
     'resume-button',
@@ -641,12 +660,32 @@ function createInteractiveDetailDocument() {
   };
 }
 
-test('renderPortfolio mounts the content and disables resume CTAs safely', () => {
+test('renderPortfolio mounts the current shell and editorial fields while disabling resume CTAs safely', () => {
   const mockDocument = createMockDocument();
   renderPortfolio(portfolioContent, mockDocument);
 
   assert.equal(mockDocument.getElementById('site-name').textContent, 'Tianyu Zhang');
   assert.match(mockDocument.getElementById('nav-list').innerHTML, /Projects/);
+  assert.equal(
+    mockDocument.getElementById('hero-intro').textContent,
+    portfolioContent.profile.intro,
+  );
+  assert.equal(
+    mockDocument.getElementById('hero-panel-label').textContent,
+    'featured_focus',
+  );
+  assert.equal(
+    mockDocument.getElementById('hero-panel-title').textContent,
+    'Industrial Process Modeling Platform',
+  );
+  assert.match(
+    mockDocument.getElementById('hero-panel-summary').textContent,
+    /safer save paths/i,
+  );
+  assert.match(
+    mockDocument.getElementById('hero-panel-list').innerHTML,
+    /Reliability-first delivery/,
+  );
   assert.equal(
     mockDocument.getElementById('hero-summary').textContent,
     'I turn messy operational workflows into software that feels clear to use, reliable to maintain, and credible in real engineering settings.',
@@ -663,6 +702,7 @@ test('renderPortfolio mounts the content and disables resume CTAs safely', () =>
     mockDocument.getElementById('about-principles').innerHTML,
     /Make complex systems readable/,
   );
+  assert.match(mockDocument.getElementById('about-stats').innerHTML, /Performance-Focused Projects/);
   assert.match(mockDocument.getElementById('project-grid').innerHTML, /Vision-Assisted Arduino Robot Car/);
   assert.equal(mockDocument.getElementById('resume-button').href, '');
   assert.equal(mockDocument.getElementById('resume-button').textContent, 'Resume PDF coming soon');
@@ -679,6 +719,7 @@ test('renderPortfolio mounts the content and disables resume CTAs safely', () =>
     mockDocument.getElementById('resume-helper').textContent,
     portfolioContent.resume.helperText,
   );
+  assert.match(mockDocument.getElementById('contact-list').innerHTML, /mailto:zhant173@mcmaster.ca/);
 });
 
 test('registerPortfolioBoot wires DOMContentLoaded to mount the portfolio', () => {
