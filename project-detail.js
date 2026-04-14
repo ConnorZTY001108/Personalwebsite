@@ -66,10 +66,10 @@ function setupProcessPlatformGallery(doc, projectDetail) {
 
   const state = {
     activePreview: null,
-    dragPointerId: null,
+    isPointerDown: false,
+    isDragging: false,
     dragStartX: 0,
     dragStartScrollLeft: 0,
-    didDrag: false,
     suppressClick: false,
     restoreFocusTo: null,
   };
@@ -110,70 +110,66 @@ function setupProcessPlatformGallery(doc, projectDetail) {
   };
 
   const resetDragState = () => {
-    if (state.dragPointerId !== null) {
+    if (state.isPointerDown || state.isDragging) {
       track.classList.remove('is-dragging');
     }
 
-    state.dragPointerId = null;
-    state.didDrag = false;
-    if (state.suppressClick) {
-      setTimeout(() => {
-        state.suppressClick = false;
-      }, 0);
-    }
+    state.isPointerDown = false;
+    state.isDragging = false;
   };
 
-  track.addEventListener('pointerdown', (event) => {
-    if (event.pointerType !== 'mouse' || event.button !== 0) {
+  const releaseSuppressedClick = () => {
+    state.suppressClick = false;
+  };
+
+  track.addEventListener('mousedown', (event) => {
+    if (event.button !== 0) {
       return;
     }
 
-    state.dragPointerId = event.pointerId;
+    state.isPointerDown = true;
     state.dragStartX = event.clientX;
     state.dragStartScrollLeft = track.scrollLeft;
-    state.didDrag = false;
+    state.isDragging = false;
     state.suppressClick = false;
-    track.classList.add('is-dragging');
-    track.setPointerCapture?.(event.pointerId);
   });
 
-  track.addEventListener('pointermove', (event) => {
-    if (state.dragPointerId !== event.pointerId) {
+  const handleMouseMove = (event) => {
+    if (!state.isPointerDown) {
       return;
     }
 
     const deltaX = event.clientX - state.dragStartX;
 
-    if (Math.abs(deltaX) > 6) {
-      state.didDrag = true;
+    if (!state.isDragging && Math.abs(deltaX) > 6) {
+      state.isDragging = true;
+      track.classList.add('is-dragging');
     }
 
-    if (state.didDrag) {
+    if (state.isDragging) {
+      event.preventDefault?.();
       track.scrollLeft = state.dragStartScrollLeft - deltaX;
     }
-  });
+  };
 
-  track.addEventListener('pointerup', (event) => {
-    if (state.dragPointerId !== event.pointerId) {
+  const handleMouseUp = () => {
+    if (!state.isPointerDown) {
       return;
     }
 
-    if (state.didDrag) {
+    const shouldSuppressClick = state.isDragging;
+
+    resetDragState();
+
+    if (shouldSuppressClick) {
       state.suppressClick = true;
+      const scheduleReset = win?.setTimeout?.bind(win) ?? setTimeout;
+      scheduleReset(releaseSuppressedClick, 0);
     }
+  };
 
-    track.releasePointerCapture?.(event.pointerId);
-    resetDragState();
-  });
-
-  track.addEventListener('pointercancel', (event) => {
-    if (state.dragPointerId !== event.pointerId) {
-      return;
-    }
-
-    track.releasePointerCapture?.(event.pointerId);
-    resetDragState();
-  });
+  win?.addEventListener('mousemove', handleMouseMove);
+  win?.addEventListener('mouseup', handleMouseUp);
 
   items.forEach((item) => {
     item.addEventListener('click', (event) => {

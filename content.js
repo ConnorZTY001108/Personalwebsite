@@ -29,7 +29,9 @@ function renderProcessPlatformGallery(items) {
             loading="lazy"
             draggable="false"
           />
-          <span class="gallery-card-title">${title}</span>
+          <span class="gallery-card-caption">
+            <span class="gallery-card-title">${title}</span>
+          </span>
         </button>
       `,
     )
