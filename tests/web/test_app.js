@@ -235,20 +235,26 @@ test('portfolio project images resolve to existing files', () => {
   }
 });
 
-test('styles include focus treatment for project cards, gallery ribbon hooks, and a mobile breakpoint', () => {
+test('styles include the editorial homepage typography, layout, and responsive hooks', () => {
   const css = fs.readFileSync(new URL('../../styles.css', import.meta.url), 'utf8');
 
-  assert.match(css, /scroll-behavior:\s*smooth/);
   assert.match(css, /body\.home-page\s*{/);
-  assert.match(css, /\.hero-panel\b/);
-  assert.match(css, /\.hero-panel-list\b/);
-  assert.match(css, /\.project-index\b/);
-  assert.match(css, /\.project-command\b/);
-  assert.match(css, /\.contact-type\b/);
-  assert.match(css, /\.home-page\s+\.project-card\s*{/);
-  assert.match(css, /\.button\.is-disabled/);
-  assert.match(css, /\.project-card:hover/);
-  assert.match(css, /\.project-card:focus-visible/);
+  assert.match(css, /font-family:\s*'Newsreader', serif/);
+  assert.match(css, /font-family:\s*'IBM Plex Sans', sans-serif/);
+  assert.match(css, /font-family:\s*'IBM Plex Mono', monospace/);
+  assert.match(css, /\.hero-intro-block\b/);
+  assert.match(css, /\.hero-work-index\b/);
+  assert.match(css, /\.hero-work-list\b/);
+  assert.match(css, /\.hero-meta-strip\b/);
+  assert.match(css, /\.about-layout\b/);
+  assert.match(css, /\.about-principles\b/);
+  assert.match(css, /\.principle-item\b/);
+  assert.match(css, /\.project-list\b/);
+  assert.match(css, /\.project-feature\b/);
+  assert.match(css, /\.project-feature-media\b/);
+  assert.match(css, /\.project-result\b/);
+  assert.match(css, /\.project-link-label\b/);
+  assert.match(css, /\.resume-panel\b/);
   assert.match(css, /\.detail-topbar\b/);
   assert.match(css, /\.detail-shell\b/);
   assert.match(css, /\.detail-hero\b/);
@@ -259,7 +265,10 @@ test('styles include focus treatment for project cards, gallery ribbon hooks, an
   assert.match(css, /\.project-gallery-track\s*{[^}]*grid-template-rows:\s*repeat\(2,/s);
   assert.match(css, /\.gallery-card-caption\s*{[^}]*backdrop-filter:\s*blur/s);
   assert.match(css, /\.gallery-card-title\b/);
-  assert.match(css, /@media\s*\(max-width:\s*800px\)/);
+  assert.match(css, /@media\s*\(max-width:\s*900px\)/);
+  assert.match(css, /@media\s*\(max-width:\s*700px\)/);
+  assert.doesNotMatch(css, /\.hero-panel\b/);
+  assert.doesNotMatch(css, /\.project-command\b/);
 });
 
 test('placeholder SVG assets exist for the hero art and project previews', () => {
