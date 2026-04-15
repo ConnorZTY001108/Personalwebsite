@@ -4,53 +4,96 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Consumer Behaviour Analytics Dashboard | Tianyu Zhang</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="../styles.css" />
   </head>
-  <body class="detail-page" data-project-slug="analytics-dashboard">
-    <header class="detail-topbar shell">
-      <a class="detail-back-link" id="back-home-link" href="../index.html#projects">Back to Home</a>
-    </header>
+  <body class="detail-page" data-project-slug="analytics-dashboard" data-nav-base-path="../">
+    <div id="dots"></div>
+    <div id="page" class="site">
+      <a class="skip-link screen-reader-text" href="#content">Skip to content</a>
 
-    <main class="detail-shell shell">
-      <section class="detail-hero">
-        <p class="eyebrow">Project Detail</p>
-        <h1 id="detail-title"></h1>
-        <p class="detail-subtitle" id="detail-subtitle"></p>
-      </section>
+      <header id="masthead" class="site-header">
+        <div class="header-content">
+          <a class="logo" href="../index.html" aria-label="Tianyu Zhang homepage">
+            <span class="logo-mark" id="wordmark-primary"></span>
+            <span class="logo-submark" id="wordmark-secondary"></span>
+          </a>
 
-      <section class="detail-section detail-project-section">
-        <div class="detail-section-head">
-          <h2>Project Detail</h2>
-          <div class="detail-stack-block">
-            <p class="detail-stack-label">Tech Stack</p>
-            <ul class="tag-list" id="detail-stack"></ul>
-          </div>
+          <nav id="site-navigation" class="main-navigation" aria-label="Primary navigation">
+            <ul id="nav-list" class="menu"></ul>
+          </nav>
         </div>
-        <div class="detail-body" id="detail-project-body"></div>
-      </section>
+      </header>
 
-      <section class="detail-section">
-        <h2>Challenge</h2>
-        <div class="detail-body" id="detail-challenge-body"></div>
-      </section>
+      <div id="content" class="site-content">
+        <div id="primary" class="content-area">
+          <main id="main" class="site-main">
+            <div class="project-pagination">
+              <div class="pagination-buttons">
+                <a id="detail-prev-link" class="btn btn-s" href="#">&lt; Prev</a>
+                <a id="detail-next-link" class="btn btn-s" href="#">Next &gt;</a>
+              </div>
+            </div>
 
-      <section class="detail-section">
-        <h2>Approach</h2>
-        <div class="detail-body" id="detail-approach-body"></div>
-      </section>
+            <div class="project-header">
+              <div class="project-title">
+                <h1 id="detail-title"></h1>
+              </div>
 
-      <section class="detail-section">
-        <h2>Outcome</h2>
-        <div class="detail-body" id="detail-outcome-body"></div>
-      </section>
-    </main>
+              <div class="project-url">
+                <a id="detail-visit-link" class="btn btn-s btn-wide" href="#">Visit Project</a>
+              </div>
+            </div>
 
+            <div class="project-content">
+              <div class="project-data">
+                <div class="data-set">
+                  <div class="type">
+                    <p>S-type:&nbsp;<span id="detail-meta-site-type"></span></p>
+                  </div>
+                </div>
+
+                <div class="data-set">
+                  <div class="platform">
+                    <p>Platform:&nbsp;<span id="detail-meta-platform"></span></p>
+                  </div>
+                  <div class="discipline">
+                    <p>Disciplines:&nbsp;</p>
+                    <ul class="discipline-type" id="detail-meta-disciplines"></ul>
+                  </div>
+                </div>
+              </div>
+
+              <div class="featured-image">
+                <img id="detail-featured-image" src="" alt="" />
+              </div>
+
+              <div class="project-details">
+                <h3 class="sub-header">Details</h3>
+                <div id="detail-details-body"></div>
+
+                <blockquote class="project-quote">
+                  <div id="detail-quote-body"></div>
+                  <div>
+                    <p><strong id="detail-quote-credit"></strong></p>
+                  </div>
+                </blockquote>
+              </div>
+            </div>
+
+            <div class="project-aside">
+              <div id="detail-aside-logo"></div>
+
+              <a id="detail-longform-link" class="project-longform-image suppressed" href="#">
+                <img id="detail-longform-image" src="" alt="" />
+              </a>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <script src="../assets/vendor/three.min.js"></script>
+    <script src="../assets/vendor/vanta.dots.min.js"></script>
     <script type="module" src="../project-detail.js"></script>
   </body>
 </html>

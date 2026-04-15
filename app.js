@@ -1,64 +1,22 @@
 import { portfolioContent } from './content.js';
+import { mountInteractiveBackground } from './background.js';
 
-export function getResumeState(resume) {
-  if (resume.available) {
-    return {
-      href: resume.path,
-      label: resume.label,
-      helperText: '',
-      isDisabled: false,
-    };
-  }
+export function renderNavigation(items, options = {}) {
+  const { basePath = '' } = options;
 
-  return {
-    href: '#resume',
-    label: resume.fallbackLabel,
-    helperText: resume.helperText,
-    isDisabled: true,
-  };
-}
-
-export function renderNavigation(items) {
   return items
-    .map((item) => `<li><a href="#${item.id}">${item.label}</a></li>`)
-    .join('');
-}
-
-export function renderHeroWorkIndex(projects) {
-  return projects
     .map(
-      (project, index) => `
-        <li class="hero-work-item">
-          <span class="hero-work-number">${String(index + 1).padStart(2, '0')}</span>
-          <div class="hero-work-copy">
-            <p class="hero-work-domain">${project.domain}</p>
-            <h3>${project.title}</h3>
-            <p class="hero-work-result">${project.result}</p>
-          </div>
+      (item) => `
+        <li class="menu-item">
+          <a href="${basePath}${item.href}">${item.label}</a>
         </li>
       `,
     )
     .join('');
 }
 
-export function renderMetaStrip(items) {
-  return items.map((item) => `<li class="hero-meta-item">${item}</li>`).join('');
-}
-
-export function renderPrinciples(items) {
-  return items
-    .map(
-      (item, index) => `
-        <li class="principle-item">
-          <span class="principle-number">${String(index + 1).padStart(2, '0')}</span>
-          <div>
-            <h3>${item.title}</h3>
-            <p>${item.description}</p>
-          </div>
-        </li>
-      `,
-    )
-    .join('');
+export function renderHeroStatement(lines = []) {
+  return lines.map((line) => `<span class="tagline-line">${line}</span>`).join('<br />');
 }
 
 export function getProjectPageHref(project) {
@@ -73,91 +31,79 @@ export function getProjectPageHref(project) {
   return '#projects';
 }
 
-export function renderProjectCards(projects) {
-  const fallbackImageSrc = 'assets/placeholders/portfolio-placeholder.svg';
+function renderProjectWordmark(lines = []) {
+  return lines.map((line) => `<span>${line}</span>`).join('');
+}
 
+export function renderProjectCards(projects = []) {
   return projects
-    .map((project, index) => {
-      const detailHref = getProjectPageHref(project);
-      const projectNumber = String(index + 1).padStart(2, '0');
+    .map(
+      (project) => `
+        <a class="project project-card" href="${getProjectPageHref(project)}" aria-label="${project.title}">
+          <div class="project-card-inner">
+            <div class="project-logo project-card-wordmark">
+              ${renderProjectWordmark(project.wordmarkLines)}
+            </div>
+            <div class="project-hover-copy">
+              <p class="project-card-result">${project.result}</p>
+            </div>
+          </div>
+        </a>
+      `,
+    )
+    .join('');
+}
+
+function renderProjectEmptyState(category) {
+  return `
+    <article class="project project-card project-empty-state" aria-label="${category.title}">
+      <div class="project-card-inner">
+        <div class="project-empty-copy">
+          <p class="project-empty-text">Projects coming soon.</p>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+export function renderProjectGroups(projects = [], categories = []) {
+  return categories
+    .map((category) => {
+      const groupedProjects = projects.filter((project) => project.category === category.slug);
+      const projectMarkup = groupedProjects.length
+        ? renderProjectCards(groupedProjects)
+        : renderProjectEmptyState(category);
 
       return `
-        <a class="project-feature" href="${detailHref}">
-          <div class="project-feature-copy">
-            <div class="project-feature-head">
-              <span class="project-number">${projectNumber}</span>
-              <p class="project-domain">${project.domain}</p>
-            </div>
-            <h3>${project.title}</h3>
-            <p class="project-result">${project.result}</p>
-            <p class="project-summary">${project.summary}</p>
-            <ul class="project-bullets">
-              ${project.bullets.map((bullet) => `<li>${bullet}</li>`).join('')}
-            </ul>
-            <ul class="tag-list">
-              ${project.stack.map((tag) => `<li>${tag}</li>`).join('')}
-            </ul>
-            <span class="project-link-label">Open project</span>
+        <section class="project-category" data-category="${category.slug}">
+          <div class="project-category-header">
+            <h3 class="project-category-title">${category.title}</h3>
           </div>
-          <figure class="project-feature-media">
-            <img
-              src="${project.image.src || fallbackImageSrc}"
-              alt="${project.image.alt}"
-              onerror="this.onerror=null;this.src='${fallbackImageSrc}';"
-            />
-          </figure>
-        </a>
+          <div class="project-grid project-category-grid">
+            ${projectMarkup}
+          </div>
+        </section>
       `;
     })
     .join('');
 }
 
-export function renderContactLinks(items) {
+export function renderContactLinks(items = []) {
   return items
     .filter((item) => item.available)
-    .map((item, index) => {
-      const externalAttrs = item.href.startsWith('http')
-        ? ' target="_blank" rel="noreferrer"'
-        : '';
-      const contactIndex = String(index + 1).padStart(2, '0');
-
-      return `
-        <a class="contact-card" href="${item.href}"${externalAttrs}>
-          <span class="contact-label">endpoint_${contactIndex}</span>
-          <span class="contact-type">${item.label}</span>
-          <span class="contact-value">${item.value}</span>
+    .map(
+      (item) => `
+        <a class="footer-link" href="${item.href}"${item.href.startsWith('http') ? ' target="_blank" rel="noreferrer"' : ''}>
+          <span class="footer-link-label">${item.label}</span>
+          <span class="footer-link-value">${item.value}</span>
         </a>
-      `;
-    })
+      `,
+    )
     .join('');
 }
 
-function renderAboutParagraphs(paragraphs) {
+function renderAboutParagraphs(paragraphs = []) {
   return paragraphs.map((text) => `<p>${text}</p>`).join('');
-}
-
-function applyResumeState(doc, resumeState) {
-  const heroButton = doc.getElementById('resume-button');
-  const cardButton = doc.getElementById('resume-card-button');
-  const helper = doc.getElementById('resume-helper');
-
-  [heroButton, cardButton].forEach((button) => {
-    button.textContent = resumeState.label;
-
-    if (resumeState.isDisabled) {
-      button.classList.add('is-disabled');
-      button.removeAttribute('href');
-      button.setAttribute('tabindex', '-1');
-      button.setAttribute('aria-disabled', 'true');
-    } else {
-      button.classList.remove('is-disabled');
-      button.href = resumeState.href;
-      button.removeAttribute('tabindex');
-      button.removeAttribute('aria-disabled');
-    }
-  });
-
-  helper.textContent = resumeState.helperText;
 }
 
 function setNodeText(doc, id, value) {
@@ -176,26 +122,24 @@ function setNodeHTML(doc, id, value) {
   }
 }
 
+function getNavBasePath(doc) {
+  return doc.body?.dataset?.navBasePath ?? '';
+}
+
 export function renderPortfolio(content = portfolioContent, doc = document) {
-  setNodeText(doc, 'site-name', content.profile.name);
-  setNodeHTML(doc, 'nav-list', renderNavigation(content.navigation));
-  setNodeText(doc, 'hero-availability', content.profile.availability);
-  setNodeText(doc, 'hero-name', content.profile.name);
-  setNodeText(doc, 'hero-headline', content.profile.headline);
-  setNodeText(doc, 'hero-summary', content.profile.summary);
-  setNodeHTML(doc, 'hero-work-list', renderHeroWorkIndex(content.projects));
-  setNodeHTML(doc, 'hero-meta-strip', renderMetaStrip(content.profile.metaStrip));
+  setNodeText(doc, 'wordmark-primary', content.profile.wordmark.primary);
+  setNodeText(doc, 'wordmark-secondary', content.profile.wordmark.secondary);
+  setNodeHTML(doc, 'nav-list', renderNavigation(content.navigation, { basePath: getNavBasePath(doc) }));
+  setNodeHTML(doc, 'hero-statement', renderHeroStatement(content.profile.heroStatementLines));
+  setNodeHTML(doc, 'project-grid', renderProjectGroups(content.projects, content.projectCategories));
   setNodeHTML(doc, 'about-copy', renderAboutParagraphs(content.about.paragraphs));
-  setNodeHTML(doc, 'about-principles', renderPrinciples(content.about.principles));
-  setNodeHTML(doc, 'project-grid', renderProjectCards(content.projects));
   setNodeHTML(doc, 'contact-list', renderContactLinks(content.contact));
   setNodeText(doc, 'footer-note', content.footer.note);
-
-  applyResumeState(doc, getResumeState(content.resume));
 }
 
 export function bootPortfolio(doc = document) {
   renderPortfolio(portfolioContent, doc);
+  mountInteractiveBackground(doc);
 }
 
 export function registerPortfolioBoot(doc) {
