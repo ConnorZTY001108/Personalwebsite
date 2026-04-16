@@ -27,16 +27,16 @@
       <div id="content" class="site-content">
         <div id="primary" class="content-area">
           <main id="main" class="site-main">
-            <div class="project-pagination">
-              <div class="pagination-buttons">
-                <a id="detail-prev-link" class="btn btn-s" href="#">&lt; Prev</a>
-                <a id="detail-next-link" class="btn btn-s" href="#">Next &gt;</a>
-              </div>
-            </div>
-
             <div class="project-header">
               <div class="project-title">
                 <h1 id="detail-title"></h1>
+              </div>
+
+              <div class="project-pagination">
+                <div class="pagination-buttons">
+                  <a id="detail-prev-link" class="btn btn-s" href="#">&lt; Prev</a>
+                  <a id="detail-next-link" class="btn btn-s" href="#">Next &gt;</a>
+                </div>
               </div>
 
               <div class="project-url">
@@ -47,18 +47,9 @@
             <div class="project-content">
               <div class="project-data">
                 <div class="data-set">
-                  <div class="type">
-                    <p>S-type:&nbsp;<span id="detail-meta-site-type"></span></p>
-                  </div>
-                </div>
-
-                <div class="data-set">
-                  <div class="platform">
-                    <p>Platform:&nbsp;<span id="detail-meta-platform"></span></p>
-                  </div>
-                  <div class="discipline">
-                    <p>Disciplines:&nbsp;</p>
-                    <ul class="discipline-type" id="detail-meta-disciplines"></ul>
+                  <div class="stack">
+                    <p>Tech Stack:&nbsp;</p>
+                    <ul class="discipline-type" id="detail-meta-stack"></ul>
                   </div>
                 </div>
               </div>
@@ -68,10 +59,9 @@
               </div>
 
               <div class="project-details">
-                <h3 class="sub-header">Details</h3>
                 <div id="detail-details-body"></div>
 
-                <blockquote class="project-quote">
+                <blockquote id="detail-project-quote" class="project-quote">
                   <div id="detail-quote-body"></div>
                   <div>
                     <p><strong id="detail-quote-credit"></strong></p>
@@ -88,6 +78,59 @@
               </a>
             </div>
           </main>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="detail-image-lightbox"
+      class="detail-image-lightbox"
+      hidden
+      aria-hidden="true"
+    >
+      <button
+        id="detail-image-lightbox-backdrop"
+        class="detail-image-lightbox-backdrop"
+        type="button"
+        aria-label="Close image preview"
+      ></button>
+      <div
+        id="detail-image-lightbox-dialog"
+        class="detail-image-lightbox-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Project image preview"
+      >
+        <button
+          id="detail-image-lightbox-close"
+          class="detail-image-lightbox-close"
+          type="button"
+          aria-label="Close image preview"
+        >
+          <span class="detail-image-lightbox-close-mark" aria-hidden="true">×</span>
+          <span>CLOSE</span>
+        </button>
+        <img id="detail-image-lightbox-image" class="detail-image-lightbox-image" src="" alt="" />
+        <p id="detail-image-lightbox-caption" class="detail-image-lightbox-caption"></p>
+        <div class="detail-image-lightbox-pagination">
+          <button
+            id="detail-image-lightbox-prev"
+            class="btn btn-s detail-image-lightbox-nav"
+            type="button"
+            data-text="< PREV"
+            aria-label="View previous image"
+          >
+            <span>&lt; PREV</span>
+          </button>
+          <button
+            id="detail-image-lightbox-next"
+            class="btn btn-s detail-image-lightbox-nav"
+            type="button"
+            data-text="NEXT >"
+            aria-label="View next image"
+          >
+            <span>NEXT &gt;</span>
+          </button>
         </div>
       </div>
     </div>

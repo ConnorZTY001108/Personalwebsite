@@ -56,9 +56,9 @@ export const portfolioContent = {
       slug: 'process-platform',
       category: 'full-stack-development',
       domain: 'Workflow Software',
-      wordmarkLines: ['Industrial', 'Process', 'Platform'],
+      wordmarkLines: ['Hybrid Process', 'Network Optimization', 'Software'],
       result: 'Safer saves, schema upgrades, and reusable subnetworks for a capstone process tool.',
-      title: 'Industrial Process Modeling Platform',
+      title: 'Hybrid Process Network Optimization Software',
       subtitle: 'A full-stack web app for drawing, saving, and computing industrial process diagrams.',
       summary:
         'For a McMaster capstone team, I helped build a visual process-modeling platform that replaces hard-to-read Excel workflows with an interactive canvas and reusable subnetworks.',
@@ -72,66 +72,66 @@ export const portfolioContent = {
         disciplines: ['Frontend Systems', 'Backend Reliability'],
       },
       stack: [
-        'TypeScript',
         'React',
-        'React Flow',
-        'Redux',
+        'TypeScript',
+        'Vite',
         'Node.js',
-        'Express.js',
+        'Express',
         'Prisma',
-        'MongoDB',
         'PostgreSQL',
+        'MongoDB',
+        'Redis',
+        'Python',
+        'Docker Compose',
       ],
+      logoImage: 'assets/logos/hypronet-logo.png',
       media: {
         featuredImage: 'assets/Industrial Process Modeling Platform/ui_overview.png',
-        featuredAlt: 'Industrial Process Modeling Platform interface overview',
+        featuredAlt: 'Hybrid Process Network Optimization Software interface overview',
         longformImage: 'assets/Industrial Process Modeling Platform/start_menu.png',
-        longformAlt: 'Industrial Process Modeling Platform start menu view',
+        longformAlt: 'Hybrid Process Network Optimization Software start menu view',
       },
+      detailLeadSections: [
+        {
+          title: 'Project Description',
+          bodyHtml: `
+            <p>
+              This project is a web-based modeling and version management tool for industrial plant simulation. It replaces
+              spreadsheet-based diagram creation with an interactive node-and-edge interface, allowing users to build, edit,
+              and manage plant networks in a more visual and efficient way.
+            </p>
+            <p>
+              A typical workflow is to sign in, create or load a diagram, choose a domain and calculation type, add
+              equipment models and stream connections, configure materials, costs, and run settings, then save the network
+              and submit it to a computation server. In the end, users get a structured and reusable digital plant model,
+              along with processed computation results that can be viewed in the interface and exported for further
+              analysis.
+            </p>
+          `,
+        },
+        {
+          title: 'Outcome',
+          bodyHtml: `
+          <p>
+            I mainly worked on reducing save time, improving computation speed, and migrating new data into the database.
+          </p>
+          <blockquote class="project-quote project-inline-quote">
+            <p>
+              Reduced large-network save time <span class="project-inline-quote-emphasis">from 40 seconds to 1.5 seconds</span>.<br />
+              Reduced backend parsing time for computation results returned by the compute server
+              <span class="project-inline-quote-emphasis">from 20 seconds to 3 seconds</span>.
+            </p>
+          </blockquote>
+        `,
+        },
+      ],
       detailsHtml: `
-        <p>
-          This project is a full-stack web platform for building industrial process diagrams in a visual way. Instead of
-          describing a plant through large Excel tables, users can place models on a canvas, connect them with streams,
-          and understand the structure of a system much more quickly.
-        </p>
-        <p>
-          The platform also supports the workflow around those diagrams: users can create and load networks, save their
-          work, import and export complete snapshots, review computation history, and reuse repeated process sections as
-          subnetwork blueprints.
-        </p>
         <h4>Challenge</h4>
-        <p>
-          My main contribution was making the platform reliable enough for repeated use. A single save or load action had
-          to keep the visual canvas, node settings, time-period data, nested subnetworks, and computation results
-          consistent across both MongoDB and PostgreSQL.
-        </p>
-        <p>
-          I also handled backward compatibility. As the project evolved, older saved diagrams and exported JSON files
-          could break when the data format changed, which is a serious problem for a tool people rely on to reopen
-          previous work.
-        </p>
         <h4>Approach</h4>
-        <p>
-          I used React, React Flow, and Redux on the frontend to build the visual editor and dashboard experience. On the
-          backend, I used Node.js, Express, and Prisma to manage APIs, persistence, authentication, import/export flows,
-          and solver-related result handling.
-        </p>
-        <p>
-          To improve reliability, I added schema version stamping and auto-upgrade logic with backup creation, safer save
-          flows with deduplication guards and ID remapping, reusable subnetwork blueprints, and run-history management
-          for computation results.
-        </p>
-        <h4>Outcome</h4>
-        <p>
-          The result is a platform that is much easier to explain in an interview setting: users can visually build and
-          manage process networks instead of working through hard-to-read spreadsheets. Recent work also reduced save
-          latency and lowered the risk of data loss during complex save or upgrade flows.
-        </p>
       `,
       quote: {
-        body:
-          'Built to make process networks readable, reusable, and safe to save under real engineering workflows.',
-        credit: 'McMaster Capstone / Team 18',
+        body: '',
+        credit: '',
       },
     },
     {

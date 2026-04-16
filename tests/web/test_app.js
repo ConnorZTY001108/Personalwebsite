@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { portfolioContent } from '../../content.js';
 import {
+  bindProjectCategoryToggles,
   registerPortfolioBoot,
   renderNavigation,
   renderProjectCards,
@@ -11,6 +12,8 @@ import {
   renderPortfolio,
 } from '../../app.js';
 import {
+  bindProjectDetailSectionToggles,
+  bindProjectDetailLightbox,
   getProjectBySlug,
   getProjectDetailState,
   renderProjectDetail,
@@ -70,6 +73,11 @@ test('portfolio content exposes the cloned dekiru-style homepage contract', () =
   assert.equal(portfolioContent.projects[0].category, 'full-stack-development');
   assert.equal(portfolioContent.projects[1].category, 'hardware-development');
   assert.equal(portfolioContent.projects[2].category, 'data-analysis');
+  assert.equal(portfolioContent.projects[0].logoImage, 'assets/logos/hypronet-logo.png');
+  assert.equal(portfolioContent.projects[0].detailLeadSections[0].title, 'Project Description');
+  assert.equal(portfolioContent.projects[0].detailLeadSections[1].title, 'Outcome');
+  assert.match(portfolioContent.projects[0].detailLeadSections[0].bodyHtml, /web-based modeling and version management tool/i);
+  assert.match(portfolioContent.projects[0].detailLeadSections[1].bodyHtml, /reducing save time, improving computation speed/i);
   assert.equal(
     portfolioContent.contact.find((entry) => entry.label === 'Email')?.href,
     'mailto:zhant173@mcmaster.ca',
@@ -87,7 +95,6 @@ test('homepage shell declares the dekiru-like header, tagline, and logo-wall hoo
   assert.match(html, /id="nav-list"/);
   assert.match(html, /id="hero-statement"/);
   assert.match(html, /id="project-grid"/);
-  assert.match(html, /class="view-all-projects"/);
   assert.doesNotMatch(html, /id="about-copy"/);
   assert.doesNotMatch(html, /<section class="page-copy" id="about">/);
   assert.doesNotMatch(html, /class="site-footer"/);
@@ -143,22 +150,39 @@ test('project detail shells expose pagination, metadata, media, and aside hooks'
     assert.match(html, /id="detail-next-link"/);
     assert.match(html, /id="detail-title"/);
     assert.match(html, /id="detail-visit-link"/);
-    assert.match(html, /id="detail-meta-site-type"/);
-    assert.match(html, /id="detail-meta-platform"/);
-    assert.match(html, /id="detail-meta-disciplines"/);
+    assert.match(html, /id="detail-meta-stack"/);
     assert.match(html, /id="detail-featured-image"/);
     assert.match(html, /id="detail-details-body"/);
+    assert.match(html, /id="detail-project-quote"/);
     assert.match(html, /id="detail-quote-body"/);
     assert.match(html, /id="detail-quote-credit"/);
     assert.match(html, /id="detail-aside-logo"/);
     assert.match(html, /id="detail-longform-link"/);
     assert.match(html, /id="detail-longform-image"/);
+    assert.match(html, /id="detail-image-lightbox"/);
+    assert.match(html, /id="detail-image-lightbox-backdrop"/);
+    assert.match(html, /id="detail-image-lightbox-dialog"/);
+    assert.match(html, /id="detail-image-lightbox-close"/);
+    assert.match(html, /id="detail-image-lightbox-image"/);
+    assert.match(html, /id="detail-image-lightbox-caption"/);
+    assert.match(html, /id="detail-image-lightbox-prev"/);
+    assert.match(html, /id="detail-image-lightbox-next"/);
     assert.doesNotMatch(html, /class="site-footer"/);
     assert.doesNotMatch(html, /id="contact-list"/);
     assert.match(html, /src="\.\.\/assets\/vendor\/three\.min\.js"/);
     assert.match(html, /src="\.\.\/assets\/vendor\/vanta\.dots\.min\.js"/);
     assert.match(html, /src="\.\.\/project-detail\.js"/);
   }
+});
+
+test('process platform detail page exposes stacked gallery images in the aside', () => {
+  const html = fs.readFileSync(new URL('../../projects/process-platform.html', import.meta.url), 'utf8');
+
+  assert.match(html, /class="project-media-gallery"/);
+  assert.match(html, /data-detail-gallery-link/);
+  assert.match(html, /Computation Pane\.png/);
+  assert.match(html, /MaterialEditor\.png/);
+  assert.doesNotMatch(html, /TPseting\.png/);
 });
 
 test('styles define local postmono font faces and cloned homepage/detail layout classes', () => {
@@ -184,14 +208,29 @@ test('styles define local postmono font faces and cloned homepage/detail layout 
   assert.match(css, /\.project-card-wordmark\b/);
   assert.match(css, /\.project-hover-copy\b/);
   assert.match(css, /\.project-title\b/);
-  assert.match(css, /\.view-all-projects\b/);
   assert.match(css, /\.project-pagination\b/);
   assert.match(css, /\.project-header\b/);
   assert.match(css, /\.project-content\b/);
   assert.match(css, /\.featured-image\b/);
   assert.match(css, /\.project-aside\b/);
   assert.match(css, /\.project-longform-image\b/);
+  assert.match(css, /\.project-media-gallery\b/);
+  assert.match(css, /\.project-details-lead\b/);
+  assert.match(css, /\.project-details-intro\b/);
+  assert.match(css, /\.project-section\b/);
+  assert.match(css, /\.project-section-toggle\b/);
+  assert.match(css, /\.project-section-arrow\b/);
+  assert.match(css, /\.project-section-body\b/);
   assert.match(css, /\.project-quote\b/);
+  assert.match(css, /\.aside-project-logo-shell\b/);
+  assert.match(css, /\.aside-project-logo-image\b/);
+  assert.match(css, /\.detail-image-lightbox\b/);
+  assert.match(css, /\.detail-image-lightbox-backdrop\b/);
+  assert.match(css, /\.detail-image-lightbox-close\b/);
+  assert.match(css, /\.detail-image-lightbox-caption\b/);
+  assert.match(css, /\.detail-image-lightbox-pagination\b/);
+  assert.match(css, /\.detail-image-lightbox-nav\b/);
+  assert.match(css, /\.detail-lightbox-open\b/);
   assert.match(css, /\.about-page \.site-main\b/);
   assert.match(css, /\.about-page-panel\b/);
   assert.match(css, /\.about-page-copy\b/);
@@ -225,7 +264,7 @@ test('renderProjectCards outputs logo-wall cards with a wordmark and short resul
   assert.match(markup, /class="project-logo project-card-wordmark"/);
   assert.match(markup, /class="project-hover-copy"/);
   assert.match(markup, /class="project-card-result"/);
-  assert.match(markup, /Industrial Process Modeling Platform/);
+  assert.match(markup, /Hybrid Process Network Optimization Software/);
   assert.match(markup, /Vision-Assisted Arduino Robot Car/);
   assert.match(markup, /Safer saves, schema upgrades/i);
   assert.match(markup, /href="projects\/process-platform\.html"/);
@@ -237,16 +276,75 @@ test('renderProjectGroups outputs grouped project sections with a category place
     portfolioContent.projectCategories,
   );
 
+  assert.match(markup, /project-category-toggle/);
+  assert.match(markup, /aria-expanded="true"/);
+  assert.match(markup, /project-category-grid-full-stack-development/);
   assert.match(markup, /Full-Stack Development/);
   assert.match(markup, /Network &amp; Cybersecurity|Network & Cybersecurity/);
   assert.match(markup, /Hardware Development/);
   assert.match(markup, /Data Analysis/);
   assert.match(markup, /Personal Interest/);
-  assert.match(markup, /Industrial Process Modeling Platform/);
+  assert.match(markup, /Hybrid Process Network Optimization Software/);
   assert.match(markup, /Vision-Assisted Arduino Robot Car/);
   assert.match(markup, /Consumer Behaviour Analytics Dashboard/);
   assert.match(markup, /project-empty-state/);
   assert.match(markup, /Projects coming soon\./);
+});
+
+test('bindProjectCategoryToggles animates collapse and re-expands a category grid', () => {
+  const button = createMockProjectCategoryToggleButton('project-category-grid-full-stack-development');
+  const grid = createMockNode('project-category-grid-full-stack-development');
+  const doc = {
+    defaultView: {
+      requestAnimationFrame(handler) {
+        handler();
+      },
+    },
+    querySelectorAll(selector) {
+      assert.equal(selector, '[data-project-category-toggle]');
+      return [button];
+    },
+    getElementById(id) {
+      assert.equal(id, 'project-category-grid-full-stack-development');
+      return grid;
+    },
+  };
+
+  bindProjectCategoryToggles(doc);
+  assert.equal(grid.style.overflow, '');
+  assert.equal(grid.style.transform, '');
+  assert.equal(grid.style.opacity, '');
+
+  button.listeners.click();
+
+  assert.equal(button.getAttribute('aria-expanded'), 'false');
+  assert.equal(grid.dataset.collapsed, 'true');
+  assert.equal(grid.style.maxHeight, '0px');
+  assert.equal(grid.style.opacity, '0');
+  assert.equal(grid.style.transform, 'translateY(-12px)');
+  assert.equal(grid.style.overflow, 'hidden');
+  assert.equal(grid.hasAttribute('hidden'), false);
+
+  grid.listeners.transitionend({ target: grid });
+
+  assert.equal(grid.getAttribute('hidden'), '');
+
+  button.listeners.click();
+
+  assert.equal(button.getAttribute('aria-expanded'), 'true');
+  assert.equal(grid.hasAttribute('hidden'), false);
+  assert.equal(grid.dataset.collapsed, 'false');
+  assert.equal(grid.style.maxHeight, '320px');
+  assert.equal(grid.style.opacity, '1');
+  assert.equal(grid.style.transform, 'translateY(0)');
+  assert.equal(grid.style.overflow, 'hidden');
+
+  grid.listeners.transitionend({ target: grid });
+
+  assert.equal(grid.style.maxHeight, '');
+  assert.equal(grid.style.opacity, '');
+  assert.equal(grid.style.transform, '');
+  assert.equal(grid.style.overflow, '');
 });
 
 test('renderContactLinks outputs footer-style contact endpoints', () => {
@@ -507,17 +605,90 @@ test('renderProjectDetail mounts cloned detail-page metadata, media, and narrati
 
   renderProjectDetail(mockDocument);
 
-  assert.equal(mockDocument.getElementById('detail-title').textContent, 'Industrial Process Modeling Platform');
+  assert.equal(mockDocument.getElementById('detail-title').textContent, 'Hybrid Process Network Optimization Software');
   assert.equal(mockDocument.getElementById('detail-visit-link').textContent, 'Visit Project');
   assert.match(mockDocument.getElementById('detail-visit-link').href, /process-platform/i);
-  assert.equal(mockDocument.getElementById('detail-meta-site-type').textContent, 'Workflow Platform');
-  assert.equal(mockDocument.getElementById('detail-meta-platform').textContent, 'React + Node.js');
-  assert.match(mockDocument.getElementById('detail-meta-disciplines').innerHTML, /Frontend Systems/);
+  assert.match(mockDocument.getElementById('detail-meta-stack').innerHTML, /TypeScript/);
+  assert.match(mockDocument.getElementById('detail-meta-stack').innerHTML, /Vite/);
+  assert.match(mockDocument.getElementById('detail-meta-stack').innerHTML, /MongoDB/);
+  assert.match(mockDocument.getElementById('detail-meta-stack').innerHTML, /Docker Compose/);
   assert.match(mockDocument.getElementById('detail-featured-image').attributes.src, /ui_overview\.png/);
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /project-details-lead/);
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /detail-section-body-lead-1/);
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /detail-section-body-lead-2/);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /Project Description[\s\S]*This project is a web-based modeling and version management tool[\s\S]*Outcome[\s\S]*reducing save time, improving computation speed[\s\S]*Challenge/i,
+  );
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /data-project-section-toggle/);
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /detail-section-body-1/);
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /project-inline-quote/);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /project-inline-quote-emphasis/,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /Outcome[\s\S]*Reduced large-network save time[\s\S]*from 40 seconds to 1\.5 seconds/i,
+  );
   assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Challenge/i);
-  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /MongoDB and PostgreSQL/i);
-  assert.match(mockDocument.getElementById('detail-aside-logo').innerHTML, /Industrial Process Modeling Platform/);
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Approach/i);
+  assert.doesNotMatch(mockDocument.getElementById('detail-details-body').innerHTML, /MongoDB and PostgreSQL/i);
+  assert.doesNotMatch(mockDocument.getElementById('detail-details-body').innerHTML, /schema version stamping/i);
+  assert.match(mockDocument.getElementById('detail-aside-logo').innerHTML, /assets\/logos\/hypronet-logo\.png/);
+  assert.match(mockDocument.getElementById('detail-aside-logo').innerHTML, /<article class="project project-card aside-project-card"/);
+  assert.doesNotMatch(mockDocument.getElementById('detail-aside-logo').innerHTML, /aside-project-title/);
+  assert.doesNotMatch(mockDocument.getElementById('detail-aside-logo').innerHTML, /href="https:\/\/example\.com\/process-platform"/);
   assert.match(mockDocument.getElementById('detail-longform-image').attributes.src, /portfolio-placeholder\.svg|start_menu\.png|ui_overview\.png/);
+  assert.equal(mockDocument.getElementById('detail-quote-body').textContent, '');
+  assert.equal(mockDocument.getElementById('detail-quote-credit').textContent, '');
+  assert.equal(mockDocument.getElementById('detail-project-quote').getAttribute('hidden'), '');
+});
+
+test('bindProjectDetailSectionToggles collapses and re-expands a detail section body', () => {
+  const button = createMockProjectDetailSectionToggleButton('detail-section-body-1');
+  const body = createMockNode('detail-section-body-1');
+  const mockDocument = createMockDetailDocument('process-platform', {
+    sectionToggleButtons: [button],
+    sectionBodies: [body],
+  });
+
+  bindProjectDetailSectionToggles(mockDocument);
+
+  assert.equal(body.style.overflow, '');
+  assert.equal(body.style.transform, '');
+  assert.equal(body.style.opacity, '');
+
+  button.listeners.click();
+
+  assert.equal(button.getAttribute('aria-expanded'), 'false');
+  assert.equal(body.dataset.collapsed, 'true');
+  assert.equal(body.style.maxHeight, '0px');
+  assert.equal(body.style.opacity, '0');
+  assert.equal(body.style.transform, 'translateY(-8px)');
+  assert.equal(body.style.overflow, 'hidden');
+  assert.equal(body.hasAttribute('hidden'), false);
+
+  body.listeners.transitionend({ target: body });
+
+  assert.equal(body.getAttribute('hidden'), '');
+
+  button.listeners.click();
+
+  assert.equal(button.getAttribute('aria-expanded'), 'true');
+  assert.equal(body.hasAttribute('hidden'), false);
+  assert.equal(body.dataset.collapsed, 'false');
+  assert.equal(body.style.maxHeight, '320px');
+  assert.equal(body.style.opacity, '1');
+  assert.equal(body.style.transform, 'translateY(0)');
+  assert.equal(body.style.overflow, 'hidden');
+
+  body.listeners.transitionend({ target: body });
+
+  assert.equal(body.style.maxHeight, '');
+  assert.equal(body.style.opacity, '');
+  assert.equal(body.style.transform, '');
+  assert.equal(body.style.overflow, '');
 });
 
 test('renderProjectDetail mounts a safe fallback when the slug is unknown', () => {
@@ -531,11 +702,104 @@ test('renderProjectDetail mounts a safe fallback when the slug is unknown', () =
   assert.match(mockDocument.getElementById('detail-visit-link').href, /\.\.\/index\.html#projects/);
 });
 
+test('bindProjectDetailLightbox opens images in a dismissible overlay', () => {
+  const mockDocument = createMockDetailDocument('process-platform');
+
+  renderProjectDetail(mockDocument);
+  bindProjectDetailLightbox(mockDocument);
+
+  const featuredImage = mockDocument.getElementById('detail-featured-image');
+  const longformLink = mockDocument.getElementById('detail-longform-link');
+  const longformImage = mockDocument.getElementById('detail-longform-image');
+  const lightbox = mockDocument.getElementById('detail-image-lightbox');
+  const lightboxImage = mockDocument.getElementById('detail-image-lightbox-image');
+  const lightboxCaption = mockDocument.getElementById('detail-image-lightbox-caption');
+  const backdrop = mockDocument.getElementById('detail-image-lightbox-backdrop');
+  const closeButton = mockDocument.getElementById('detail-image-lightbox-close');
+  const prevButton = mockDocument.getElementById('detail-image-lightbox-prev');
+  const nextButton = mockDocument.getElementById('detail-image-lightbox-next');
+
+  featuredImage.listeners.click();
+
+  assert.equal(lightbox.hasAttribute('hidden'), false);
+  assert.equal(lightbox.getAttribute('aria-hidden'), 'false');
+  assert.equal(lightboxImage.getAttribute('src'), featuredImage.getAttribute('src'));
+  assert.equal(lightboxCaption.textContent, featuredImage.getAttribute('alt'));
+  assert.equal(prevButton.disabled, true);
+  assert.equal(nextButton.disabled, false);
+  assert.equal(mockDocument.body.classList.contains('detail-lightbox-open'), true);
+
+  backdrop.listeners.click();
+
+  assert.equal(lightbox.getAttribute('hidden'), '');
+  assert.equal(lightboxImage.getAttribute('src'), '');
+  assert.equal(lightboxCaption.textContent, '');
+  assert.equal(mockDocument.body.classList.contains('detail-lightbox-open'), false);
+
+  const clickEvent = {
+    prevented: false,
+    preventDefault() {
+      this.prevented = true;
+    },
+  };
+
+  longformLink.listeners.click(clickEvent);
+
+  assert.equal(clickEvent.prevented, true);
+  assert.equal(lightbox.hasAttribute('hidden'), false);
+  assert.equal(lightboxImage.getAttribute('src'), longformImage.getAttribute('src'));
+  assert.equal(lightboxCaption.textContent, longformImage.getAttribute('alt'));
+
+  closeButton.listeners.click({ stopPropagation() {} });
+
+  assert.equal(lightbox.getAttribute('hidden'), '');
+  assert.equal(lightbox.getAttribute('aria-hidden'), 'true');
+});
+
+test('bindProjectDetailLightbox opens stacked gallery images with the same overlay', () => {
+  const galleryImage = createMockNode('gallery-image');
+  galleryImage.setAttribute('src', '../assets/Industrial Process Modeling Platform/Computation Pane.png');
+  galleryImage.setAttribute('alt', 'Hybrid Process Network Optimization Software computation pane');
+  const galleryLink = createMockGalleryLink(galleryImage);
+  const mockDocument = createMockDetailDocument('process-platform', { galleryLinks: [galleryLink] });
+
+  renderProjectDetail(mockDocument);
+  bindProjectDetailLightbox(mockDocument);
+
+  const lightbox = mockDocument.getElementById('detail-image-lightbox');
+  const lightboxImage = mockDocument.getElementById('detail-image-lightbox-image');
+  const lightboxCaption = mockDocument.getElementById('detail-image-lightbox-caption');
+  const prevButton = mockDocument.getElementById('detail-image-lightbox-prev');
+  const nextButton = mockDocument.getElementById('detail-image-lightbox-next');
+
+  const clickEvent = {
+    prevented: false,
+    preventDefault() {
+      this.prevented = true;
+    },
+    currentTarget: galleryLink,
+  };
+
+  galleryLink.listeners.click(clickEvent);
+
+  assert.equal(clickEvent.prevented, true);
+  assert.equal(lightbox.hasAttribute('hidden'), false);
+  assert.equal(lightboxImage.getAttribute('src'), '../assets/Industrial Process Modeling Platform/Computation Pane.png');
+  assert.equal(lightboxCaption.textContent, 'Hybrid Process Network Optimization Software computation pane');
+
+  prevButton.listeners.click({ stopPropagation() {} });
+  assert.equal(lightboxImage.getAttribute('src'), mockDocument.getElementById('detail-longform-image').getAttribute('src'));
+
+  nextButton.listeners.click({ stopPropagation() {} });
+  assert.equal(lightboxImage.getAttribute('src'), '../assets/Industrial Process Modeling Platform/Computation Pane.png');
+});
+
 test('registerProjectDetailBoot mounts immediately and via DOMContentLoaded for detail pages', () => {
   const readyDoc = createMockDetailDocument('analytics-dashboard');
   readyDoc.readyState = 'interactive';
-  readyDoc.addEventListener = () => {
-    throw new Error('ready detail documents should mount immediately');
+  readyDoc.addEventListener = (eventName, handler) => {
+    assert.equal(eventName, 'keydown');
+    readyDoc.listeners[eventName] = handler;
   };
 
   registerProjectDetailBoot(readyDoc);
@@ -546,8 +810,13 @@ test('registerProjectDetailBoot mounts immediately and via DOMContentLoaded for 
   let loadingHandler;
 
   loadingDoc.addEventListener = (eventName, handler) => {
-    assert.equal(eventName, 'DOMContentLoaded');
-    loadingHandler = handler;
+    if (eventName === 'DOMContentLoaded') {
+      loadingHandler = handler;
+      return;
+    }
+
+    assert.equal(eventName, 'keydown');
+    loadingDoc.listeners[eventName] = handler;
   };
 
   registerProjectDetailBoot(loadingDoc);
@@ -590,26 +859,54 @@ function createMockAboutDocument() {
   return createMockDocument(ids);
 }
 
-function createMockDetailDocument(slug) {
+function createMockDetailDocument(slug, options = {}) {
+  const {
+    galleryLinks = [],
+    sectionToggleButtons = [],
+    sectionBodies = [],
+  } = options;
   const ids = [
     'detail-prev-link',
     'detail-next-link',
     'detail-title',
     'detail-visit-link',
-    'detail-meta-site-type',
-    'detail-meta-platform',
-    'detail-meta-disciplines',
+    'detail-meta-stack',
     'detail-featured-image',
     'detail-details-body',
+    'detail-project-quote',
     'detail-quote-body',
     'detail-quote-credit',
     'detail-aside-logo',
     'detail-longform-link',
     'detail-longform-image',
+    'detail-image-lightbox',
+    'detail-image-lightbox-backdrop',
+    'detail-image-lightbox-dialog',
+    'detail-image-lightbox-close',
+    'detail-image-lightbox-image',
+    'detail-image-lightbox-caption',
+    'detail-image-lightbox-prev',
+    'detail-image-lightbox-next',
   ];
 
   const doc = createMockDocument(ids);
   doc.body.dataset.projectSlug = slug;
+  sectionBodies.forEach((body) => {
+    doc.nodes.set(body.id, body);
+  });
+  doc.getElementById('detail-image-lightbox').setAttribute('hidden', '');
+  doc.getElementById('detail-image-lightbox').setAttribute('aria-hidden', 'true');
+  doc.querySelectorAll = (selector) => {
+    if (selector === '[data-detail-gallery-link]') {
+      return galleryLinks;
+    }
+
+    if (selector === '[data-project-section-toggle]') {
+      return sectionToggleButtons;
+    }
+
+    assert.fail(`Unexpected selector: ${selector}`);
+  };
   return doc;
 }
 
@@ -675,17 +972,42 @@ function createMockBackgroundDocument(options = {}) {
 
 function createMockDocument(ids) {
   const nodes = new Map(ids.map((id) => [id, createMockNode(id)]));
+  const listeners = {};
 
   return {
     readyState: 'interactive',
     body: {
       dataset: {},
+      classList: createClassList(),
     },
+    listeners,
     defaultView: {},
+    nodes,
     getElementById(id) {
       return nodes.get(id) ?? null;
     },
-    addEventListener() {},
+    addEventListener(eventName, handler) {
+      listeners[eventName] = handler;
+    },
+  };
+}
+
+function createMockProjectDetailSectionToggleButton(controlsId) {
+  return {
+    listeners: {},
+    attributes: {
+      'aria-controls': controlsId,
+      'aria-expanded': 'true',
+    },
+    addEventListener(eventName, handler) {
+      this.listeners[eventName] = handler;
+    },
+    setAttribute(name, value) {
+      this.attributes[name] = String(value);
+    },
+    getAttribute(name) {
+      return this.attributes[name];
+    },
   };
 }
 
@@ -729,6 +1051,41 @@ function createMockInteractiveContactButton() {
   };
 }
 
+function createMockProjectCategoryToggleButton(controlsId) {
+  return {
+    dataset: {
+      projectCategoryToggle: '',
+    },
+    listeners: {},
+    attributes: {
+      'aria-controls': controlsId,
+      'aria-expanded': 'true',
+    },
+    addEventListener(eventName, handler) {
+      this.listeners[eventName] = handler;
+    },
+    setAttribute(name, value) {
+      this.attributes[name] = String(value);
+    },
+    getAttribute(name) {
+      return this.attributes[name];
+    },
+  };
+}
+
+function createMockGalleryLink(imageNode) {
+  return {
+    listeners: {},
+    addEventListener(eventName, handler) {
+      this.listeners[eventName] = handler;
+    },
+    querySelector(selector) {
+      assert.equal(selector, 'img');
+      return imageNode;
+    },
+  };
+}
+
 function createMockNode(id) {
   return {
     id,
@@ -736,18 +1093,34 @@ function createMockNode(id) {
     innerHTML: '',
     href: '',
     attributes: {},
+    dataset: {},
+    style: {},
+    listeners: {},
+    scrollHeight: 320,
     classList: createClassList(),
+    addEventListener(eventName, handler) {
+      this.listeners[eventName] = handler;
+    },
+    removeEventListener(eventName) {
+      delete this.listeners[eventName];
+    },
     setAttribute(name, value) {
       this.attributes[name] = String(value);
       if (name === 'href') {
         this.href = String(value);
       }
     },
+    getAttribute(name) {
+      return this.attributes[name];
+    },
     removeAttribute(name) {
       delete this.attributes[name];
       if (name === 'href') {
         this.href = '';
       }
+    },
+    hasAttribute(name) {
+      return Object.hasOwn(this.attributes, name);
     },
   };
 }

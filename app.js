@@ -73,19 +73,133 @@ export function renderProjectGroups(projects = [], categories = []) {
       const projectMarkup = groupedProjects.length
         ? renderProjectCards(groupedProjects)
         : renderProjectEmptyState(category);
+      const gridId = `project-category-grid-${category.slug}`;
 
       return `
         <section class="project-category" data-category="${category.slug}">
           <div class="project-category-header">
-            <h3 class="project-category-title">${category.title}</h3>
+            <button
+              class="project-category-toggle project-category-title"
+              type="button"
+              data-project-category-toggle
+              aria-expanded="true"
+              aria-controls="${gridId}"
+            >
+              <span class="project-category-arrow" aria-hidden="true">></span>
+              <span class="project-category-label">${category.title}</span>
+            </button>
           </div>
-          <div class="project-grid project-category-grid">
+          <div class="project-grid project-category-grid" id="${gridId}" data-collapsed="false">
             ${projectMarkup}
           </div>
         </section>
       `;
     })
     .join('');
+}
+
+function getProjectCategoryAnimationFrame(doc) {
+  return doc?.defaultView?.requestAnimationFrame?.bind(doc.defaultView) ?? ((handler) => handler());
+}
+
+function removeProjectCategoryTransitionHandler(grid) {
+  const existingHandler = grid._projectCategoryTransitionHandler;
+
+  if (!existingHandler) {
+    return;
+  }
+
+  grid.removeEventListener?.('transitionend', existingHandler);
+  delete grid._projectCategoryTransitionHandler;
+}
+
+function resetProjectCategoryGridAnimationStyles(grid) {
+  grid.style.maxHeight = '';
+  grid.style.opacity = '';
+  grid.style.transform = '';
+  grid.style.overflow = '';
+}
+
+function setProjectCategoryCollapsedState(button, grid, collapsed, doc = document) {
+  const requestAnimationFrame = getProjectCategoryAnimationFrame(doc);
+
+  removeProjectCategoryTransitionHandler(grid);
+  button.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+  grid.dataset.collapsed = collapsed ? 'true' : 'false';
+
+  grid.removeAttribute('hidden');
+  const fullHeight = `${grid.scrollHeight}px`;
+  grid.style.overflow = 'hidden';
+
+  if (collapsed) {
+    grid.style.maxHeight = fullHeight;
+    grid.style.opacity = '1';
+    grid.style.transform = 'translateY(0)';
+
+    requestAnimationFrame(() => {
+      grid.style.maxHeight = '0px';
+      grid.style.opacity = '0';
+      grid.style.transform = 'translateY(-12px)';
+    });
+  } else {
+    grid.style.maxHeight = '0px';
+    grid.style.opacity = '0';
+    grid.style.transform = 'translateY(-12px)';
+
+    requestAnimationFrame(() => {
+      grid.style.maxHeight = fullHeight;
+      grid.style.opacity = '1';
+      grid.style.transform = 'translateY(0)';
+    });
+  }
+
+  const transitionHandler = (event) => {
+    if (event?.target && event.target !== grid) {
+      return;
+    }
+
+    removeProjectCategoryTransitionHandler(grid);
+
+    if (grid.dataset.collapsed === 'true') {
+      resetProjectCategoryGridAnimationStyles(grid);
+      grid.setAttribute('hidden', '');
+      return;
+    }
+
+    resetProjectCategoryGridAnimationStyles(grid);
+  };
+
+  grid._projectCategoryTransitionHandler = transitionHandler;
+  grid.addEventListener?.('transitionend', transitionHandler);
+}
+
+function initializeProjectCategoryGrid(grid) {
+  grid.dataset.collapsed = grid.dataset.collapsed ?? 'false';
+  resetProjectCategoryGridAnimationStyles(grid);
+}
+
+export function bindProjectCategoryToggles(doc = document) {
+  if (!doc?.querySelectorAll) {
+    return;
+  }
+
+  const toggleButtons = doc.querySelectorAll('[data-project-category-toggle]');
+
+  toggleButtons.forEach((button) => {
+    const controlledId = button.getAttribute('aria-controls');
+    const grid = controlledId ? doc.getElementById(controlledId) : null;
+
+    if (!grid) {
+      return;
+    }
+
+    initializeProjectCategoryGrid(grid);
+
+    button.addEventListener('click', () => {
+      const collapsed = button.getAttribute('aria-expanded') === 'true';
+      setProjectCategoryCollapsedState(button, grid, collapsed, doc);
+    });
+  });
 }
 
 export function renderContactLinks(items = []) {
@@ -139,6 +253,7 @@ export function renderPortfolio(content = portfolioContent, doc = document) {
 
 export function bootPortfolio(doc = document) {
   renderPortfolio(portfolioContent, doc);
+  bindProjectCategoryToggles(doc);
   mountInteractiveBackground(doc);
 }
 
