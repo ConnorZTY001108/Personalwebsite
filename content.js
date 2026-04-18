@@ -243,6 +243,545 @@ export const portfolioContent = {
         credit: 'Applied Analytics Project',
       },
     },
+    {
+      slug: 'secure-gateway-sgx',
+      category: 'network-cybersecurity',
+      domain: 'Secure Systems',
+      wordmarkLines: ['Secure Gateway', 'Based on SGX'],
+      result: 'One-way critical-data transfer with SGX-backed security checks for industrial networks.',
+      title: 'Unidirectional Secure Gateway Based on SGX',
+      subtitle: 'One-way secure data transfer for critical infrastructure scenarios.',
+      summary:
+        'Designed a unidirectional secure gateway that paired physical one-way transfer with SGX-backed trusted processing for industrial-control data.',
+      visit: {
+        href: 'https://example.com/secure-gateway-sgx',
+        label: 'Visit Project',
+      },
+      detailMeta: {
+        siteType: 'Secure Gateway',
+        platform: 'Ubuntu + Intel SGX',
+        disciplines: ['Trusted Computing', 'Network Security'],
+      },
+      stack: ['Intel SGX', 'Ubuntu', 'Trusted Execution'],
+      media: {
+        featuredImage: placeholderImage,
+        featuredAlt: 'Placeholder visual for the secure gateway project',
+        longformImage: placeholderImage,
+        longformAlt: 'Placeholder longform visual for the secure gateway project',
+      },
+      detailLeadSections: [
+        {
+          title: 'Project Description',
+          bodyHtml: `
+        <p>
+          This project focused on secure data transfer for critical infrastructure environments. I designed a
+          unidirectional secure gateway that used physical isolation to ensure one-way transmission while still
+          allowing protected processing on the receiving side.
+        </p>
+        <p>
+          The core idea was to narrow the attack surface at the network boundary without treating the gateway as a
+          simple pass-through box. Intel SGX made it possible to protect sensitive handling inside a trusted
+          execution environment.
+        </p>
+      `,
+        },
+        {
+          title: 'Key Contributions',
+          bodyHtml: `
+        <ul>
+          <li>Designed and implemented a Unidirectional Secure Gateway (USG) on Ubuntu for one-way critical-data transfer.</li>
+          <li>Integrated Intel SGX trusted execution to support both pass-through and security-check modes.</li>
+          <li>Analyzed industrial-control use cases in manufacturing, transportation, and energy settings.</li>
+        </ul>
+      `,
+        },
+      ],
+      detailsHtml: `
+    <h4>Outcome</h4>
+    <p>
+      The project demonstrated how physical isolation and SGX-backed processing can be combined to reduce attack
+      surface while still supporting protected inspection of incoming data.
+    </p>
+  `,
+      quote: {
+        body: '',
+        credit: '',
+      },
+    },
+    {
+      slug: 'intel-sgx-enclave-lab',
+      category: 'network-cybersecurity',
+      domain: 'Trusted Computing',
+      wordmarkLines: ['Intel SGX', 'Enclave Lab'],
+      result: 'Hands-on enclave calls, trusted output, and file-writing experiments inside Intel SGX.',
+      title: 'Intel SGX Enclave Lab',
+      subtitle: "Hands-on SGX enclave experiments inside Intel's Docker lab environment.",
+      summary:
+        "Extended Intel's sample SGX environment to compare trusted and untrusted execution paths through small, targeted experiments.",
+      visit: {
+        href: 'https://example.com/intel-sgx-enclave-lab',
+        label: 'Visit Project',
+      },
+      detailMeta: {
+        siteType: 'Security Lab',
+        platform: 'Docker + Intel SGX',
+        disciplines: ['Trusted Execution', 'Systems Experiments'],
+      },
+      stack: ['Intel SGX', 'Docker', 'Ubuntu'],
+      media: {
+        featuredImage: placeholderImage,
+        featuredAlt: 'Placeholder visual for the Intel SGX lab project',
+        longformImage: placeholderImage,
+        longformAlt: 'Placeholder longform visual for the Intel SGX lab project',
+      },
+      detailLeadSections: [
+        {
+          title: 'Project Description',
+          bodyHtml: `
+        <p>
+          This lab project was a hands-on introduction to Intel SGX. I worked inside Intel's pre-configured Docker
+          image, built and ran the sample project, and then modified the sample to compare trusted and untrusted
+          behavior.
+        </p>
+      `,
+        },
+        {
+          title: 'Key Contributions',
+          bodyHtml: `
+        <ul>
+          <li>Ran Intel's sample enclave project inside the SGX Docker environment.</li>
+          <li>Added trusted and untrusted calls that append text to a file during enclave execution.</li>
+          <li>Added trusted and untrusted calls to compute a square root inside the enclave workflow.</li>
+        </ul>
+      `,
+        },
+      ],
+      detailsHtml: `
+    <h4>Notes</h4>
+    <p>
+      The lab made SGX much more concrete by showing how enclave boundaries affect real execution paths rather than
+      treating trusted execution as an abstract security concept.
+    </p>
+  `,
+      quote: {
+        body: '',
+        credit: '',
+      },
+    },
+    {
+      slug: 'dns-parking-detection',
+      category: 'network-cybersecurity',
+      domain: 'Network Diagnostics',
+      wordmarkLines: ['DNS Parking', 'Detection'],
+      result: 'DNS-record and service-port analysis to distinguish parked domains from live websites.',
+      title: 'DNS-Based Parking Website Detection System',
+      subtitle: 'Domain classification using DNS records and live service checks.',
+      summary:
+        'Analyzed DNS records and service availability to determine whether a domain was a parked page or an active site.',
+      visit: {
+        href: 'https://example.com/dns-parking-detection',
+        label: 'Visit Project',
+      },
+      detailMeta: {
+        siteType: 'Detection Tool',
+        platform: 'DNS + Service Checks',
+        disciplines: ['DNS Analysis', 'Network Diagnostics'],
+      },
+      stack: ['DNS', 'A/MX Records', 'CNAME/NS', 'Port Checks'],
+      media: {
+        featuredImage: placeholderImage,
+        featuredAlt: 'Placeholder visual for the DNS parking detection project',
+        longformImage: placeholderImage,
+        longformAlt: 'Placeholder longform visual for the DNS parking detection project',
+      },
+      detailLeadSections: [
+        {
+          title: 'Project Description',
+          bodyHtml: `
+        <p>
+          This project focused on recognizing parked domains instead of just resolving hostnames. I combined DNS
+          record analysis with service verification to move from name lookup into operational classification.
+        </p>
+      `,
+        },
+        {
+          title: 'Key Contributions',
+          bodyHtml: `
+        <ul>
+          <li>Queried A, MX, and CNAME/NS records to resolve domain ownership and routing details.</li>
+          <li>Checked whether the resolved IP address exposed an active service port.</li>
+          <li>Used DNS registration timing as an additional signal when classifying parked pages.</li>
+        </ul>
+      `,
+        },
+      ],
+      detailsHtml: `
+    <h4>Outcome</h4>
+    <p>
+      The result was a stronger detection workflow than DNS lookup alone because it combined record inspection,
+      registration context, and live-service checks in one decision path.
+    </p>
+  `,
+      quote: {
+        body: '',
+        credit: '',
+      },
+    },
+    {
+      slug: 'decentralized-platforms',
+      category: 'full-stack-development',
+      domain: 'Cloud Commerce',
+      wordmarkLines: ['Cloud &', 'Decentralized', 'Platforms'],
+      result: 'Ethereum smart contracts, backend services, and S3-backed storage for a research commerce stack.',
+      title: 'Software Development on Cloud and Decentralized Platforms',
+      subtitle: 'Research prototype combining Ethereum smart contracts, backend logic, and cloud storage.',
+      summary:
+        'Explored how an e-commerce workflow could mix Ethereum smart contracts with backend services and AWS S3-backed storage.',
+      visit: {
+        href: 'https://example.com/decentralized-platforms',
+        label: 'Visit Project',
+      },
+      detailMeta: {
+        siteType: 'Research Prototype',
+        platform: 'Ethereum + AWS S3',
+        disciplines: ['Backend Systems', 'Smart Contracts'],
+      },
+      stack: ['Ethereum', 'Solidity', 'AWS S3', 'Backend Logic'],
+      media: {
+        featuredImage: placeholderImage,
+        featuredAlt: 'Placeholder visual for the cloud and decentralized platforms project',
+        longformImage: placeholderImage,
+        longformAlt: 'Placeholder longform visual for the cloud and decentralized platforms project',
+      },
+      detailLeadSections: [
+        {
+          title: 'Project Description',
+          bodyHtml: `
+        <p>
+          This research project examined how cloud-hosted services and decentralized platforms can work together in
+          a commerce workflow. Ethereum handled transaction logic, while backend services and AWS S3 supported
+          application behavior and storage.
+        </p>
+      `,
+        },
+        {
+          title: 'Key Contributions',
+          bodyHtml: `
+        <ul>
+          <li>Selected Ethereum as the decentralized platform and wrote Solidity smart contracts for product posting, purchasing, and payment.</li>
+          <li>Built backend logic to handle user requests, interact with contracts, and manage user data.</li>
+          <li>Used AWS S3 to provide reliable cloud storage and backup for application data.</li>
+        </ul>
+      `,
+        },
+      ],
+      detailsHtml: `
+    <h4>Outcome</h4>
+    <p>
+      The project connected smart contracts, backend orchestration, and cloud storage into one research prototype,
+      making the tradeoffs between centralized and decentralized components easier to evaluate.
+    </p>
+  `,
+      quote: {
+        body: '',
+        credit: '',
+      },
+    },
+    {
+      slug: 'smart-home-management',
+      category: 'full-stack-development',
+      domain: 'Web Application',
+      wordmarkLines: ['Smart Home', 'Management'],
+      result: 'Flask-backed smart-home simulation with realtime JSON-driven control flows.',
+      title: 'Smart Home Management System',
+      subtitle: 'Smart-home management workflow with Flask and JSON-backed state.',
+      summary:
+        'Built a smart-home management system with an HTML/CSS interface, Flask backend logic, and JSON-based state updates.',
+      visit: {
+        href: 'https://example.com/smart-home-management',
+        label: 'Visit Project',
+      },
+      detailMeta: {
+        siteType: 'Management App',
+        platform: 'Flask + HTML/CSS',
+        disciplines: ['Backend Logic', 'UI Simulation'],
+      },
+      stack: ['Flask', 'HTML', 'CSS', 'JSON'],
+      media: {
+        featuredImage: placeholderImage,
+        featuredAlt: 'Placeholder visual for the smart home project',
+        longformImage: placeholderImage,
+        longformAlt: 'Placeholder longform visual for the smart home project',
+      },
+      detailLeadSections: [
+        {
+          title: 'Project Description',
+          bodyHtml: `
+        <p>
+          This project simulated a mobile-style smart-home management interface backed by Flask. The goal was to tie
+          simple frontend controls to backend logic and persistent user actions.
+        </p>
+      `,
+        },
+        {
+          title: 'Key Contributions',
+          bodyHtml: `
+        <ul>
+          <li>Built the interface with HTML and CSS to simulate a mobile control experience.</li>
+          <li>Used Flask to handle backend workflow and user actions.</li>
+          <li>Adopted JSON files to store and update smart-home state in real time.</li>
+        </ul>
+      `,
+        },
+      ],
+      detailsHtml: `
+    <h4>Outcome</h4>
+    <p>
+      The result was a compact but complete control workflow covering furniture management, device control, and
+      add-furniture flows inside one application.
+    </p>
+  `,
+      quote: {
+        body: '',
+        credit: '',
+      },
+    },
+    {
+      slug: 'gym-membership-management',
+      category: 'full-stack-development',
+      domain: 'Management System',
+      wordmarkLines: ['Gym Membership', 'Management'],
+      result: 'Member and admin workflows for registration, classes, equipment, points, and fee handling.',
+      title: 'Gym Membership Management System',
+      subtitle: 'Member and administrator workflows built with Flask and MongoDB.',
+      summary:
+        'Built separate member and admin workflows for registration, profile updates, classes, coaches, equipment, and fee logic.',
+      visit: {
+        href: 'https://example.com/gym-membership-management',
+        label: 'Visit Project',
+      },
+      detailMeta: {
+        siteType: 'Management System',
+        platform: 'Flask + MongoDB',
+        disciplines: ['CRUD Workflows', 'Admin Systems'],
+      },
+      stack: ['Flask', 'MongoDB', 'HTML'],
+      media: {
+        featuredImage: placeholderImage,
+        featuredAlt: 'Placeholder visual for the gym management project',
+        longformImage: placeholderImage,
+        longformAlt: 'Placeholder longform visual for the gym management project',
+      },
+      detailLeadSections: [
+        {
+          title: 'Project Description',
+          bodyHtml: `
+        <p>
+          This project modeled the daily operations of a gym through separate member and administrator interfaces.
+          It focused on managing people, schedules, and fees inside a single system.
+        </p>
+      `,
+        },
+        {
+          title: 'Key Contributions',
+          bodyHtml: `
+        <ul>
+          <li>Used MongoDB for the underlying data model and Flask for backend behavior.</li>
+          <li>Implemented registration, profile updates, and course participation for members.</li>
+          <li>Built admin flows to manage courses, coaches, equipment, points, and fee generation.</li>
+        </ul>
+      `,
+        },
+      ],
+      detailsHtml: `
+    <h4>Outcome</h4>
+    <p>
+      The system covered both user-facing and administrative operations, making it a stronger CRUD workflow project
+      than a single-role dashboard.
+    </p>
+  `,
+      quote: {
+        body: '',
+        credit: '',
+      },
+    },
+    {
+      slug: 'community-refrigerator',
+      category: 'full-stack-development',
+      domain: 'Community Platform',
+      wordmarkLines: ['Community', 'Refrigerator'],
+      result: 'Inventory browsing, item removal, and realtime MongoDB-backed updates for a community fridge.',
+      title: 'Community Refrigerator Web App',
+      subtitle: 'Community inventory workflow with realtime MongoDB-backed updates.',
+      summary:
+        'Developed a small web app for browsing shared fridge inventory, viewing items, and updating data in real time.',
+      visit: {
+        href: 'https://example.com/community-refrigerator',
+        label: 'Visit Project',
+      },
+      detailMeta: {
+        siteType: 'Community Web App',
+        platform: 'HTML/CSS/JS + MongoDB',
+        disciplines: ['Frontend Basics', 'Realtime Data'],
+      },
+      stack: ['HTML', 'CSS', 'JavaScript', 'MongoDB', 'JSON'],
+      media: {
+        featuredImage: placeholderImage,
+        featuredAlt: 'Placeholder visual for the community refrigerator project',
+        longformImage: placeholderImage,
+        longformAlt: 'Placeholder longform visual for the community refrigerator project',
+      },
+      detailLeadSections: [
+        {
+          title: 'Project Description',
+          bodyHtml: `
+        <p>
+          This project focused on a simple shared-inventory workflow for a community refrigerator. The emphasis was
+          on clear browsing and item updates rather than visual complexity.
+        </p>
+      `,
+        },
+        {
+          title: 'Key Contributions',
+          bodyHtml: `
+        <ul>
+          <li>Built the web interface with HTML, CSS, and JavaScript.</li>
+          <li>Stored and loaded data in JSON format backed by MongoDB.</li>
+          <li>Implemented browsing, item viewing, item removal, and realtime data updates.</li>
+        </ul>
+      `,
+        },
+      ],
+      detailsHtml: `
+    <h4>Outcome</h4>
+    <p>
+      The app turned a small community use case into a practical data workflow and gave me hands-on experience with
+      simple realtime update paths.
+    </p>
+  `,
+      quote: {
+        body: '',
+        credit: '',
+      },
+    },
+    {
+      slug: 'aed-interface-simulation',
+      category: 'hardware-development',
+      domain: 'Medical Device Interface',
+      wordmarkLines: ['AED Interface', 'Simulation'],
+      result: 'Qt and C++ training interface for ECG, CPR, shock logic, and patient-state simulation.',
+      title: 'AED Interface Simulation',
+      subtitle: 'Qt-based AED interface and training-mode simulation.',
+      summary:
+        'Created an AED software simulation that combined interface design, training flow, and patient-state logic.',
+      visit: {
+        href: 'https://example.com/aed-interface-simulation',
+        label: 'Visit Project',
+      },
+      detailMeta: {
+        siteType: 'Training Interface',
+        platform: 'Qt + C++',
+        disciplines: ['Embedded UI', 'Simulation Logic'],
+      },
+      stack: ['Qt', 'C++'],
+      media: {
+        featuredImage: placeholderImage,
+        featuredAlt: 'Placeholder visual for the AED simulation project',
+        longformImage: placeholderImage,
+        longformAlt: 'Placeholder longform visual for the AED simulation project',
+      },
+      detailLeadSections: [
+        {
+          title: 'Project Description',
+          bodyHtml: `
+        <p>
+          This project simulated the logic and interface flow of an AED training device. The work combined user
+          interface design with procedural device behavior.
+        </p>
+      `,
+        },
+        {
+          title: 'Key Contributions',
+          bodyHtml: `
+        <ul>
+          <li>Used Qt and C++ to build the training interface and underlying simulation logic.</li>
+          <li>Implemented ECG output, CPR analysis, shock simulation, and heart-rate feedback.</li>
+          <li>Built input-driven logic to determine whether defibrillation was required for different patient types.</li>
+        </ul>
+      `,
+        },
+      ],
+      detailsHtml: `
+    <h4>Outcome</h4>
+    <p>
+      The result was both a UI exercise and a procedure simulator, combining training guidance with device-like
+      state transitions.
+    </p>
+  `,
+      quote: {
+        body: '',
+        credit: '',
+      },
+    },
+    {
+      slug: 'interactive-documentary',
+      category: 'personal-interest',
+      domain: 'Interactive Media',
+      wordmarkLines: ['Interactive', 'Documentary'],
+      result: 'Dynamic local and YouTube playback with synchronized controls for an interactive documentary.',
+      title: 'Interactive Documentary Created with HTML',
+      subtitle: 'Interactive documentary with synchronized local and YouTube video playback.',
+      summary:
+        'Built an HTML, CSS, and JavaScript documentary experience that coordinated local video, YouTube embeds, and timed interaction.',
+      visit: {
+        href: 'https://example.com/interactive-documentary',
+        label: 'Visit Project',
+      },
+      detailMeta: {
+        siteType: 'Interactive Experience',
+        platform: 'HTML + JavaScript',
+        disciplines: ['Frontend Interaction', 'Media Integration'],
+      },
+      stack: ['HTML', 'CSS', 'JavaScript', 'YouTube IFrame API'],
+      media: {
+        featuredImage: placeholderImage,
+        featuredAlt: 'Placeholder visual for the interactive documentary project',
+        longformImage: placeholderImage,
+        longformAlt: 'Placeholder longform visual for the interactive documentary project',
+      },
+      detailLeadSections: [
+        {
+          title: 'Project Description',
+          bodyHtml: `
+        <p>
+          This project explored interactive storytelling through synchronized media playback. It combined local video
+          assets, YouTube embeds, and responsive interface controls to shape how the documentary unfolded.
+        </p>
+      `,
+        },
+        {
+          title: 'Key Contributions',
+          bodyHtml: `
+        <ul>
+          <li>Used HTML, CSS, and JavaScript to coordinate local and YouTube videos.</li>
+          <li>Built a multi-device adaptive interface with cover screens, buttons, and dropdown controls.</li>
+          <li>Implemented time-triggered logic and custom JavaScript animations with the YouTube IFrame API.</li>
+        </ul>
+      `,
+        },
+      ],
+      detailsHtml: `
+    <h4>Outcome</h4>
+    <p>
+      The project emphasized timing, media control, and interactivity, showing how frontend logic can shape a
+      narrative experience rather than just present static content.
+    </p>
+  `,
+      quote: {
+        body: '',
+        credit: '',
+      },
+    },
   ],
   resume: {
     available: false,

@@ -55,7 +55,41 @@ test('portfolio content exposes the cloned dekiru-style homepage contract', () =
   );
   assert.deepEqual(
     portfolioContent.projects.map((project) => project.slug),
-    ['process-platform', 'robot-car', 'analytics-dashboard'],
+    [
+      'process-platform',
+      'robot-car',
+      'analytics-dashboard',
+      'secure-gateway-sgx',
+      'intel-sgx-enclave-lab',
+      'dns-parking-detection',
+      'decentralized-platforms',
+      'smart-home-management',
+      'gym-membership-management',
+      'community-refrigerator',
+      'aed-interface-simulation',
+      'interactive-documentary',
+    ],
+  );
+  assert.equal(portfolioContent.projects.length, 12);
+  assert.equal(
+    portfolioContent.projects.find((project) => project.slug === 'community-refrigerator')
+      ?.category,
+    'full-stack-development',
+  );
+  assert.equal(
+    portfolioContent.projects.find((project) => project.slug === 'secure-gateway-sgx')
+      ?.category,
+    'network-cybersecurity',
+  );
+  assert.equal(
+    portfolioContent.projects.find((project) => project.slug === 'aed-interface-simulation')
+      ?.category,
+    'hardware-development',
+  );
+  assert.equal(
+    portfolioContent.projects.find((project) => project.slug === 'interactive-documentary')
+      ?.category,
+    'personal-interest',
   );
   assert.deepEqual(
     portfolioContent.projectCategories.map((category) => category.slug),
@@ -140,6 +174,15 @@ test('project detail shells expose pagination, metadata, media, and aside hooks'
     ['process-platform', '../../projects/process-platform.html'],
     ['robot-car', '../../projects/robot-car.html'],
     ['analytics-dashboard', '../../projects/analytics-dashboard.html'],
+    ['secure-gateway-sgx', '../../projects/secure-gateway-sgx.html'],
+    ['intel-sgx-enclave-lab', '../../projects/intel-sgx-enclave-lab.html'],
+    ['dns-parking-detection', '../../projects/dns-parking-detection.html'],
+    ['decentralized-platforms', '../../projects/decentralized-platforms.html'],
+    ['smart-home-management', '../../projects/smart-home-management.html'],
+    ['gym-membership-management', '../../projects/gym-membership-management.html'],
+    ['community-refrigerator', '../../projects/community-refrigerator.html'],
+    ['aed-interface-simulation', '../../projects/aed-interface-simulation.html'],
+    ['interactive-documentary', '../../projects/interactive-documentary.html'],
   ];
 
   for (const [slug, file] of detailPages) {
@@ -270,7 +313,7 @@ test('renderProjectCards outputs logo-wall cards with a wordmark and short resul
   assert.match(markup, /href="projects\/process-platform\.html"/);
 });
 
-test('renderProjectGroups outputs grouped project sections with a category placeholder state', () => {
+test('renderProjectGroups outputs grouped project sections across the populated category taxonomy', () => {
   const markup = renderProjectGroups(
     portfolioContent.projects,
     portfolioContent.projectCategories,
@@ -285,8 +328,17 @@ test('renderProjectGroups outputs grouped project sections with a category place
   assert.match(markup, /Data Analysis/);
   assert.match(markup, /Personal Interest/);
   assert.match(markup, /Hybrid Process Network Optimization Software/);
+  assert.match(markup, /Unidirectional Secure Gateway Based on SGX/);
   assert.match(markup, /Vision-Assisted Arduino Robot Car/);
   assert.match(markup, /Consumer Behaviour Analytics Dashboard/);
+  assert.match(markup, /Interactive Documentary Created with HTML/);
+  assert.doesNotMatch(markup, /project-empty-state/);
+  assert.doesNotMatch(markup, /Projects coming soon\./);
+});
+
+test('renderProjectGroups preserves the empty-category placeholder branch', () => {
+  const markup = renderProjectGroups([], [portfolioContent.projectCategories[0]]);
+
   assert.match(markup, /project-empty-state/);
   assert.match(markup, /Projects coming soon\./);
 });
@@ -642,6 +694,34 @@ test('renderProjectDetail mounts cloned detail-page metadata, media, and narrati
   assert.match(mockDocument.getElementById('detail-longform-image').attributes.src, /portfolio-placeholder\.svg|start_menu\.png|ui_overview\.png/);
   assert.equal(mockDocument.getElementById('detail-quote-body').textContent, '');
   assert.equal(mockDocument.getElementById('detail-quote-credit').textContent, '');
+  assert.equal(mockDocument.getElementById('detail-project-quote').getAttribute('hidden'), '');
+});
+
+test('renderProjectDetail mounts lightweight CV-backed detail pages for newly added projects', () => {
+  const mockDocument = createMockDetailDocument('secure-gateway-sgx');
+
+  renderProjectDetail(mockDocument);
+
+  assert.equal(
+    mockDocument.getElementById('detail-title').textContent,
+    'Unidirectional Secure Gateway Based on SGX',
+  );
+  assert.match(mockDocument.getElementById('detail-meta-stack').innerHTML, /Intel SGX/);
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Project Description/);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /physical isolation to ensure one-way transmission/i,
+  );
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Key Contributions/);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /pass-through and security-check modes/i,
+  );
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Outcome/i);
+  assert.match(
+    mockDocument.getElementById('detail-featured-image').attributes.src,
+    /portfolio-placeholder\.svg/,
+  );
   assert.equal(mockDocument.getElementById('detail-project-quote').getAttribute('hidden'), '');
 });
 
