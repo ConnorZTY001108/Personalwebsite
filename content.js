@@ -7,7 +7,7 @@ export const portfolioContent = {
       primary: 'Tianyu',
       secondary: 'Zhang',
     },
-    heroStatementLines: ['Software Design', '& Build for', 'Workflow Systems'],
+    heroStatementLines: ['Turning problems into working software with AI'],
     availability: 'Open to software engineering internship opportunities',
     headline: 'Software engineer for workflow systems, product tooling, and applied backend work',
     summary:
@@ -127,7 +127,41 @@ export const portfolioContent = {
       ],
       detailsHtml: `
         <h4>Challenge</h4>
+        <p>
+          Before I took ownership of this part of the project, the system already had its
+          <strong class="detail-emphasis">core modeling, saving, and computation features</strong> in place. Users
+          could create factory flow diagrams, edit node parameters, and submit models to the backend solver for
+          computation. In other words, the application was already
+          <strong class="detail-emphasis">functionally complete</strong>, but its
+          <strong class="detail-emphasis">performance and responsiveness</strong> still had clear room for improvement.
+          As the models became larger, with more nodes, <strong class="detail-emphasis">nested subnetworks</strong>,
+          and <strong class="detail-emphasis">time-period data</strong>, the save flow started to slow down because of
+          <strong class="detail-emphasis"
+            >redundant writes, full-page refreshes, and multi-layer data synchronization</strong
+          >, while the computation flow became slower due to the
+          <strong class="detail-emphasis">large volume of results</strong> and the complexity of writing them back into
+          the system. My role was to improve these areas
+          <strong class="detail-emphasis">without disrupting existing functionality</strong>, helping move the product
+          from something that simply <strong class="detail-emphasis">worked</strong> to something that felt
+          <strong class="detail-emphasis">smooth and reliable in practice</strong>.
+        </p>
         <h4>Approach</h4>
+        <p>
+          Rather than <strong class="detail-emphasis">rewriting the existing system</strong>, I focused on making
+          <strong class="detail-emphasis">targeted performance improvements</strong> on top of the current
+          implementation. For saving, I changed the workflow from a largely
+          <strong class="detail-emphasis">full-save process</strong> to a more efficient
+          <strong class="detail-emphasis">incremental save approach</strong>, so that only the data that had actually
+          changed would be persisted. I also added <strong class="detail-emphasis">request deduplication</strong> and
+          <strong class="detail-emphasis">save guards</strong> to reduce unnecessary writes and prevent disruptive user
+          interactions. For computation, I restructured the workflow around
+          <strong class="detail-emphasis">asynchronous queued execution</strong> and optimized the result write-back
+          path through
+          <strong class="detail-emphasis">controlled concurrency, batched database writes, and cache reuse</strong>.
+          At the same time, I made sure to
+          <strong class="detail-emphasis">preserve user-entered values</strong>, so that improving performance would
+          not come at the cost of <strong class="detail-emphasis">correctness or stability</strong>.
+        </p>
       `,
       quote: {
         body: '',
@@ -139,54 +173,100 @@ export const portfolioContent = {
       category: 'hardware-development',
       domain: 'Robotics Interface',
       wordmarkLines: ['Vision Assisted', 'Robot Car'],
-      result: 'Browser control, live telemetry, and vision-assisted driving feedback in one loop.',
+      result: 'Gamepad teleoperation, live video, and host-side vision feedback integrated into one robot workflow.',
       title: 'Vision-Assisted Arduino Robot Car',
-      subtitle: 'Browser-based robotics control with computer vision assistance.',
+      subtitle: 'A team robotics project combining Arduino control, ESP32-S3 streaming, and browser-based operation.',
       summary:
-        'Built a browser-driven robotics workflow that combines teleoperation, telemetry, and host-side computer vision feedback.',
+        'In a four-person SEP 780 project, we turned an ELEGOO robot car kit into a browser-operated system with controller input, live telemetry, and host-side vision assistance.',
       visit: {
-        href: 'https://example.com/vision-assisted-robot-car',
-        label: 'Visit Project',
+        href: '../assets/project-documents/robot-car-sep780-final-report.pdf',
+        label: 'Download Project PDF',
       },
       detailMeta: {
-        siteType: 'Robotics Interface',
-        platform: 'Angular + Python',
-        disciplines: ['Control UI', 'Computer Vision'],
+        siteType: 'Embedded Robotics Project',
+        platform: 'Arduino + ESP32-S3 + Angular',
+        disciplines: ['Embedded Control', 'Operator UI', 'Computer Vision Integration'],
       },
-      stack: ['Angular', 'Python', 'WebSocket', 'Arduino UNO', 'ESP32-S3'],
+      stack: ['Angular', 'WebSocket', 'Python', 'Arduino UNO R3', 'ESP32-S3', 'YOLO26l', 'ByteTrack'],
       media: {
-        featuredImage: placeholderImage,
-        featuredAlt: 'Placeholder project visual for the robot car project',
-        longformImage: placeholderImage,
-        longformAlt: 'Placeholder longform visual for the robot car project',
+        featuredImage: 'assets/diagrams/robot-car-featured-hero.jpg',
+        featuredAlt: 'Assembled ELEGOO robot car with camera, ultrasonic sensor, and battery pack',
+        longformImage: 'assets/diagrams/robot-car-system-architecture.png',
+        longformAlt: 'System architecture diagram for the robot car control, sensing, and actuation layers',
       },
-      detailsHtml: `
+      detailAsideAction: {
+        href: 'assets/project-documents/robot-car-sep780-final-report.pdf',
+        label: 'Download Project PDF',
+        wordmarkLines: ['Download PDF'],
+        download: 'SEP 780 Arduino Robotics Project Final Report_Group 2 (1).pdf',
+        ariaLabel: 'Download the SEP 780 robot car project report PDF',
+      },
+      detailLeadSections: [
+        {
+          title: 'Project Description',
+          bodyHtml: `
         <p>
-          This project combines browser controls, live telemetry, and a host-side vision loop into one robotics workflow.
-          The goal was to move beyond simple remote control and create a system where an operator could see the robot,
-          steer it from a browser interface, and receive vision-assisted feedback in real time.
+          This four-person SEP 780 project started with the <span class="detail-emphasis">ELEGOO Robot Car Kit V4.0</span>
+          and expanded it beyond stock classroom demos. We first validated the kit's built-in behaviors such as
+          <span class="detail-emphasis">IR remote control, line tracking, obstacle avoidance, and automatic following</span>,
+          then rebuilt the interaction layer around a browser-based operator console and a host-side vision pipeline.
         </p>
+        <p>
+          In the final system, the <span class="detail-emphasis">Arduino UNO R3 handled execution and local safety</span>,
+          the <span class="detail-emphasis">ESP32-S3 handled camera, Wi-Fi, UI hosting, and serial bridging</span>,
+          the Angular frontend became the operator dashboard, and a local Python backend processed detections for
+          assisted driving.
+        </p>
+      `,
+        },
+        {
+          title: 'System Design',
+          bodyHtml: `
+        <p>
+          The operator console captured <span class="detail-emphasis">XBOX controller and keyboard input</span>,
+          maintained <span class="detail-emphasis">low-latency WebSocket communication</span>, displayed live video,
+          and surfaced drive modes, runtime charts, and target-lock feedback. The ESP32-S3 served the static UI,
+          exposed the HTTP and WebSocket endpoints in SoftAP mode, and forwarded higher-level commands to the UNO.
+        </p>
+        <p>
+          On the robot side, the UNO translated those commands into motor and servo outputs while enforcing
+          <span class="detail-emphasis">local stop logic when serial input was lost</span>. For vision, selected
+          frames were relayed to a Python backend that used <span class="detail-emphasis">YOLO26l + ByteTrack</span>
+          to detect and track a person before returning normalized detections to the dashboard.
+        </p>
+      `,
+        },
+      ],
+      detailsHtml: `
         <h4>Challenge</h4>
         <p>
-          The hard part was coordinating several moving pieces at once: browser inputs, WebSocket messaging, Arduino
-          motion logic, ESP32-S3 camera streaming, and a Python vision pipeline all had to stay responsive enough for
-          assisted driving.
+          The difficult part was not assembling the kit; it was turning it into a
+          <strong class="detail-emphasis">stable multi-layer robotics demo</strong> where browser inputs, Wi-Fi
+          streaming, serial control, and host-side perception could all stay synchronized. The team had to work through
+          <strong class="detail-emphasis">wireless architecture trade-offs</strong>, limited camera bandwidth, serial
+          corruption, target-loss edge cases, and motion instability caused by steering aggressiveness and battery
+          variation.
         </p>
         <h4>Approach</h4>
         <p>
-          I connected an Angular frontend to the control loop, used WebSocket messaging for browser-to-device updates,
-          and integrated camera streaming with host-side vision processing so detections could feed back into the
-          driving experience.
+          We converged on a <strong class="detail-emphasis">single ESP32-S3 SoftAP architecture</strong>, used a
+          <strong class="detail-emphasis">serial JSON protocol with incremental state synchronization</strong>, and kept
+          the UNO responsible for low-level execution and safety. On the operator side, the Angular console unified
+          controller input, telemetry, live video, and drive-mode management, while the host Python backend handled
+          <strong class="detail-emphasis">real-time detection, target locking, smoothing, and recovery behavior</strong>.
         </p>
         <h4>Outcome</h4>
         <p>
-          The result was a more credible robotics interface: the operator could control the car from the browser, monitor
-          telemetry, and use live detections as part of the driving loop rather than treating vision as a separate demo.
+          The final demo supported <strong class="detail-emphasis">manual, assist, and auto drive modes</strong>,
+          browser-based XBOX control, live video, local telemetry charts, and target-aware feedback in one loop. After
+          tuning the stream resolution, JPEG quality, relay size, and frame rate, the system brought
+          <strong class="detail-emphasis">end-to-end streaming latency below 200 ms on average</strong> while keeping
+          <strong class="detail-emphasis">backend inference under 70 ms per frame</strong>.
         </p>
       `,
       quote: {
-        body: 'One control loop for browser inputs, telemetry, streaming, and machine-vision feedback.',
-        credit: 'Embedded Robotics Project',
+        body: '',
+        credit: '',
       },
     },
     {
@@ -264,15 +344,16 @@ export const portfolioContent = {
       },
       stack: ['Intel SGX', 'Ubuntu', 'Trusted Execution'],
       media: {
-        featuredImage: placeholderImage,
-        featuredAlt: 'Placeholder visual for the secure gateway project',
+        featuredImage: 'assets/diagrams/secure-gateway-architecture.svg',
+        featuredAlt: 'Architecture of the unidirectional data transmission platform',
         longformImage: placeholderImage,
         longformAlt: 'Placeholder longform visual for the secure gateway project',
       },
+      hideLongformMedia: true,
       detailAsideAction: {
         href: 'assets/project-documents/secure-gateway-sgx-group-report.pdf',
         label: 'Download Project PDF',
-        wordmarkLines: ['Download Project PDF'],
+        wordmarkLines: ['Download PDF'],
         download: 'COMP4900K Group 4 Project.pdf',
         ariaLabel: 'Download the Unidirectional Secure Gateway Based on SGX project PDF',
       },
@@ -296,12 +377,22 @@ export const portfolioContent = {
         {
           title: 'Key Contributions',
           bodyHtml: `
-        <ul>
-          <li>Owned the project's <strong>Design & Implementation</strong> and <strong>Security Analysis</strong> sections, defining how SGX-backed trusted processing fits into the receiving and sending units.</li>
-          <li>Mapped trusted versus untrusted components and explained how the gateway mitigates inbound injection, in-transit tampering, and misuse from compromised internal components.</li>
-          <li>Specified a dual-SGX verification model in which the receiving side processes and signs trusted data, while the sending side validates the local proof report and data integrity before forwarding outward.</li>
-          <li>Framed a fully offline authentication workflow using pre-issued trusted certificates so enclave validation can still work in deployments that do not permit active outbound attestation.</li>
-        </ul>
+        <p>
+          I owned the project's <strong>Design & Implementation</strong> and <strong>Security Analysis</strong>
+          sections, defining how SGX-backed trusted processing fits into the receiving and sending units.
+        </p>
+        <p>
+          I mapped trusted versus untrusted components and explained how the gateway mitigates inbound injection,
+          in-transit tampering, and misuse from compromised internal components.
+        </p>
+        <p>
+          I specified a dual-SGX verification model in which the receiving side processes and signs trusted data,
+          while the sending side validates the local proof report and data integrity before forwarding outward.
+        </p>
+        <p>
+          I framed a fully offline authentication workflow using pre-issued trusted certificates so enclave
+          validation can still work in deployments that do not permit active outbound attestation.
+        </p>
       `,
         },
       ],
@@ -326,117 +417,106 @@ export const portfolioContent = {
       },
     },
     {
-      slug: 'intel-sgx-enclave-lab',
-      category: 'network-cybersecurity',
-      domain: 'Trusted Computing',
-      wordmarkLines: ['Intel SGX', 'Enclave Lab'],
-      result: 'Hands-on enclave calls, trusted output, and file-writing experiments inside Intel SGX.',
-      title: 'Intel SGX Enclave Lab',
-      subtitle: "Hands-on SGX enclave experiments inside Intel's Docker lab environment.",
-      summary:
-        "Extended Intel's sample SGX environment to compare trusted and untrusted execution paths through small, targeted experiments.",
-      visit: {
-        href: 'https://example.com/intel-sgx-enclave-lab',
-        label: 'Visit Project',
-      },
-      detailMeta: {
-        siteType: 'Security Lab',
-        platform: 'Docker + Intel SGX',
-        disciplines: ['Trusted Execution', 'Systems Experiments'],
-      },
-      stack: ['Intel SGX', 'Docker', 'Ubuntu'],
-      media: {
-        featuredImage: placeholderImage,
-        featuredAlt: 'Placeholder visual for the Intel SGX lab project',
-        longformImage: placeholderImage,
-        longformAlt: 'Placeholder longform visual for the Intel SGX lab project',
-      },
-      detailLeadSections: [
-        {
-          title: 'Project Description',
-          bodyHtml: `
-        <p>
-          This lab project was a hands-on introduction to Intel SGX. I worked inside Intel's pre-configured Docker
-          image, built and ran the sample project, and then modified the sample to compare trusted and untrusted
-          behavior.
-        </p>
-      `,
-        },
-        {
-          title: 'Key Contributions',
-          bodyHtml: `
-        <ul>
-          <li>Ran Intel's sample enclave project inside the SGX Docker environment.</li>
-          <li>Added trusted and untrusted calls that append text to a file during enclave execution.</li>
-          <li>Added trusted and untrusted calls to compute a square root inside the enclave workflow.</li>
-        </ul>
-      `,
-        },
-      ],
-      detailsHtml: `
-    <h4>Notes</h4>
-    <p>
-      The lab made SGX much more concrete by showing how enclave boundaries affect real execution paths rather than
-      treating trusted execution as an abstract security concept.
-    </p>
-  `,
-      quote: {
-        body: '',
-        credit: '',
-      },
-    },
-    {
       slug: 'dns-parking-detection',
       category: 'network-cybersecurity',
-      domain: 'Network Diagnostics',
+      domain: 'DNS Research',
       wordmarkLines: ['DNS Parking', 'Detection'],
-      result: 'DNS-record and service-port analysis to distinguish parked domains from live websites.',
+      result: 'WHOIS and recursive DNS analysis to identify broadly parked domains in a 10,000-domain sample.',
       title: 'DNS-Based Parking Website Detection System',
-      subtitle: 'Domain classification using DNS records and live service checks.',
+      subtitle: 'An honours research project using OpenIntel DNS data, WHOIS filtering, and recursive record analysis.',
       summary:
-        'Analyzed DNS records and service availability to determine whether a domain was a parked page or an active site.',
+        'Built a Python pipeline around OpenIntel DNS measurements to separate broadly parked domains from active, recent, or unregistered sites.',
       visit: {
-        href: 'https://example.com/dns-parking-detection',
-        label: 'Visit Project',
+        href: '../assets/project-documents/dns-parking-detection-honours-project.pdf',
+        label: 'Download Project PDF',
       },
       detailMeta: {
-        siteType: 'Detection Tool',
-        platform: 'DNS + Service Checks',
-        disciplines: ['DNS Analysis', 'Network Diagnostics'],
+        siteType: 'Honours Research Project',
+        platform: 'Python + OpenIntel',
+        disciplines: ['DNS Analysis', 'WHOIS Processing', 'Dataset Research'],
       },
-      stack: ['DNS', 'A/MX Records', 'CNAME/NS', 'Port Checks'],
+      stack: ['Python', 'OpenIntel DNS Data', 'python-whois', 'dnspython', 'Pandas', 'Matplotlib'],
       media: {
-        featuredImage: placeholderImage,
-        featuredAlt: 'Placeholder visual for the DNS parking detection project',
-        longformImage: placeholderImage,
-        longformAlt: 'Placeholder longform visual for the DNS parking detection project',
+        featuredImage: 'assets/diagrams/dns-parking-detection-workflow-report.png',
+        featuredAlt: 'Original workflow figure from the DNS parking honours project report',
+        longformImage: 'assets/diagrams/dns-screenshot-table-4-1.png',
+        longformAlt: 'Table 4.1 WHOIS-based classification of sampled domains',
+      },
+      detailAsideAction: {
+        href: 'assets/project-documents/dns-parking-detection-honours-project.pdf',
+        label: 'Download Project PDF',
+        wordmarkLines: ['Download PDF'],
+        download: 'Honours_Project.pdf',
+        ariaLabel: 'Download the DNS-Based Parking Website Detection System project PDF',
       },
       detailLeadSections: [
         {
           title: 'Project Description',
           bodyHtml: `
         <p>
-          This project focused on recognizing parked domains instead of just resolving hostnames. I combined DNS
-          record analysis with service verification to move from name lookup into operational classification.
+          This honours project studied how to identify <span class="detail-emphasis">broadly parked domains</span>
+          from DNS infrastructure data rather than from webpage screenshots or ad redirects alone. Using OpenIntel's
+          October 2023 DNS measurements, I focused on domains that had been registered for a meaningful period but
+          still showed no signs of operational web or mail service.
+        </p>
+      `,
+        },
+        {
+          title: 'Method & Pipeline',
+          bodyHtml: `
+        <p>
+          I built a local preprocessing pipeline that extracted query names from the raw OpenIntel files, removed
+          duplicates, normalized them to second-level domains, and produced a <span class="detail-emphasis">10,000-domain
+          random sample</span> for the experiment.
+        </p>
+        <p>
+          From there, I used <span class="detail-emphasis">python-whois</span> to separate domains into unregistered,
+          recently registered, and older-than-90-days groups, then ran <span class="detail-emphasis">recursive A, MX,
+          CNAME, and NS resolution</span> with loop protection and depth limits to decide whether a domain still had
+          usable DNS configuration.
         </p>
       `,
         },
         {
           title: 'Key Contributions',
           bodyHtml: `
-        <ul>
-          <li>Queried A, MX, and CNAME/NS records to resolve domain ownership and routing details.</li>
-          <li>Checked whether the resolved IP address exposed an active service port.</li>
-          <li>Used DNS registration timing as an additional signal when classifying parked pages.</li>
-        </ul>
+        <p>
+          The zip archive captures the full engineering path behind the report: chunked CSV extraction, de-duplication,
+          domain normalization, batch WHOIS classification, recursive DNS analysis, and follow-up statistics scripts for
+          WHOIS aggregation and box-plot generation.
+        </p>
+        <p>
+          That let me turn the report into a <span class="detail-emphasis">reproducible research workflow</span> rather
+          than a one-off manual inspection, with each stage writing structured intermediate outputs for later analysis.
+        </p>
       `,
         },
       ],
       detailsHtml: `
+    <h4>Results</h4>
+    <p>
+      In the 10,000-domain sample, <span class="detail-emphasis">5,656 domains</span> had been registered for more than
+      three months. After DNS analysis, <span class="detail-emphasis">169 domains had no usable DNS information</span>
+      and <span class="detail-emphasis">129 exposed only NS records</span>, producing
+      <span class="detail-emphasis">298 broadly parked domains</span>. That is about
+      <span class="detail-emphasis">2.98% of the full sample</span> and about
+      <span class="detail-emphasis">5% of the older-than-90-days subset</span>.
+    </p>
+    <h4>Research Findings</h4>
+    <p>
+      The parked set was dominated by gTLDs, with <span class="detail-emphasis">228 gTLDs</span> versus
+      <span class="detail-emphasis">70 ccTLDs</span>, but several ccTLD groups such as <span class="detail-emphasis">.ru,
+      .cn, and .ro</span> showed much longer average holding periods. The WHOIS follow-up also found
+      <span class="detail-emphasis">226 domains using privacy protection</span>,
+      <span class="detail-emphasis">196 with EPP lock enabled</span>, and
+      <span class="detail-emphasis">226 without DNSSEC</span>.
+    </p>
     <h4>Outcome</h4>
     <p>
-      The result was a stronger detection workflow than DNS lookup alone because it combined record inspection,
-      registration context, and live-service checks in one decision path.
+      The project demonstrated that combining <span class="detail-emphasis">WHOIS age filtering</span> with
+      <span class="detail-emphasis">multi-layer DNS queries</span> can surface parked domains efficiently at dataset
+      scale, while also highlighting where stricter follow-up checks such as HTTP, HTTPS, SMTP, SSH, or content
+      inspection would strengthen future classification.
     </p>
   `,
       quote: {
@@ -497,242 +577,6 @@ export const portfolioContent = {
     <p>
       The project connected smart contracts, backend orchestration, and cloud storage into one research prototype,
       making the tradeoffs between centralized and decentralized components easier to evaluate.
-    </p>
-  `,
-      quote: {
-        body: '',
-        credit: '',
-      },
-    },
-    {
-      slug: 'smart-home-management',
-      category: 'full-stack-development',
-      domain: 'Web Application',
-      wordmarkLines: ['Smart Home', 'Management'],
-      result: 'Flask-backed smart-home simulation with realtime JSON-driven control flows.',
-      title: 'Smart Home Management System',
-      subtitle: 'Smart-home management workflow with Flask and JSON-backed state.',
-      summary:
-        'Built a smart-home management system with an HTML/CSS interface, Flask backend logic, and JSON-based state updates.',
-      visit: {
-        href: 'https://example.com/smart-home-management',
-        label: 'Visit Project',
-      },
-      detailMeta: {
-        siteType: 'Management App',
-        platform: 'Flask + HTML/CSS',
-        disciplines: ['Backend Logic', 'UI Simulation'],
-      },
-      stack: ['Flask', 'HTML', 'CSS', 'JSON'],
-      media: {
-        featuredImage: placeholderImage,
-        featuredAlt: 'Placeholder visual for the smart home project',
-        longformImage: placeholderImage,
-        longformAlt: 'Placeholder longform visual for the smart home project',
-      },
-      detailLeadSections: [
-        {
-          title: 'Project Description',
-          bodyHtml: `
-        <p>
-          This project simulated a mobile-style smart-home management interface backed by Flask. The goal was to tie
-          simple frontend controls to backend logic and persistent user actions.
-        </p>
-      `,
-        },
-        {
-          title: 'Key Contributions',
-          bodyHtml: `
-        <ul>
-          <li>Built the interface with HTML and CSS to simulate a mobile control experience.</li>
-          <li>Used Flask to handle backend workflow and user actions.</li>
-          <li>Adopted JSON files to store and update smart-home state in real time.</li>
-        </ul>
-      `,
-        },
-      ],
-      detailsHtml: `
-    <h4>Outcome</h4>
-    <p>
-      The result was a compact but complete control workflow covering furniture management, device control, and
-      add-furniture flows inside one application.
-    </p>
-  `,
-      quote: {
-        body: '',
-        credit: '',
-      },
-    },
-    {
-      slug: 'gym-membership-management',
-      category: 'full-stack-development',
-      domain: 'Management System',
-      wordmarkLines: ['Gym Membership', 'Management'],
-      result: 'Member and admin workflows for registration, classes, equipment, points, and fee handling.',
-      title: 'Gym Membership Management System',
-      subtitle: 'Member and administrator workflows built with Flask and MongoDB.',
-      summary:
-        'Built separate member and admin workflows for registration, profile updates, classes, coaches, equipment, and fee logic.',
-      visit: {
-        href: 'https://example.com/gym-membership-management',
-        label: 'Visit Project',
-      },
-      detailMeta: {
-        siteType: 'Management System',
-        platform: 'Flask + MongoDB',
-        disciplines: ['CRUD Workflows', 'Admin Systems'],
-      },
-      stack: ['Flask', 'MongoDB', 'HTML'],
-      media: {
-        featuredImage: placeholderImage,
-        featuredAlt: 'Placeholder visual for the gym management project',
-        longformImage: placeholderImage,
-        longformAlt: 'Placeholder longform visual for the gym management project',
-      },
-      detailLeadSections: [
-        {
-          title: 'Project Description',
-          bodyHtml: `
-        <p>
-          This project modeled the daily operations of a gym through separate member and administrator interfaces.
-          It focused on managing people, schedules, and fees inside a single system.
-        </p>
-      `,
-        },
-        {
-          title: 'Key Contributions',
-          bodyHtml: `
-        <ul>
-          <li>Used MongoDB for the underlying data model and Flask for backend behavior.</li>
-          <li>Implemented registration, profile updates, and course participation for members.</li>
-          <li>Built admin flows to manage courses, coaches, equipment, points, and fee generation.</li>
-        </ul>
-      `,
-        },
-      ],
-      detailsHtml: `
-    <h4>Outcome</h4>
-    <p>
-      The system covered both user-facing and administrative operations, making it a stronger CRUD workflow project
-      than a single-role dashboard.
-    </p>
-  `,
-      quote: {
-        body: '',
-        credit: '',
-      },
-    },
-    {
-      slug: 'community-refrigerator',
-      category: 'full-stack-development',
-      domain: 'Community Platform',
-      wordmarkLines: ['Community', 'Refrigerator'],
-      result: 'Inventory browsing, item removal, and realtime MongoDB-backed updates for a community fridge.',
-      title: 'Community Refrigerator Web App',
-      subtitle: 'Community inventory workflow with realtime MongoDB-backed updates.',
-      summary:
-        'Developed a small web app for browsing shared fridge inventory, viewing items, and updating data in real time.',
-      visit: {
-        href: 'https://example.com/community-refrigerator',
-        label: 'Visit Project',
-      },
-      detailMeta: {
-        siteType: 'Community Web App',
-        platform: 'HTML/CSS/JS + MongoDB',
-        disciplines: ['Frontend Basics', 'Realtime Data'],
-      },
-      stack: ['HTML', 'CSS', 'JavaScript', 'MongoDB', 'JSON'],
-      media: {
-        featuredImage: placeholderImage,
-        featuredAlt: 'Placeholder visual for the community refrigerator project',
-        longformImage: placeholderImage,
-        longformAlt: 'Placeholder longform visual for the community refrigerator project',
-      },
-      detailLeadSections: [
-        {
-          title: 'Project Description',
-          bodyHtml: `
-        <p>
-          This project focused on a simple shared-inventory workflow for a community refrigerator. The emphasis was
-          on clear browsing and item updates rather than visual complexity.
-        </p>
-      `,
-        },
-        {
-          title: 'Key Contributions',
-          bodyHtml: `
-        <ul>
-          <li>Built the web interface with HTML, CSS, and JavaScript.</li>
-          <li>Stored and loaded data in JSON format backed by MongoDB.</li>
-          <li>Implemented browsing, item viewing, item removal, and realtime data updates.</li>
-        </ul>
-      `,
-        },
-      ],
-      detailsHtml: `
-    <h4>Outcome</h4>
-    <p>
-      The app turned a small community use case into a practical data workflow and gave me hands-on experience with
-      simple realtime update paths.
-    </p>
-  `,
-      quote: {
-        body: '',
-        credit: '',
-      },
-    },
-    {
-      slug: 'aed-interface-simulation',
-      category: 'hardware-development',
-      domain: 'Medical Device Interface',
-      wordmarkLines: ['AED Interface', 'Simulation'],
-      result: 'Qt and C++ training interface for ECG, CPR, shock logic, and patient-state simulation.',
-      title: 'AED Interface Simulation',
-      subtitle: 'Qt-based AED interface and training-mode simulation.',
-      summary:
-        'Created an AED software simulation that combined interface design, training flow, and patient-state logic.',
-      visit: {
-        href: 'https://example.com/aed-interface-simulation',
-        label: 'Visit Project',
-      },
-      detailMeta: {
-        siteType: 'Training Interface',
-        platform: 'Qt + C++',
-        disciplines: ['Embedded UI', 'Simulation Logic'],
-      },
-      stack: ['Qt', 'C++'],
-      media: {
-        featuredImage: placeholderImage,
-        featuredAlt: 'Placeholder visual for the AED simulation project',
-        longformImage: placeholderImage,
-        longformAlt: 'Placeholder longform visual for the AED simulation project',
-      },
-      detailLeadSections: [
-        {
-          title: 'Project Description',
-          bodyHtml: `
-        <p>
-          This project simulated the logic and interface flow of an AED training device. The work combined user
-          interface design with procedural device behavior.
-        </p>
-      `,
-        },
-        {
-          title: 'Key Contributions',
-          bodyHtml: `
-        <ul>
-          <li>Used Qt and C++ to build the training interface and underlying simulation logic.</li>
-          <li>Implemented ECG output, CPR analysis, shock simulation, and heart-rate feedback.</li>
-          <li>Built input-driven logic to determine whether defibrillation was required for different patient types.</li>
-        </ul>
-      `,
-        },
-      ],
-      detailsHtml: `
-    <h4>Outcome</h4>
-    <p>
-      The result was both a UI exercise and a procedure simulator, combining training guidance with device-like
-      state transitions.
     </p>
   `,
       quote: {

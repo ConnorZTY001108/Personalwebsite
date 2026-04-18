@@ -1052,6 +1052,10 @@ blockquote {
   cursor: zoom-in;
 }
 
+.featured-image img {
+  width: 100%;
+}
+
 .project-details {
   width: 100%;
 }
@@ -1117,6 +1121,30 @@ blockquote {
     transform 0.22s ease;
 }
 
+.project-section-body strong,
+.project-section-body .detail-emphasis,
+.project-details-intro strong,
+.project-details-intro .detail-emphasis {
+  color: rgba(255, 255, 255, 0.98);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  padding: 0 0.08em 0.02em;
+  border-radius: 0.1em;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(0, 247, 255, 0) 0%,
+      rgba(0, 247, 255, 0) 56%,
+      rgba(0, 247, 255, 0.14) 56%,
+      rgba(0, 247, 255, 0.14) 100%
+    );
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  text-shadow:
+    0 0 10px rgba(255, 255, 255, 0.24),
+    0 0 18px rgba(0, 247, 255, 0.2);
+}
+
 .project-section-body[hidden] {
   display: none;
 }
@@ -1180,6 +1208,22 @@ blockquote {
   font-size: clamp(16px, 4cqw, 28px);
   opacity: 0.92;
   transform: scale(0.9);
+}
+
+.project-aside .aside-action-card .project-logo.project-card-wordmark {
+  width: 100%;
+  max-width: none;
+  padding-inline: 9%;
+  box-sizing: border-box;
+  font-size: clamp(18px, 4.2cqw, 26px);
+  line-height: 1;
+  letter-spacing: 0.07em;
+  opacity: 0.96;
+  transform: none;
+}
+
+.project-aside .aside-action-card .project-logo.project-card-wordmark span {
+  white-space: nowrap;
 }
 
 .aside-project-logo-shell {

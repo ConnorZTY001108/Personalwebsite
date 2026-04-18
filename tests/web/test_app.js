@@ -40,9 +40,7 @@ test('portfolio content exposes the cloned dekiru-style homepage contract', () =
   assert.equal(portfolioContent.profile.wordmark.primary, 'Tianyu');
   assert.equal(portfolioContent.profile.wordmark.secondary, 'Zhang');
   assert.deepEqual(portfolioContent.profile.heroStatementLines, [
-    'Software Design',
-    '& Build for',
-    'Workflow Systems',
+    'Turning problems into working software with AI',
   ]);
   assert.equal(portfolioContent.navigation.length, 3);
   assert.deepEqual(
@@ -60,21 +58,19 @@ test('portfolio content exposes the cloned dekiru-style homepage contract', () =
       'robot-car',
       'analytics-dashboard',
       'secure-gateway-sgx',
-      'intel-sgx-enclave-lab',
       'dns-parking-detection',
       'decentralized-platforms',
-      'smart-home-management',
-      'gym-membership-management',
-      'community-refrigerator',
-      'aed-interface-simulation',
       'interactive-documentary',
     ],
   );
-  assert.equal(portfolioContent.projects.length, 12);
+  assert.equal(portfolioContent.projects.length, 7);
   assert.equal(
-    portfolioContent.projects.find((project) => project.slug === 'community-refrigerator')
-      ?.category,
-    'full-stack-development',
+    portfolioContent.projects.find((project) => project.slug === 'community-refrigerator'),
+    undefined,
+  );
+  assert.equal(
+    portfolioContent.projects.find((project) => project.slug === 'intel-sgx-enclave-lab'),
+    undefined,
   );
   assert.equal(
     portfolioContent.projects.find((project) => project.slug === 'secure-gateway-sgx')
@@ -82,9 +78,8 @@ test('portfolio content exposes the cloned dekiru-style homepage contract', () =
     'network-cybersecurity',
   );
   assert.equal(
-    portfolioContent.projects.find((project) => project.slug === 'aed-interface-simulation')
-      ?.category,
-    'hardware-development',
+    portfolioContent.projects.find((project) => project.slug === 'aed-interface-simulation'),
+    undefined,
   );
   assert.equal(
     portfolioContent.projects.find((project) => project.slug === 'interactive-documentary')
@@ -102,7 +97,7 @@ test('portfolio content exposes the cloned dekiru-style homepage contract', () =
     ],
   );
   assert.equal(portfolioContent.projects[0].detailMeta.siteType, 'Workflow Platform');
-  assert.equal(portfolioContent.projects[1].detailMeta.platform, 'Angular + Python');
+  assert.equal(portfolioContent.projects[1].detailMeta.platform, 'Arduino + ESP32-S3 + Angular');
   assert.equal(portfolioContent.projects[2].detailMeta.disciplines.length, 2);
   assert.equal(portfolioContent.projects[0].category, 'full-stack-development');
   assert.equal(portfolioContent.projects[1].category, 'hardware-development');
@@ -169,19 +164,65 @@ test('about page shell declares the shared header and standalone about hooks', (
   assert.match(html, /<script type="module" src="\.\/about\.js"><\/script>/);
 });
 
+test('style validation page shell declares an isolated cyber-terminal prototype surface', () => {
+  const fileUrl = new URL('../../style-validation.html', import.meta.url);
+
+  assert.equal(fs.existsSync(fileUrl), true);
+
+  const html = fs.readFileSync(fileUrl, 'utf8');
+
+  assert.match(html, /<body class="style-validation-page">/);
+  assert.match(html, /<div id="style-validation-dots"><\/div>/);
+  assert.match(html, /id="style-validation-app"/);
+  assert.match(html, /href="\.\/style-validation\.css"/);
+  assert.match(html, /<script type="module" src="\.\/style-validation\.js"><\/script>/);
+});
+
+test('style validation boot renders the approved hero, support rail, and CTA copy', async () => {
+  const fileUrl = new URL('../../style-validation.js', import.meta.url);
+
+  assert.equal(fs.existsSync(fileUrl), true);
+
+  const { renderStyleValidation, registerStyleValidationBoot } = await import(fileUrl);
+  const mockDocument = createMockDocument([
+    'style-validation-app',
+  ]);
+
+  renderStyleValidation(mockDocument);
+
+  assert.match(mockDocument.getElementById('style-validation-app').innerHTML, /Signal-grade portfolio systems/i);
+  assert.match(mockDocument.getElementById('style-validation-app').innerHTML, /Command navigation/i);
+  assert.match(mockDocument.getElementById('style-validation-app').innerHTML, /Validation frame/i);
+  assert.match(mockDocument.getElementById('style-validation-app').innerHTML, /Request full build/i);
+
+  const loadingDocument = createMockDocument([
+    'style-validation-app',
+  ]);
+  loadingDocument.readyState = 'loading';
+  let domReadyHandler;
+
+  loadingDocument.addEventListener = (eventName, handler) => {
+    assert.equal(eventName, 'DOMContentLoaded');
+    domReadyHandler = handler;
+  };
+
+  registerStyleValidationBoot(loadingDocument);
+  assert.equal(typeof domReadyHandler, 'function');
+  assert.equal(loadingDocument.getElementById('style-validation-app').innerHTML, '');
+
+  domReadyHandler();
+
+  assert.match(loadingDocument.getElementById('style-validation-app').innerHTML, /Signal-grade portfolio systems/i);
+});
+
 test('project detail shells expose pagination, metadata, media, and aside hooks', () => {
   const detailPages = [
     ['process-platform', '../../projects/process-platform.html'],
     ['robot-car', '../../projects/robot-car.html'],
     ['analytics-dashboard', '../../projects/analytics-dashboard.html'],
     ['secure-gateway-sgx', '../../projects/secure-gateway-sgx.html'],
-    ['intel-sgx-enclave-lab', '../../projects/intel-sgx-enclave-lab.html'],
     ['dns-parking-detection', '../../projects/dns-parking-detection.html'],
     ['decentralized-platforms', '../../projects/decentralized-platforms.html'],
-    ['smart-home-management', '../../projects/smart-home-management.html'],
-    ['gym-membership-management', '../../projects/gym-membership-management.html'],
-    ['community-refrigerator', '../../projects/community-refrigerator.html'],
-    ['aed-interface-simulation', '../../projects/aed-interface-simulation.html'],
     ['interactive-documentary', '../../projects/interactive-documentary.html'],
   ];
 
@@ -227,6 +268,24 @@ test('secure gateway pdf asset exists for the detail download card', () => {
   );
 });
 
+test('dns parking report pdf asset exists for the detail download card', () => {
+  assert.equal(
+    fs.existsSync(
+      new URL('../../assets/project-documents/dns-parking-detection-honours-project.pdf', import.meta.url),
+    ),
+    true,
+  );
+});
+
+test('robot car report pdf asset exists for the detail download card', () => {
+  assert.equal(
+    fs.existsSync(
+      new URL('../../assets/project-documents/robot-car-sep780-final-report.pdf', import.meta.url),
+    ),
+    true,
+  );
+});
+
 test('process platform detail page exposes stacked gallery images in the aside', () => {
   const html = fs.readFileSync(new URL('../../projects/process-platform.html', import.meta.url), 'utf8');
 
@@ -235,6 +294,38 @@ test('process platform detail page exposes stacked gallery images in the aside',
   assert.match(html, /Computation Pane\.png/);
   assert.match(html, /MaterialEditor\.png/);
   assert.doesNotMatch(html, /TPseting\.png/);
+});
+
+test('dns parking detail page exposes report tables in the aside gallery', () => {
+  const html = fs.readFileSync(new URL('../../projects/dns-parking-detection.html', import.meta.url), 'utf8');
+
+  assert.match(html, /class="project-media-gallery"/);
+  assert.match(html, /dns-screenshot-table-4-2\.png/);
+  assert.match(html, /dns-screenshot-table-4-3\.png/);
+  assert.match(html, /dns-screenshot-figure-4-1\.png/);
+  assert.match(html, /dns-screenshot-figure-4-2\.png/);
+  assert.match(html, /dns-screenshot-table-4-4\.png/);
+  assert.match(html, /dns-screenshot-table-4-5\.png/);
+  assert.match(html, /dns-screenshot-table-4-6\.png/);
+  assert.match(html, /dns-screenshot-table-4-7\.png/);
+  assert.doesNotMatch(html, /dns-table-source-29\.png/);
+  assert.doesNotMatch(html, /dns-table-source-36\.png/);
+  assert.doesNotMatch(html, /dns-table-source-37\.png/);
+  assert.doesNotMatch(html, /dns-table-source-38\.png/);
+});
+
+test('robot car detail page exposes extracted project visuals in the aside gallery', () => {
+  const html = fs.readFileSync(new URL('../../projects/robot-car.html', import.meta.url), 'utf8');
+
+  assert.match(html, /class="project-media-gallery"/);
+  assert.match(html, /robot-car-hardware-components-1\.png/);
+  assert.match(html, /robot-car-hardware-components-2\.png/);
+  assert.match(html, /robot-car-console-ui\.jpg/);
+  assert.match(html, /robot-car-controller-architecture\.png/);
+  assert.match(html, /robot-car-camera-cv-architecture\.png/);
+  assert.match(html, /robot-car-debug-snapshot\.jpg/);
+  assert.match(html, /robot-car-controller-demo\.jpg/);
+  assert.match(html, /robot-car-live-dashboard\.jpg/);
 });
 
 test('styles define local postmono font faces and cloned homepage/detail layout classes', () => {
@@ -264,6 +355,7 @@ test('styles define local postmono font faces and cloned homepage/detail layout 
   assert.match(css, /\.project-header\b/);
   assert.match(css, /\.project-content\b/);
   assert.match(css, /\.featured-image\b/);
+  assert.match(css, /\.featured-image img\s*\{[\s\S]*width:\s*100%/);
   assert.match(css, /\.project-aside\b/);
   assert.match(css, /\.project-longform-image\b/);
   assert.match(css, /\.project-media-gallery\b/);
@@ -273,6 +365,10 @@ test('styles define local postmono font faces and cloned homepage/detail layout 
   assert.match(css, /\.project-section-toggle\b/);
   assert.match(css, /\.project-section-arrow\b/);
   assert.match(css, /\.project-section-body\b/);
+  assert.match(css, /\.project-section-body strong\b/);
+  assert.match(css, /\.detail-emphasis\b/);
+  assert.match(css, /box-decoration-break:\s*clone/);
+  assert.match(css, /font-weight:\s*700/);
   assert.match(css, /\.project-quote\b/);
   assert.match(css, /\.aside-project-logo-shell\b/);
   assert.match(css, /\.aside-project-logo-image\b/);
@@ -320,6 +416,10 @@ test('renderProjectCards outputs logo-wall cards with a wordmark and short resul
   assert.match(markup, /Vision-Assisted Arduino Robot Car/);
   assert.match(markup, /Safer saves, schema upgrades/i);
   assert.match(markup, /href="projects\/process-platform\.html"/);
+  assert.doesNotMatch(markup, /Smart Home Management System/);
+  assert.doesNotMatch(markup, /Gym Membership Management System/);
+  assert.doesNotMatch(markup, /Community Refrigerator Web App/);
+  assert.doesNotMatch(markup, /Intel SGX Enclave Lab/);
 });
 
 test('renderProjectGroups outputs grouped project sections across the populated category taxonomy', () => {
@@ -341,6 +441,10 @@ test('renderProjectGroups outputs grouped project sections across the populated 
   assert.match(markup, /Vision-Assisted Arduino Robot Car/);
   assert.match(markup, /Consumer Behaviour Analytics Dashboard/);
   assert.match(markup, /Interactive Documentary Created with HTML/);
+  assert.doesNotMatch(markup, /Smart Home Management System/);
+  assert.doesNotMatch(markup, /Gym Membership Management System/);
+  assert.doesNotMatch(markup, /Community Refrigerator Web App/);
+  assert.doesNotMatch(markup, /Intel SGX Enclave Lab/);
   assert.doesNotMatch(markup, /project-empty-state/);
   assert.doesNotMatch(markup, /Projects coming soon\./);
 });
@@ -564,8 +668,7 @@ test('renderPortfolio mounts the dekiru-like wordmark, navigation, tagline, grid
   assert.equal(mockDocument.getElementById('wordmark-primary').textContent, 'Tianyu');
   assert.equal(mockDocument.getElementById('wordmark-secondary').textContent, 'Zhang');
   assert.match(mockDocument.getElementById('hero-statement').innerHTML, /tagline-line/);
-  assert.match(mockDocument.getElementById('hero-statement').innerHTML, /<br\s*\/?>/i);
-  assert.match(mockDocument.getElementById('hero-statement').innerHTML, /Workflow Systems/);
+  assert.match(mockDocument.getElementById('hero-statement').innerHTML, /Turning problems into working software with AI/);
   assert.match(mockDocument.getElementById('nav-list').innerHTML, /Projects/);
   assert.match(mockDocument.getElementById('project-grid').innerHTML, /project-category-title/);
   assert.match(mockDocument.getElementById('project-grid').innerHTML, /project-card-wordmark/);
@@ -692,6 +795,18 @@ test('renderProjectDetail mounts cloned detail-page metadata, media, and narrati
     mockDocument.getElementById('detail-details-body').innerHTML,
     /Outcome[\s\S]*Reduced large-network save time[\s\S]*from 40 seconds to 1\.5 seconds/i,
   );
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /Challenge[\s\S]*Before I took ownership of this part of the project[\s\S]*core modeling, saving, and computation features[\s\S]*Approach[\s\S]*rewriting the existing system/i,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /detail-emphasis/,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /core modeling, saving, and computation features/,
+  );
   assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Challenge/i);
   assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Approach/i);
   assert.doesNotMatch(mockDocument.getElementById('detail-details-body').innerHTML, /MongoDB and PostgreSQL/i);
@@ -738,6 +853,10 @@ test('renderProjectDetail mounts the SGX report summary and PDF download card', 
     mockDocument.getElementById('detail-details-body').innerHTML,
     /fully offline authentication workflow/i,
   );
+  assert.doesNotMatch(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /<ul>|<li>/i,
+  );
   assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Outcome/i);
   assert.match(
     mockDocument.getElementById('detail-details-body').innerHTML,
@@ -745,7 +864,11 @@ test('renderProjectDetail mounts the SGX report summary and PDF download card', 
   );
   assert.match(
     mockDocument.getElementById('detail-aside-logo').innerHTML,
-    /Download Project PDF/,
+    /aside-action-card/,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-aside-logo').innerHTML,
+    /Download PDF/,
   );
   assert.equal(mockDocument.getElementById('detail-visit-link').textContent, 'Download Project PDF');
   assert.match(
@@ -762,8 +885,171 @@ test('renderProjectDetail mounts the SGX report summary and PDF download card', 
   );
   assert.match(
     mockDocument.getElementById('detail-featured-image').attributes.src,
-    /portfolio-placeholder\.svg/,
+    /secure-gateway-architecture\.svg/,
   );
+  assert.equal(mockDocument.getElementById('detail-featured-image').attributes.alt, 'Architecture of the unidirectional data transmission platform');
+  assert.equal(mockDocument.getElementById('detail-longform-link').getAttribute('hidden'), '');
+  assert.equal(mockDocument.getElementById('detail-longform-link').href, '');
+  assert.equal(mockDocument.getElementById('detail-longform-link').style.display, 'none');
+  assert.equal(mockDocument.getElementById('detail-longform-image').getAttribute('src'), undefined);
+  assert.equal(mockDocument.getElementById('detail-project-quote').getAttribute('hidden'), '');
+});
+
+test('renderProjectDetail mounts the DNS honours summary, visuals, and PDF download card', () => {
+  const mockDocument = createMockDetailDocument('dns-parking-detection');
+
+  renderProjectDetail(mockDocument);
+
+  assert.equal(
+    mockDocument.getElementById('detail-title').textContent,
+    'DNS-Based Parking Website Detection System',
+  );
+  assert.match(mockDocument.getElementById('detail-meta-stack').innerHTML, /OpenIntel DNS Data/);
+  assert.match(mockDocument.getElementById('detail-meta-stack').innerHTML, /python-whois/);
+  assert.match(mockDocument.getElementById('detail-meta-stack').innerHTML, /dnspython/);
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Project Description/);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /broadly parked domains/i,
+  );
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Method & Pipeline/);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /10,000-domain[\s\S]*random sample/i,
+  );
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Key Contributions/);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /reproducible research workflow/i,
+  );
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Results/i);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /298 broadly parked domains/i,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /226 domains using privacy protection/i,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /HTTP, HTTPS, SMTP, SSH/i,
+  );
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /detail-emphasis/);
+  assert.match(
+    mockDocument.getElementById('detail-aside-logo').innerHTML,
+    /aside-action-card/,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-aside-logo').innerHTML,
+    /Download PDF/,
+  );
+  assert.equal(mockDocument.getElementById('detail-visit-link').textContent, 'Download Project PDF');
+  assert.match(
+    mockDocument.getElementById('detail-visit-link').href,
+    /\.\.\/assets\/project-documents\/dns-parking-detection-honours-project\.pdf/,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-aside-logo').innerHTML,
+    /assets\/project-documents\/dns-parking-detection-honours-project\.pdf/,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-aside-logo').innerHTML,
+    /download="Honours_Project\.pdf"/,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-featured-image').attributes.src,
+    /dns-parking-detection-workflow-report\.png/,
+  );
+  assert.equal(
+    mockDocument.getElementById('detail-featured-image').attributes.alt,
+    'Original workflow figure from the DNS parking honours project report',
+  );
+  assert.match(
+    mockDocument.getElementById('detail-longform-image').attributes.src,
+    /dns-screenshot-table-4-1\.png/,
+  );
+  assert.equal(
+    mockDocument.getElementById('detail-longform-image').attributes.alt,
+    'Table 4.1 WHOIS-based classification of sampled domains',
+  );
+  assert.equal(mockDocument.getElementById('detail-project-quote').getAttribute('hidden'), '');
+});
+
+test('renderProjectDetail mounts the robot car report summary, visuals, and PDF download card', () => {
+  const mockDocument = createMockDetailDocument('robot-car');
+
+  renderProjectDetail(mockDocument);
+
+  assert.equal(
+    mockDocument.getElementById('detail-title').textContent,
+    'Vision-Assisted Arduino Robot Car',
+  );
+  assert.match(mockDocument.getElementById('detail-meta-stack').innerHTML, /ESP32-S3/);
+  assert.match(mockDocument.getElementById('detail-meta-stack').innerHTML, /YOLO26l/);
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Project Description/);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /ELEGOO Robot Car Kit V4\.0/i,
+  );
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /System Design/);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /serial JSON protocol/i,
+  );
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Challenge/i);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /wireless architecture trade-offs/i,
+  );
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Outcome/i);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /manual, assist, and auto drive modes/i,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /detail-emphasis/,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-aside-logo').innerHTML,
+    /aside-action-card/,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-aside-logo').innerHTML,
+    /Download PDF/,
+  );
+  assert.equal(mockDocument.getElementById('detail-visit-link').textContent, 'Download Project PDF');
+  assert.match(
+    mockDocument.getElementById('detail-visit-link').href,
+    /\.\.\/assets\/project-documents\/robot-car-sep780-final-report\.pdf/,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-aside-logo').innerHTML,
+    /assets\/project-documents\/robot-car-sep780-final-report\.pdf/,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-aside-logo').innerHTML,
+    /download="SEP 780 Arduino Robotics Project Final Report_Group 2 \(1\)\.pdf"/,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-featured-image').attributes.src,
+    /robot-car-featured-hero\.jpg/,
+  );
+  assert.equal(
+    mockDocument.getElementById('detail-featured-image').attributes.alt,
+    'Assembled ELEGOO robot car with camera, ultrasonic sensor, and battery pack',
+  );
+  assert.match(
+    mockDocument.getElementById('detail-longform-image').attributes.src,
+    /robot-car-system-architecture\.png/,
+  );
+  assert.equal(
+    mockDocument.getElementById('detail-longform-image').attributes.alt,
+    'System architecture diagram for the robot car control, sensing, and actuation layers',
+  );
+  assert.equal(mockDocument.getElementById('detail-quote-body').textContent, '');
+  assert.equal(mockDocument.getElementById('detail-quote-credit').textContent, '');
   assert.equal(mockDocument.getElementById('detail-project-quote').getAttribute('hidden'), '');
 });
 

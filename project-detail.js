@@ -520,7 +520,7 @@ function renderAsideActionCard(action) {
 
   return `
     <a
-      class="project project-card aside-project-card"
+      class="project project-card aside-project-card aside-action-card"
       href="${normalizeAsideActionHref(action.href)}"
       aria-label="${action.ariaLabel || action.label}"
      ${downloadAttribute}
@@ -609,11 +609,28 @@ export function renderProjectDetail(doc = document, content = portfolioContent) 
   setNodeText(doc, 'detail-quote-credit', quote.credit);
   setNodeHidden(doc, 'detail-project-quote', !quote.body && !quote.credit);
   setNodeHTML(doc, 'detail-aside-logo', renderAsideLogo(project));
-  setImageNode(doc, 'detail-longform-image', `../${project.media.longformImage}`, project.media.longformAlt);
 
   const longformLink = doc.getElementById('detail-longform-link');
-  if (longformLink) {
-    longformLink.href = `../${project.media.longformImage}`;
+  const longformImage = doc.getElementById('detail-longform-image');
+  const hideLongformMedia = project.hideLongformMedia === true;
+
+  setNodeHidden(doc, 'detail-longform-link', hideLongformMedia);
+
+  if (hideLongformMedia) {
+    if (longformLink) {
+      longformLink.removeAttribute('href');
+      longformLink.style.display = 'none';
+    }
+    if (longformImage) {
+      longformImage.removeAttribute('src');
+      longformImage.removeAttribute('alt');
+    }
+  } else {
+    setImageNode(doc, 'detail-longform-image', `../${project.media.longformImage}`, project.media.longformAlt);
+    if (longformLink) {
+      longformLink.href = `../${project.media.longformImage}`;
+      longformLink.style.display = '';
+    }
   }
 
   bindProjectDetailSectionToggles(doc);
