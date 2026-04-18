@@ -747,6 +747,11 @@ test('renderProjectDetail mounts the SGX report summary and PDF download card', 
     mockDocument.getElementById('detail-aside-logo').innerHTML,
     /Download Project PDF/,
   );
+  assert.equal(mockDocument.getElementById('detail-visit-link').textContent, 'Download Project PDF');
+  assert.match(
+    mockDocument.getElementById('detail-visit-link').href,
+    /\.\.\/assets\/project-documents\/secure-gateway-sgx-group-report\.pdf/,
+  );
   assert.match(
     mockDocument.getElementById('detail-aside-logo').innerHTML,
     /assets\/project-documents\/secure-gateway-sgx-group-report\.pdf/,
@@ -760,6 +765,20 @@ test('renderProjectDetail mounts the SGX report summary and PDF download card', 
     /portfolio-placeholder\.svg/,
   );
   assert.equal(mockDocument.getElementById('detail-project-quote').getAttribute('hidden'), '');
+});
+
+test('renderProjectDetail preserves a root-relative aside action href override', () => {
+  const contentOverride = JSON.parse(JSON.stringify(portfolioContent));
+  const sgxProject = contentOverride.projects.find((project) => project.slug === 'secure-gateway-sgx');
+
+  assert.ok(sgxProject);
+  sgxProject.detailAsideAction.href = '/downloads/spec.pdf';
+
+  const mockDocument = createMockDetailDocument('secure-gateway-sgx');
+
+  renderProjectDetail(mockDocument, contentOverride);
+
+  assert.match(mockDocument.getElementById('detail-aside-logo').innerHTML, /href="\/downloads\/spec\.pdf"/);
 });
 
 test('bindProjectDetailSectionToggles collapses and re-expands a detail section body', () => {

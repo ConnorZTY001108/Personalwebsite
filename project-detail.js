@@ -494,6 +494,22 @@ function renderQuote(project) {
   return project.quote;
 }
 
+function normalizeAsideActionHref(href) {
+  if (
+    href.startsWith('http://') ||
+    href.startsWith('https://') ||
+    href.startsWith('//') ||
+    href.startsWith('/') ||
+    href.startsWith('./') ||
+    href.startsWith('../') ||
+    href.startsWith('#')
+  ) {
+    return href;
+  }
+
+  return `../${href}`;
+}
+
 function renderAsideActionCard(action) {
   if (!action?.href || !action?.label) {
     return '';
@@ -505,7 +521,7 @@ function renderAsideActionCard(action) {
   return `
     <a
       class="project project-card aside-project-card"
-      href="../${action.href}"
+      href="${normalizeAsideActionHref(action.href)}"
       aria-label="${action.ariaLabel || action.label}"
      ${downloadAttribute}
     >

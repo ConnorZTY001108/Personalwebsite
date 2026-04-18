@@ -254,8 +254,8 @@ export const portfolioContent = {
       summary:
         'Designed a unidirectional secure gateway that paired physical one-way transfer with SGX-backed trusted processing for industrial-control data.',
       visit: {
-        href: 'https://example.com/secure-gateway-sgx',
-        label: 'Visit Project',
+        href: '../assets/project-documents/secure-gateway-sgx-group-report.pdf',
+        label: 'Download Project PDF',
       },
       detailMeta: {
         siteType: 'Secure Gateway',
