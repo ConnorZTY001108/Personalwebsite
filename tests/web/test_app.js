@@ -218,6 +218,15 @@ test('project detail shells expose pagination, metadata, media, and aside hooks'
   }
 });
 
+test('secure gateway pdf asset exists for the detail download card', () => {
+  assert.equal(
+    fs.existsSync(
+      new URL('../../assets/project-documents/secure-gateway-sgx-group-report.pdf', import.meta.url),
+    ),
+    true,
+  );
+});
+
 test('process platform detail page exposes stacked gallery images in the aside', () => {
   const html = fs.readFileSync(new URL('../../projects/process-platform.html', import.meta.url), 'utf8');
 
@@ -697,7 +706,7 @@ test('renderProjectDetail mounts cloned detail-page metadata, media, and narrati
   assert.equal(mockDocument.getElementById('detail-project-quote').getAttribute('hidden'), '');
 });
 
-test('renderProjectDetail mounts lightweight CV-backed detail pages for newly added projects', () => {
+test('renderProjectDetail mounts the SGX report summary and PDF download card', () => {
   const mockDocument = createMockDetailDocument('secure-gateway-sgx');
 
   renderProjectDetail(mockDocument);
@@ -710,14 +719,42 @@ test('renderProjectDetail mounts lightweight CV-backed detail pages for newly ad
   assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Project Description/);
   assert.match(
     mockDocument.getElementById('detail-details-body').innerHTML,
-    /physical isolation to ensure one-way transmission/i,
+    /operational technology \(OT\) environments/i,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /pass-through mode/i,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /security-check mode/i,
   );
   assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Key Contributions/);
   assert.match(
     mockDocument.getElementById('detail-details-body').innerHTML,
-    /pass-through and security-check modes/i,
+    /Design & Implementation/i,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /fully offline authentication workflow/i,
   );
   assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Outcome/i);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /side-channel attacks/i,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-aside-logo').innerHTML,
+    /Download Project PDF/,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-aside-logo').innerHTML,
+    /assets\/project-documents\/secure-gateway-sgx-group-report\.pdf/,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-aside-logo').innerHTML,
+    /download="COMP4900K Group 4 Project\.pdf"/,
+  );
   assert.match(
     mockDocument.getElementById('detail-featured-image').attributes.src,
     /portfolio-placeholder\.svg/,
