@@ -494,7 +494,35 @@ function renderQuote(project) {
   return project.quote;
 }
 
+function renderAsideActionCard(action) {
+  if (!action?.href || !action?.label) {
+    return '';
+  }
+
+  const wordmarkLines = action.wordmarkLines?.length ? action.wordmarkLines : [action.label];
+  const downloadAttribute = action.download ? ` download="${action.download}"` : '';
+
+  return `
+    <a
+      class="project project-card aside-project-card"
+      href="../${action.href}"
+      aria-label="${action.ariaLabel || action.label}"
+     ${downloadAttribute}
+    >
+      <div class="project-card-inner">
+        <div class="project-logo project-card-wordmark">
+          ${renderProjectWordmark(wordmarkLines)}
+        </div>
+      </div>
+    </a>
+  `;
+}
+
 function renderAsideLogo(project) {
+  if (project.detailAsideAction) {
+    return renderAsideActionCard(project.detailAsideAction);
+  }
+
   const logoMarkup = project.logoImage
     ? `
         <div class="aside-project-logo-shell has-image">
