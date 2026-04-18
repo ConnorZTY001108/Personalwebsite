@@ -269,19 +269,27 @@ export const portfolioContent = {
         longformImage: placeholderImage,
         longformAlt: 'Placeholder longform visual for the secure gateway project',
       },
+      detailAsideAction: {
+        href: 'assets/project-documents/secure-gateway-sgx-group-report.pdf',
+        label: 'Download Project PDF',
+        wordmarkLines: ['Download Project PDF'],
+        download: 'COMP4900K Group 4 Project.pdf',
+        ariaLabel: 'Download the Unidirectional Secure Gateway Based on SGX project PDF',
+      },
       detailLeadSections: [
         {
           title: 'Project Description',
           bodyHtml: `
         <p>
-          This project focused on secure data transfer for critical infrastructure environments. I designed a
-          unidirectional secure gateway that used physical isolation to ensure one-way transmission while still
-          allowing protected processing on the receiving side.
+          This project explored how a unidirectional security gateway (USG) can protect operational technology (OT) environments by enforcing one-way data flow from a secure internal network to an external network. In
+          industrial settings such as manufacturing, transportation, and energy, that allows teams to expose
+          operational data for monitoring without opening a return path for remote attacks.
         </p>
         <p>
-          The core idea was to narrow the attack surface at the network boundary without treating the gateway as a
-          simple pass-through box. Intel SGX made it possible to protect sensitive handling inside a trusted
-          execution environment.
+          We designed an Ubuntu-based receive/send architecture with Ethernet and I/O interfaces, local storage,
+          data-processing modules, and a unidirectional optical-fiber link. The platform supports both a
+          pass-through mode, which forwards data unchanged in one direction, and a security-check mode, which
+          filters content, applies error-correcting codes, and verifies integrity before release.
         </p>
       `,
         },
@@ -289,9 +297,10 @@ export const portfolioContent = {
           title: 'Key Contributions',
           bodyHtml: `
         <ul>
-          <li>Designed and implemented a Unidirectional Secure Gateway (USG) on Ubuntu for one-way critical-data transfer.</li>
-          <li>Integrated Intel SGX trusted execution to support both pass-through and security-check modes.</li>
-          <li>Analyzed industrial-control use cases in manufacturing, transportation, and energy settings.</li>
+          <li>Owned the project's <strong>Design & Implementation</strong> and <strong>Security Analysis</strong> sections, defining how SGX-backed trusted processing fits into the receiving and sending units.</li>
+          <li>Mapped trusted versus untrusted components and explained how the gateway mitigates inbound injection, in-transit tampering, and misuse from compromised internal components.</li>
+          <li>Specified a dual-SGX verification model in which the receiving side processes and signs trusted data, while the sending side validates the local proof report and data integrity before forwarding outward.</li>
+          <li>Framed a fully offline authentication workflow using pre-issued trusted certificates so enclave validation can still work in deployments that do not permit active outbound attestation.</li>
         </ul>
       `,
         },
@@ -299,8 +308,16 @@ export const portfolioContent = {
       detailsHtml: `
     <h4>Outcome</h4>
     <p>
-      The project demonstrated how physical isolation and SGX-backed processing can be combined to reduce attack
-      surface while still supporting protected inspection of incoming data.
+      The design combines physical one-way transfer with SGX-backed trusted processing, making it a stronger fit for
+      high-assurance industrial and infrastructure settings than a traditional one-way box alone. It protects
+      outbound data transfer while still allowing verification, filtering, and certificate-backed trust decisions to
+      run inside a protected execution environment.
+    </p>
+    <p>
+      The tradeoffs are explicit. The system does not solve side-channel attacks against SGX, cannot prevent
+      physical destruction or service interruption, and introduces overhead from enclave transitions, cache
+      behavior, and paging. In practice, it improves trust in outbound data transfer, but it still depends on
+      careful hardware choices and realistic performance budgeting.
     </p>
   `,
       quote: {
