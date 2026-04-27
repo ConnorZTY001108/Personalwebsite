@@ -160,7 +160,7 @@ test('homepage shell declares the dekiru-like header, tagline, and logo-wall hoo
   assert.match(html, /id="hero-contact"/);
   assert.match(html, /class="hero-photo-slot"/);
   assert.match(html, /class="hero-photo"/);
-  assert.match(html, /src="\.\/assets\/profile\/tianyu-portrait\.png\?v=20260427-033033"/);
+  assert.match(html, /src="\.\/assets\/profile\/tianyu-portrait\.svg\?v=20260427-033033"/);
   assert.match(html, /id="education-list"/);
   assert.match(html, /id="tech-stack-list"/);
   assert.match(html, /id="project-grid"/);
