@@ -3,8 +3,11 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { portfolioContent } from '../../content.js';
 import {
+  bindHeroContactActions,
   bindProjectCategoryToggles,
+  copyHeroContactValue,
   registerPortfolioBoot,
+  renderHeroContactLinks,
   renderNavigation,
   renderProjectCards,
   renderProjectGroups,
@@ -39,17 +42,26 @@ test('portfolio content exposes the cloned dekiru-style homepage contract', () =
   assert.equal(portfolioContent.profile.name, 'Tianyu Zhang');
   assert.equal(portfolioContent.profile.wordmark.primary, 'Tianyu');
   assert.equal(portfolioContent.profile.wordmark.secondary, 'Zhang');
-  assert.deepEqual(portfolioContent.profile.heroStatementLines, [
-    'Turning problems into working software with AI',
-  ]);
-  assert.equal(portfolioContent.navigation.length, 3);
+  assert.equal(Object.hasOwn(portfolioContent.profile, 'greeting'), false);
+  assert.equal(Object.hasOwn(portfolioContent.profile, 'headline'), false);
+  assert.deepEqual(portfolioContent.profile.heroStatementLines, ["Hello, I'm Tianyu"]);
+  assert.match(portfolioContent.profile.summary, /Master of Engineering student/);
+  assert.deepEqual(
+    portfolioContent.profile.education.map((item) => item.school),
+    ['McMaster University', 'Carleton University'],
+  );
+  assert.match(
+    portfolioContent.profile.technicalStack.find((group) => group.label === 'Languages')?.items.join(' '),
+    /Python/,
+  );
+  assert.equal(portfolioContent.navigation.length, 2);
   assert.deepEqual(
     portfolioContent.navigation.map((item) => item.href),
-    ['index.html#projects', 'about.html', 'contact.html'],
+    ['index.html#projects', 'about.html'],
   );
   assert.deepEqual(
     portfolioContent.navigation.map((item) => item.label),
-    ['Projects', 'About Me', 'Contact'],
+    ['Projects', 'About Me'],
   );
   assert.deepEqual(
     portfolioContent.projects.map((project) => project.slug),
@@ -61,9 +73,10 @@ test('portfolio content exposes the cloned dekiru-style homepage contract', () =
       'dns-parking-detection',
       'decentralized-platforms',
       'interactive-documentary',
+      'ctest',
     ],
   );
-  assert.equal(portfolioContent.projects.length, 7);
+  assert.equal(portfolioContent.projects.length, 8);
   assert.equal(
     portfolioContent.projects.find((project) => project.slug === 'community-refrigerator'),
     undefined,
@@ -86,6 +99,10 @@ test('portfolio content exposes the cloned dekiru-style homepage contract', () =
       ?.category,
     'personal-interest',
   );
+  assert.equal(
+    portfolioContent.projects.find((project) => project.slug === 'ctest')?.category,
+    'personal-interest',
+  );
   assert.deepEqual(
     portfolioContent.projectCategories.map((category) => category.slug),
     [
@@ -99,6 +116,21 @@ test('portfolio content exposes the cloned dekiru-style homepage contract', () =
   assert.equal(portfolioContent.projects[0].detailMeta.siteType, 'Workflow Platform');
   assert.equal(portfolioContent.projects[1].detailMeta.platform, 'Arduino + ESP32-S3 + Angular');
   assert.equal(portfolioContent.projects[2].detailMeta.disciplines.length, 2);
+  assert.equal(
+    portfolioContent.projects.find((project) => project.slug === 'decentralized-platforms')
+      ?.detailMeta.siteType,
+    'Marketplace DApp',
+  );
+  assert.equal(
+    portfolioContent.projects.find((project) => project.slug === 'decentralized-platforms')
+      ?.visit.href,
+    'https://github.com/connorzty/PACSJF-401004-final',
+  );
+  assert.match(
+    portfolioContent.projects.find((project) => project.slug === 'decentralized-platforms')
+      ?.stack.join(' '),
+    /QuickNode IPFS/,
+  );
   assert.equal(portfolioContent.projects[0].category, 'full-stack-development');
   assert.equal(portfolioContent.projects[1].category, 'hardware-development');
   assert.equal(portfolioContent.projects[2].category, 'data-analysis');
@@ -122,31 +154,27 @@ test('homepage shell declares the dekiru-like header, tagline, and logo-wall hoo
   assert.match(html, /id="wordmark-primary"/);
   assert.match(html, /id="wordmark-secondary"/);
   assert.match(html, /id="nav-list"/);
+  assert.match(html, /class="hero-profile-copy"/);
   assert.match(html, /id="hero-statement"/);
+  assert.match(html, /id="hero-summary"/);
+  assert.match(html, /id="hero-contact"/);
+  assert.match(html, /class="hero-photo-slot"/);
+  assert.match(html, /class="hero-photo"/);
+  assert.match(html, /src="\.\/assets\/profile\/tianyu-portrait\.png\?v=20260427-033033"/);
+  assert.match(html, /id="education-list"/);
+  assert.match(html, /id="tech-stack-list"/);
   assert.match(html, /id="project-grid"/);
+  assert.doesNotMatch(html, /id="hero-greeting"/);
+  assert.doesNotMatch(html, /id="hero-headline"/);
   assert.doesNotMatch(html, /id="about-copy"/);
   assert.doesNotMatch(html, /<section class="page-copy" id="about">/);
   assert.doesNotMatch(html, /class="site-footer"/);
   assert.doesNotMatch(html, /id="contact-list"/);
   assert.doesNotMatch(html, /id="footer-note"/);
   assert.match(html, /src="\.\/assets\/vendor\/three\.min\.js"/);
+  assert.match(html, /href="\.\/styles\.css\?v=20260427-hero-v14"/);
   assert.match(html, /src="\.\/assets\/vendor\/vanta\.dots\.min\.js"/);
-  assert.match(html, /<script type="module" src="\.\/app\.js"><\/script>/);
-});
-
-test('contact page shell declares the shared header and standalone contact hooks', () => {
-  const html = fs.readFileSync(new URL('../../contact.html', import.meta.url), 'utf8');
-
-  assert.match(html, /<body class="contact-page">/);
-  assert.match(html, /<div id="dots"><\/div>/);
-  assert.match(html, /id="wordmark-primary"/);
-  assert.match(html, /id="wordmark-secondary"/);
-  assert.match(html, /id="nav-list"/);
-  assert.match(html, /id="contact-page-list"/);
-  assert.doesNotMatch(html, /class="site-footer"/);
-  assert.match(html, /src="\.\/assets\/vendor\/three\.min\.js"/);
-  assert.match(html, /src="\.\/assets\/vendor\/vanta\.dots\.min\.js"/);
-  assert.match(html, /<script type="module" src="\.\/contact\.js"><\/script>/);
+  assert.match(html, /<script type="module" src="\.\/app\.js\?v=20260427-hero-v14"><\/script>/);
 });
 
 test('about page shell declares the shared header and standalone about hooks', () => {
@@ -224,6 +252,7 @@ test('project detail shells expose pagination, metadata, media, and aside hooks'
     ['dns-parking-detection', '../../projects/dns-parking-detection.html'],
     ['decentralized-platforms', '../../projects/decentralized-platforms.html'],
     ['interactive-documentary', '../../projects/interactive-documentary.html'],
+    ['ctest', '../../projects/ctest.html'],
   ];
 
   for (const [slug, file] of detailPages) {
@@ -339,6 +368,28 @@ test('styles define local postmono font faces and cloned homepage/detail layout 
   assert.match(css, /\.dots-canvas\b/);
   assert.match(css, /\.header-content\b/);
   assert.match(css, /\.tagline\b/);
+  assert.match(css, /\.hero-profile\b/);
+  assert.match(css, /\.hero-profile-copy\b/);
+  assert.match(css, /\.hero-photo-slot\b/);
+  assert.match(css, /\.hero-photo\b/);
+  assert.match(css, /object-fit:\s*cover/);
+  assert.match(css, /\.hero-contact\b/);
+  assert.match(css, /\.hero-contact-button\b/);
+  assert.match(css, /\.hero-contact-card-inner\b/);
+  assert.match(css, /\.hero-contact-label\b/);
+  assert.match(css, /grid-template-columns:\s*repeat\(auto-fit,\s*minmax\(92px,\s*1fr\)\)/);
+  assert.match(css, /grid-template-columns:\s*minmax\(0,\s*0\.95fr\)\s*minmax\(260px,\s*0\.6fr\)/);
+  assert.match(css, /justify-self:\s*start/);
+  const heroContactHoverCss = css.slice(
+    css.indexOf('.hero-contact-link:hover::before'),
+    css.indexOf(".hero-contact-button[data-copy-state='copied']"),
+  );
+  assert.match(heroContactHoverCss, /transform:\s*scale\(1\.9\)/);
+  assert.match(heroContactHoverCss, /width:\s*clamp\(5px,\s*4%,\s*8px\)/);
+  assert.match(css, /\.profile-overview\b/);
+  assert.match(css, /\.profile-panel\b/);
+  assert.match(css, /\.profile-education-list\b/);
+  assert.match(css, /\.tech-stack-list\b/);
   assert.match(css, /\.tagline-line\b/);
   assert.match(css, /\.work\b/);
   assert.match(css, /\.project-grid\b/);
@@ -401,8 +452,9 @@ test('renderNavigation outputs linked menu items using explicit hrefs', () => {
   assert.match(markup, /class="menu-item"/);
   assert.match(markup, /href="index\.html#projects"/);
   assert.match(markup, /href="about\.html"/);
-  assert.match(markup, /href="contact\.html"/);
   assert.match(markup, />About Me</);
+  assert.doesNotMatch(markup, /href="contact\.html"/);
+  assert.doesNotMatch(markup, />Contact</);
 });
 
 test('renderProjectCards outputs logo-wall cards with a wordmark and short result line', () => {
@@ -520,6 +572,106 @@ test('renderContactLinks outputs footer-style contact endpoints', () => {
   assert.match(markup, /github\.com\/ConnorZTY001108/);
 });
 
+test('renderHeroContactLinks outputs a copy button and external profile links', () => {
+  const markup = renderHeroContactLinks(portfolioContent.contact);
+
+  assert.match(markup, /class="hero-contact-link hero-contact-button"/);
+  assert.match(markup, /data-hero-contact-copy="zhant173@mcmaster\.ca"/);
+  assert.match(markup, /class="hero-contact-card-inner"/);
+  assert.match(markup, /class="hero-contact-label">Email<\/span>/);
+  assert.doesNotMatch(markup, /hero-contact-hover-copy/);
+  assert.match(markup, /class="hero-contact-link suppressed"/);
+  assert.match(markup, /href="https:\/\/github\.com\/ConnorZTY001108"/);
+  assert.match(markup, /href="https:\/\/www\.linkedin\.com\/in\/tianyu-zhang-9470a7266\/"/);
+  assert.doesNotMatch(markup, /Contact Page/);
+  assert.doesNotMatch(markup, /href="mailto:zhant173@mcmaster\.ca"/);
+});
+
+test('copyHeroContactValue writes the requested hero contact value to clipboard', async () => {
+  const clipboard = {
+    copiedText: '',
+    async writeText(value) {
+      this.copiedText = value;
+    },
+  };
+
+  await copyHeroContactValue('zhant173@mcmaster.ca', clipboard);
+  assert.equal(clipboard.copiedText, 'zhant173@mcmaster.ca');
+});
+
+test('copyHeroContactValue falls back to document copy when clipboard access is blocked', async () => {
+  const textarea = createMockCopyTextarea();
+  const doc = {
+    appendedNode: null,
+    body: {
+      appendChild(node) {
+        doc.appendedNode = node;
+      },
+    },
+    createElement(tagName) {
+      assert.equal(tagName, 'textarea');
+      return textarea;
+    },
+    execCommand(command) {
+      assert.equal(command, 'copy');
+      return true;
+    },
+  };
+  const clipboard = {
+    async writeText() {
+      throw new Error('Clipboard blocked');
+    },
+  };
+
+  const copied = await copyHeroContactValue('zhant173@mcmaster.ca', clipboard, doc);
+
+  assert.equal(copied, true);
+  assert.equal(doc.appendedNode, textarea);
+  assert.equal(textarea.value, 'zhant173@mcmaster.ca');
+  assert.equal(textarea.removed, true);
+});
+
+test('bindHeroContactActions wires the hero email button to copy state', async () => {
+  const button = createMockInteractiveHeroContactButton();
+  let resetHandler;
+  let resetDelay;
+  const clipboard = {
+    copiedText: '',
+    async writeText(value) {
+      this.copiedText = value;
+    },
+  };
+  const doc = {
+    querySelectorAll(selector) {
+      assert.equal(selector, '[data-hero-contact-copy]');
+      return [button];
+    },
+  };
+
+  bindHeroContactActions(doc, clipboard, {
+    setTimeout(handler, delay) {
+      resetHandler = handler;
+      resetDelay = delay;
+      return 'reset-timer';
+    },
+  });
+  await button.listeners.click();
+
+  assert.equal(clipboard.copiedText, 'zhant173@mcmaster.ca');
+  assert.equal(button.dataset.copyState, 'copied');
+  assert.equal(button.label.textContent, 'Copied');
+  assert.equal(button.attributes['aria-label'], 'Email copied to clipboard');
+  assert.equal(resetDelay, 2000);
+  assert.equal(button._heroContactResetTimer, 'reset-timer');
+
+  resetHandler();
+
+  assert.equal(button.label.textContent, 'Email');
+  assert.equal(button.dataset.copyState, undefined);
+  assert.equal(button.attributes['aria-label'], 'Copy email address');
+  assert.equal(button._heroContactResetTimer, undefined);
+});
+
 test('renderContactCards outputs project-style tiles with copy and external actions', () => {
   const markup = renderContactCards(portfolioContent.contact);
 
@@ -577,7 +729,7 @@ test('renderContactPage mounts the shared wordmark and standalone contact list',
 
   assert.equal(mockDocument.getElementById('wordmark-primary').textContent, 'Tianyu');
   assert.equal(mockDocument.getElementById('wordmark-secondary').textContent, 'Zhang');
-  assert.match(mockDocument.getElementById('nav-list').innerHTML, /contact\.html/);
+  assert.doesNotMatch(mockDocument.getElementById('nav-list').innerHTML, /contact\.html/);
   assert.match(mockDocument.getElementById('contact-page-list').innerHTML, /contact-card/);
   assert.match(mockDocument.getElementById('contact-page-list').innerHTML, /data-contact-copy="zhant173@mcmaster\.ca"/);
   assert.match(mockDocument.getElementById('contact-page-list').innerHTML, /github\.com\/ConnorZTY001108/i);
@@ -668,7 +820,14 @@ test('renderPortfolio mounts the dekiru-like wordmark, navigation, tagline, grid
   assert.equal(mockDocument.getElementById('wordmark-primary').textContent, 'Tianyu');
   assert.equal(mockDocument.getElementById('wordmark-secondary').textContent, 'Zhang');
   assert.match(mockDocument.getElementById('hero-statement').innerHTML, /tagline-line/);
-  assert.match(mockDocument.getElementById('hero-statement').innerHTML, /Turning problems into working software with AI/);
+  assert.match(mockDocument.getElementById('hero-statement').innerHTML, /Hello, I'm Tianyu/);
+  assert.match(mockDocument.getElementById('hero-summary').textContent, /Master of Engineering student/i);
+  assert.match(mockDocument.getElementById('hero-contact').innerHTML, /data-hero-contact-copy="zhant173@mcmaster\.ca"/);
+  assert.match(mockDocument.getElementById('hero-contact').innerHTML, /GitHub/);
+  assert.match(mockDocument.getElementById('hero-contact').innerHTML, /LinkedIn/);
+  assert.doesNotMatch(mockDocument.getElementById('hero-contact').innerHTML, /Contact Page/);
+  assert.match(mockDocument.getElementById('education-list').innerHTML, /McMaster University/);
+  assert.match(mockDocument.getElementById('tech-stack-list').innerHTML, /TypeScript/);
   assert.match(mockDocument.getElementById('nav-list').innerHTML, /Projects/);
   assert.match(mockDocument.getElementById('project-grid').innerHTML, /project-category-title/);
   assert.match(mockDocument.getElementById('project-grid').innerHTML, /project-card-wordmark/);
@@ -1053,6 +1212,82 @@ test('renderProjectDetail mounts the robot car report summary, visuals, and PDF 
   assert.equal(mockDocument.getElementById('detail-project-quote').getAttribute('hidden'), '');
 });
 
+test('renderProjectDetail mounts the decentralized marketplace case study and repository link', () => {
+  const mockDocument = createMockDetailDocument('decentralized-platforms');
+
+  renderProjectDetail(mockDocument);
+
+  assert.equal(
+    mockDocument.getElementById('detail-title').textContent,
+    'Software Development on Cloud and Decentralized Platforms',
+  );
+  assert.equal(
+    mockDocument.getElementById('detail-visit-link').href,
+    'https://github.com/connorzty/PACSJF-401004-final',
+  );
+  assert.equal(mockDocument.getElementById('detail-visit-link').textContent, 'View Repository');
+  assert.match(mockDocument.getElementById('detail-meta-stack').innerHTML, /QuickNode IPFS/);
+  assert.match(mockDocument.getElementById('detail-meta-stack').innerHTML, /Web3\.js/);
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Project Description/);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /Ethereum marketplace DApp/i,
+  );
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Outcome/i);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /full marketplace loop|shipping-status updates/i,
+  );
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Challenge/i);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /on-chain[\s\S]*off-chain/i,
+  );
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Approach/i);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /Home, Add Product, Manage Shipping, and Purchased Orders/i,
+  );
+  assert.match(mockDocument.getElementById('detail-featured-image').attributes.src, /portfolio-placeholder\.svg/);
+  assert.equal(mockDocument.getElementById('detail-quote-body').textContent, '');
+  assert.equal(mockDocument.getElementById('detail-quote-credit').textContent, '');
+  assert.equal(mockDocument.getElementById('detail-project-quote').getAttribute('hidden'), '');
+});
+
+test('renderProjectDetail mounts the Ctest study tool summary and repository link', () => {
+  const mockDocument = createMockDetailDocument('ctest');
+
+  renderProjectDetail(mockDocument);
+
+  assert.equal(
+    mockDocument.getElementById('detail-title').textContent,
+    'Ctest Bilingual Practice System',
+  );
+  assert.match(mockDocument.getElementById('detail-meta-stack').innerHTML, /JavaScript/);
+  assert.match(mockDocument.getElementById('detail-meta-stack').innerHTML, /Python/);
+  assert.equal(mockDocument.getElementById('detail-visit-link').href, 'https://github.com/ConnorZTY001108/Ctest');
+  assert.equal(mockDocument.getElementById('detail-visit-link').textContent, 'View Repository');
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Project Description/);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /Chinese and English question banks|bilingual content/i,
+  );
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Key Contributions/);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /question-archive\.json/i,
+  );
+  assert.match(mockDocument.getElementById('detail-details-body').innerHTML, /Outcome/i);
+  assert.match(
+    mockDocument.getElementById('detail-details-body').innerHTML,
+    /frontend study tool|local-first/i,
+  );
+  assert.match(
+    mockDocument.getElementById('detail-featured-image').attributes.src,
+    /portfolio-placeholder\.svg/,
+  );
+});
+
 test('renderProjectDetail preserves a root-relative aside action href override', () => {
   const contentOverride = JSON.parse(JSON.stringify(portfolioContent));
   const sgxProject = contentOverride.projects.find((project) => project.slug === 'secure-gateway-sgx');
@@ -1253,6 +1488,10 @@ function createMockHomeDocument() {
     'wordmark-secondary',
     'nav-list',
     'hero-statement',
+    'hero-summary',
+    'hero-contact',
+    'education-list',
+    'tech-stack-list',
     'project-grid',
   ];
 
@@ -1453,6 +1692,49 @@ function createMockElement(tagName) {
         fill() {},
         setTransform() {},
       };
+    },
+  };
+}
+
+function createMockCopyTextarea() {
+  return {
+    value: '',
+    style: {},
+    removed: false,
+    attributes: {},
+    setAttribute(name, value) {
+      this.attributes[name] = String(value);
+    },
+    focus() {},
+    select() {},
+    setSelectionRange() {},
+    remove() {
+      this.removed = true;
+    },
+  };
+}
+
+function createMockInteractiveHeroContactButton() {
+  const label = {
+    textContent: 'Email',
+  };
+
+  return {
+    dataset: {
+      heroContactCopy: 'zhant173@mcmaster.ca',
+    },
+    label,
+    listeners: {},
+    attributes: {},
+    addEventListener(eventName, handler) {
+      this.listeners[eventName] = handler;
+    },
+    querySelector(selector) {
+      assert.equal(selector, '.hero-contact-label');
+      return label;
+    },
+    setAttribute(name, value) {
+      this.attributes[name] = String(value);
     },
   };
 }

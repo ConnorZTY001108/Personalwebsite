@@ -1,4 +1,4 @@
-import { portfolioContent } from './content.js';
+import { portfolioContent } from './content.js?v=20260427-hero-v14';
 import { mountInteractiveBackground } from './background.js';
 
 export function renderNavigation(items, options = {}) {
@@ -17,6 +17,63 @@ export function renderNavigation(items, options = {}) {
 
 export function renderHeroStatement(lines = []) {
   return lines.map((line) => `<span class="tagline-line">${line}</span>`).join('<br />');
+}
+
+export function renderHeroContactLinks(items = []) {
+  return items
+    .filter((item) => item.available)
+    .map((item) => {
+      if (item.label === 'Email') {
+        return `
+        <button
+          class="hero-contact-link hero-contact-button"
+          type="button"
+          data-hero-contact-copy="${item.value}"
+          aria-label="Copy email address"
+        >
+          <span class="hero-contact-card-inner">
+            <span class="hero-contact-label">${item.label}</span>
+          </span>
+        </button>
+      `;
+      }
+
+      return `
+        <a class="hero-contact-link suppressed" href="${item.href}"${item.href.startsWith('http') ? ' target="_blank" rel="noreferrer"' : ''}>
+          <span class="hero-contact-card-inner">
+            <span class="hero-contact-label">${item.label}</span>
+          </span>
+        </a>
+      `;
+    })
+    .join('');
+}
+
+export function renderEducationItems(items = []) {
+  return items
+    .map(
+      (item) => `
+        <div class="profile-education-item">
+          <p class="profile-school">${item.school}</p>
+          <p class="profile-program">${item.program}</p>
+          <p class="profile-period">${item.period}</p>
+        </div>
+      `,
+    )
+    .join('');
+}
+
+export function renderTechnicalStackGroups(groups = []) {
+  return groups
+    .map(
+      (group) => `
+        <div class="tech-stack-group">
+          <p class="tech-stack-label">${group.label}</p>
+          <p class="tech-stack-items">${group.items.join(' / ')}</p>
+        </div>
+      `,
+    )
+    .join('');
 }
 
 export function getProjectPageHref(project) {
@@ -216,6 +273,99 @@ export function renderContactLinks(items = []) {
     .join('');
 }
 
+function copyTextWithFallback(value, doc = globalThis.document) {
+  if (!doc?.body?.appendChild || !doc?.createElement || typeof doc.execCommand !== 'function') {
+    return false;
+  }
+
+  const textarea = doc.createElement('textarea');
+  textarea.value = value;
+  textarea.setAttribute('readonly', '');
+  textarea.style.position = 'fixed';
+  textarea.style.left = '-9999px';
+  textarea.style.opacity = '0';
+  doc.body.appendChild(textarea);
+  textarea.focus?.();
+  textarea.select?.();
+  textarea.setSelectionRange?.(0, value.length);
+
+  const copied = doc.execCommand('copy');
+  textarea.remove?.();
+  return copied;
+}
+
+export async function copyHeroContactValue(
+  value,
+  clipboard = globalThis.navigator?.clipboard,
+  doc = globalThis.document,
+) {
+  if (!value) {
+    return false;
+  }
+
+  if (clipboard?.writeText) {
+    try {
+      await clipboard.writeText(value);
+      return true;
+    } catch {
+      return copyTextWithFallback(value, doc);
+    }
+  }
+
+  return copyTextWithFallback(value, doc);
+}
+
+export function bindHeroContactActions(
+  doc = document,
+  clipboard = doc?.defaultView?.navigator?.clipboard,
+  options = {},
+) {
+  if (!doc?.querySelectorAll) {
+    return;
+  }
+
+  const scheduleReset =
+    options.setTimeout ??
+    doc?.defaultView?.setTimeout?.bind(doc.defaultView) ??
+    globalThis.setTimeout?.bind(globalThis);
+  const clearScheduledReset =
+    options.clearTimeout ??
+    doc?.defaultView?.clearTimeout?.bind(doc.defaultView) ??
+    globalThis.clearTimeout?.bind(globalThis);
+  const resetDelay = options.resetDelay ?? 2000;
+  const copyButtons = doc.querySelectorAll('[data-hero-contact-copy]');
+
+  copyButtons.forEach((button) => {
+    button.addEventListener('click', async () => {
+      const copied = await copyHeroContactValue(button.dataset.heroContactCopy, clipboard, doc);
+
+      if (!copied) {
+        return;
+      }
+
+      button.dataset.copyState = 'copied';
+      const label = button.querySelector?.('.hero-contact-label') ?? button;
+      const originalLabel = button.dataset.originalLabel ?? label.textContent;
+      button.dataset.originalLabel = originalLabel;
+      label.textContent = 'Copied';
+      button.setAttribute('aria-label', 'Email copied to clipboard');
+
+      if (button._heroContactResetTimer && clearScheduledReset) {
+        clearScheduledReset(button._heroContactResetTimer);
+      }
+
+      if (scheduleReset) {
+        button._heroContactResetTimer = scheduleReset(() => {
+          label.textContent = button.dataset.originalLabel ?? originalLabel;
+          delete button.dataset.copyState;
+          button.setAttribute('aria-label', 'Copy email address');
+          delete button._heroContactResetTimer;
+        }, resetDelay);
+      }
+    });
+  });
+}
+
 function renderAboutParagraphs(paragraphs = []) {
   return paragraphs.map((text) => `<p>${text}</p>`).join('');
 }
@@ -245,6 +395,10 @@ export function renderPortfolio(content = portfolioContent, doc = document) {
   setNodeText(doc, 'wordmark-secondary', content.profile.wordmark.secondary);
   setNodeHTML(doc, 'nav-list', renderNavigation(content.navigation, { basePath: getNavBasePath(doc) }));
   setNodeHTML(doc, 'hero-statement', renderHeroStatement(content.profile.heroStatementLines));
+  setNodeText(doc, 'hero-summary', content.profile.summary);
+  setNodeHTML(doc, 'hero-contact', renderHeroContactLinks(content.contact));
+  setNodeHTML(doc, 'education-list', renderEducationItems(content.profile.education));
+  setNodeHTML(doc, 'tech-stack-list', renderTechnicalStackGroups(content.profile.technicalStack));
   setNodeHTML(doc, 'project-grid', renderProjectGroups(content.projects, content.projectCategories));
   setNodeHTML(doc, 'about-copy', renderAboutParagraphs(content.about.paragraphs));
   setNodeHTML(doc, 'contact-list', renderContactLinks(content.contact));
@@ -253,6 +407,7 @@ export function renderPortfolio(content = portfolioContent, doc = document) {
 
 export function bootPortfolio(doc = document) {
   renderPortfolio(portfolioContent, doc);
+  bindHeroContactActions(doc);
   bindProjectCategoryToggles(doc);
   mountInteractiveBackground(doc);
 }

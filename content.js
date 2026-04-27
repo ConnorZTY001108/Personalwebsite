@@ -7,16 +7,48 @@ export const portfolioContent = {
       primary: 'Tianyu',
       secondary: 'Zhang',
     },
-    heroStatementLines: ['Turning problems into working software with AI'],
+    heroStatementLines: ["Hello, I'm Tianyu"],
     availability: 'Open to software engineering internship opportunities',
-    headline: 'Software engineer for workflow systems, product tooling, and applied backend work',
     summary:
-      'I build workflow software, engineering tools, and applied systems that need clear interfaces, reliable data handling, and practical delivery.',
+      'I am a Master of Engineering student with a Computer Science background. I build full-stack web systems, backend APIs, robotics interfaces, data tools, and secure-system prototypes for practical workflows.',
+    education: [
+      {
+        school: 'McMaster University',
+        program: 'Master of Engineering in Systems and Technology',
+        period: '2025.09 - Present',
+      },
+      {
+        school: 'Carleton University',
+        program: 'Bachelor of Science in Computer Science',
+        period: '2020.09 - 2025.07',
+      },
+    ],
+    technicalStack: [
+      {
+        label: 'Languages',
+        items: ['Python', 'TypeScript', 'JavaScript', 'SQL', 'C++', 'Java', 'HTML', 'CSS'],
+      },
+      {
+        label: 'Frontend',
+        items: ['React', 'Angular', 'Responsive HTML/CSS'],
+      },
+      {
+        label: 'Backend and APIs',
+        items: ['Node.js', 'Express.js', 'Flask', 'REST APIs', 'WebSocket'],
+      },
+      {
+        label: 'Databases and Cloud',
+        items: ['PostgreSQL', 'MongoDB', 'MySQL', 'AWS S3', 'JSON data stores'],
+      },
+      {
+        label: 'Tools and Platforms',
+        items: ['Git', 'GitHub', 'Docker', 'Arduino UNO', 'ESP32-S3', 'Intel SGX'],
+      },
+    ],
   },
   navigation: [
     { label: 'Projects', href: 'index.html#projects' },
     { label: 'About Me', href: 'about.html' },
-    { label: 'Contact', href: 'contact.html' },
   ],
   about: {
     paragraphs: [
@@ -527,23 +559,24 @@ export const portfolioContent = {
     {
       slug: 'decentralized-platforms',
       category: 'full-stack-development',
-      domain: 'Cloud Commerce',
+      domain: 'Marketplace DApp',
       wordmarkLines: ['Cloud &', 'Decentralized', 'Platforms'],
-      result: 'Ethereum smart contracts, backend services, and S3-backed storage for a research commerce stack.',
+      result:
+        'Product listing, wallet purchases, shipping-state updates, and IPFS-backed media packaged into one Ethereum marketplace flow.',
       title: 'Software Development on Cloud and Decentralized Platforms',
-      subtitle: 'Research prototype combining Ethereum smart contracts, backend logic, and cloud storage.',
+      subtitle: 'Ethereum marketplace DApp with React, Solidity, Web3, and QuickNode IPFS.',
       summary:
-        'Explored how an e-commerce workflow could mix Ethereum smart contracts with backend services and AWS S3-backed storage.',
+        'Built a marketplace prototype that keeps product and order state on-chain while storing images and descriptions off-chain through an IPFS upload and retrieval flow.',
       visit: {
-        href: 'https://example.com/decentralized-platforms',
-        label: 'Visit Project',
+        href: 'https://github.com/connorzty/PACSJF-401004-final',
+        label: 'View Repository',
       },
       detailMeta: {
-        siteType: 'Research Prototype',
-        platform: 'Ethereum + AWS S3',
-        disciplines: ['Backend Systems', 'Smart Contracts'],
+        siteType: 'Marketplace DApp',
+        platform: 'React + Solidity + Truffle',
+        disciplines: ['Smart Contract Design', 'Frontend Integration', 'Decentralized App Architecture'],
       },
-      stack: ['Ethereum', 'Solidity', 'AWS S3', 'Backend Logic'],
+      stack: ['React', 'JavaScript', 'Solidity', 'Truffle', 'Web3.js', 'MetaMask', 'QuickNode IPFS'],
       media: {
         featuredImage: placeholderImage,
         featuredAlt: 'Placeholder visual for the cloud and decentralized platforms project',
@@ -555,28 +588,54 @@ export const portfolioContent = {
           title: 'Project Description',
           bodyHtml: `
         <p>
-          This research project examined how cloud-hosted services and decentralized platforms can work together in
-          a commerce workflow. Ethereum handled transaction logic, while backend services and AWS S3 supported
-          application behavior and storage.
+          This project is an <span class="detail-emphasis">Ethereum marketplace DApp</span> that lets users list
+          products, browse items, purchase them with a connected wallet, and follow order progress after checkout.
+          The frontend is built in <span class="detail-emphasis">React</span>, while a Solidity marketplace contract
+          stores each product's core sale state on-chain.
+        </p>
+        <p>
+          Instead of pushing rich product content directly onto the blockchain, the app packages each image together
+          with a <span class="detail-emphasis">description.txt</span> file, uploads that bundle through
+          <span class="detail-emphasis">QuickNode IPFS</span>, and reloads the content when products are rendered in
+          the storefront and purchased-order views.
         </p>
       `,
         },
         {
-          title: 'Key Contributions',
+          title: 'Outcome',
           bodyHtml: `
-        <ul>
-          <li>Selected Ethereum as the decentralized platform and wrote Solidity smart contracts for product posting, purchasing, and payment.</li>
-          <li>Built backend logic to handle user requests, interact with contracts, and manage user data.</li>
-          <li>Used AWS S3 to provide reliable cloud storage and backup for application data.</li>
-        </ul>
+        <p>
+          The final prototype demonstrates a full marketplace loop: sellers can publish products, buyers can connect a
+          wallet and complete purchases, and the app can continue tracking fulfillment through shipping-status updates.
+        </p>
+        <p>
+          More importantly, it proves a workable split between
+          <span class="detail-emphasis">minimal on-chain transaction state</span> and
+          <span class="detail-emphasis">off-chain product media delivery</span>, making the DApp practical enough to
+          present as an integrated product flow instead of a smart-contract demo in isolation.
+        </p>
       `,
         },
       ],
       detailsHtml: `
-    <h4>Outcome</h4>
+    <h4>Challenge</h4>
     <p>
-      The project connected smart contracts, backend orchestration, and cloud storage into one research prototype,
-      making the tradeoffs between centralized and decentralized components easier to evaluate.
+      The hard part was balancing what belongs <strong class="detail-emphasis">on-chain</strong> versus what should
+      stay off-chain. Product images and long descriptions are too heavy for contract storage, but the interface still
+      needs to make wallet state, contract reads, IPFS content loading, and route-specific behavior feel like one
+      coherent marketplace. On top of that, the project goes beyond a simple buy button by keeping
+      <strong class="detail-emphasis">purchasable items, purchased orders, and shipping-state management</strong> in
+      sync with the evolving contract state.
+    </p>
+    <h4>Approach</h4>
+    <p>
+      I treated the contract as the source of truth for <strong class="detail-emphasis">product identity, price,
+      buyer assignment, sale status, and order status</strong>, then moved rich content off-chain. The React client
+      zips each uploaded image together with a description file, sends that package to
+      <strong class="detail-emphasis">QuickNode IPFS</strong>, and later unpacks it when rendering cards. The UI is
+      separated into four flows
+      <strong class="detail-emphasis">Home, Add Product, Manage Shipping, and Purchased Orders</strong>
+      so listing, checkout, fulfillment updates, and buyer review each have a clear path through the app.
     </p>
   `,
       quote: {
@@ -636,6 +695,90 @@ export const portfolioContent = {
     <p>
       The project emphasized timing, media control, and interactivity, showing how frontend logic can shape a
       narrative experience rather than just present static content.
+    </p>
+  `,
+      quote: {
+        body: '',
+        credit: '',
+      },
+    },
+    {
+      slug: 'ctest',
+      category: 'personal-interest',
+      domain: 'Study Tool',
+      wordmarkLines: ['Bilingual', 'Question', 'System'],
+      result:
+        'Bilingual question banks, practice and mock exam modes, wrong-question review, and local progress archives.',
+      title: 'Ctest Bilingual Practice System',
+      subtitle:
+        'A local-first frontend study tool with bilingual question banks, exam simulation, and progress tracking.',
+      summary:
+        'Built a lightweight browser-based practice system that supports Chinese and English question sets, mock exams, mistake review, and local learning archives.',
+      visit: {
+        href: 'https://github.com/ConnorZTY001108/Ctest',
+        label: 'View Repository',
+      },
+      detailMeta: {
+        siteType: 'Study Tool',
+        platform: 'HTML + CSS + JavaScript',
+        disciplines: ['Frontend Interaction', 'Local Persistence'],
+      },
+      stack: ['HTML', 'CSS', 'JavaScript', 'Python', 'Node.js'],
+      media: {
+        featuredImage: placeholderImage,
+        featuredAlt: 'Placeholder visual for the Ctest bilingual practice system',
+        longformImage: placeholderImage,
+        longformAlt: 'Placeholder longform visual for the Ctest bilingual practice system',
+      },
+      detailLeadSections: [
+        {
+          title: 'Project Description',
+          bodyHtml: `
+        <p>
+          Ctest is a <span class="detail-emphasis">pure frontend question-practice system</span> built for studying
+          with both <span class="detail-emphasis">Chinese and English question banks</span>. It supports normal
+          practice, simulated exams, wrong-question review, and local progress persistence without requiring a backend
+          service.
+        </p>
+        <p>
+          The repo also includes a small data-preparation path built with
+          <span class="detail-emphasis">Python and pypdf</span> so extracted question sets can be turned into the JSON
+          data files the browser app uses.
+        </p>
+      `,
+        },
+        {
+          title: 'Key Contributions',
+          bodyHtml: `
+        <ul>
+          <li>Implemented bilingual question-bank switching for <span class="detail-emphasis">Chinese and English study flows</span>.</li>
+          <li>Built separate <span class="detail-emphasis">practice and mock exam modes</span> with instant feedback and score review.</li>
+          <li>Added a <span class="detail-emphasis">wrong-question notebook</span> so missed items can be revisited and cleared after review.</li>
+          <li>Designed a local archive flow around <span class="detail-emphasis">question-archive.json</span> to persist study state and sync progress on future sessions.</li>
+        </ul>
+      `,
+        },
+      ],
+      detailsHtml: `
+    <h4>Challenge</h4>
+    <p>
+      The project needed to stay <strong class="detail-emphasis">simple to run and maintain</strong> while still
+      handling multiple learning workflows. That meant supporting bilingual content, instant practice feedback, exam
+      scoring, and progress persistence in a <strong class="detail-emphasis">local-first frontend experience</strong>
+      without relying on a hosted backend.
+    </p>
+    <h4>Approach</h4>
+    <p>
+      I kept the app lightweight by building it with <strong class="detail-emphasis">plain HTML, CSS, and
+      JavaScript</strong>, then separated content into JSON question banks and archive files. A small Python parser
+      path handled data extraction, while the browser app focused on <strong class="detail-emphasis">mode switching,
+      wrong-question tracking, and local progress storage</strong>.
+    </p>
+    <h4>Outcome</h4>
+    <p>
+      The result is a <strong class="detail-emphasis">focused frontend study tool</strong> that is easy to launch
+      locally, practical for repeated review, and structured so new question banks or archive data can be added without
+      changing the core UI flow.
     </p>
   `,
       quote: {

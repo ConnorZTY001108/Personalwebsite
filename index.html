@@ -8,7 +8,7 @@
       name="description"
       content="Portfolio website for Tianyu Zhang, focused on workflow systems, robotics interfaces, and applied software projects."
     />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=20260427-hero-v14" />
   </head>
   <body class="home-page">
     <div id="dots"></div>
@@ -31,9 +31,32 @@
       <div id="content" class="site-content">
         <div class="content-area">
           <main id="main" class="site-main">
-            <div class="tagline">
-              <h1 id="hero-statement"></h1>
-            </div>
+            <section class="tagline hero-profile" aria-labelledby="hero-statement">
+              <div class="hero-profile-copy">
+                <h1 id="hero-statement"></h1>
+                <p class="hero-summary" id="hero-summary"></p>
+                <div class="hero-contact" id="hero-contact" aria-label="Contact links"></div>
+              </div>
+              <div class="hero-photo-slot">
+                <img
+                  class="hero-photo"
+                  src="./assets/profile/tianyu-portrait.png?v=20260427-033033"
+                  alt="Profile portrait"
+                  loading="eager"
+                />
+              </div>
+            </section>
+
+            <section class="profile-overview" aria-label="Education and technical stack">
+              <article class="profile-panel profile-education">
+                <h2>Education</h2>
+                <div class="profile-education-list" id="education-list"></div>
+              </article>
+              <article class="profile-panel profile-tech-stack">
+                <h2>Technical Stack</h2>
+                <div class="tech-stack-list" id="tech-stack-list"></div>
+              </article>
+            </section>
 
             <section class="work" id="projects">
               <div class="project-groups" id="project-grid"></div>
@@ -45,6 +68,6 @@
 
     <script src="./assets/vendor/three.min.js"></script>
     <script src="./assets/vendor/vanta.dots.min.js"></script>
-    <script type="module" src="./app.js"></script>
+    <script type="module" src="./app.js?v=20260427-hero-v14"></script>
   </body>
 </html>
