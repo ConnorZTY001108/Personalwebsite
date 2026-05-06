@@ -45,15 +45,53 @@ export const portfolioContent = {
         items: ['Git', 'GitHub', 'Docker', 'Arduino UNO', 'ESP32-S3', 'Intel SGX'],
       },
     ],
+    certifications: [
+      {
+        title: 'AWS Machine Learning Foundations',
+        href: 'https://www.credly.com/badges/594233e4-cbe0-4f63-8039-418ee7335fc4/linked_in_profile',
+      },
+      {
+        title: 'CompTIA A+',
+        href: 'https://www.credly.com/badges/1bd9beb4-8796-4833-aca0-c7aefb83c6da/linked_in_profile',
+      },
+    ],
   },
   navigation: [
     { label: 'Projects', href: 'index.html#projects' },
     { label: 'About Me', href: 'about.html' },
   ],
   about: {
-    paragraphs: [
-      'I work best on software that sits between people, operations, and technical systems: workflow platforms, internal tools, visual editors, and interfaces that turn a messy process into something readable.',
-      'My strongest projects usually involve both product judgment and engineering rigor. I care about building systems that look intentional, survive real use, and make complex work easier to trust.',
+    personalItems: [
+      {
+        label: 'Steam',
+        value: 'Zty20001108',
+        iconSlug: 'steam',
+        href: 'https://steamcommunity.com/id/Zty20001108/',
+      },
+      {
+        label: 'Steam',
+        value: '76561199104733654',
+        iconSlug: 'steam',
+        href: 'https://steamcommunity.com/profiles/76561199104733654/',
+      },
+      {
+        label: 'Discord',
+        value: 'edmchzty',
+        copyValue: 'edmchzty',
+        iconSlug: 'discord',
+      },
+      {
+        label: 'League of Legends',
+        value: 'ELO不让我赢的我坚决不赢#ELO的狗',
+        iconSlug: 'leagueoflegends',
+        href: 'https://www.leagueofgraphs.com/summoner/na/ELO%E4%B8%8D%E8%AE%A9%E6%88%91%E8%B5%A2%E7%9A%84%E6%88%91%E5%9D%9A%E5%86%B3%E4%B8%8D%E8%B5%A2-ELO%E7%9A%84%E7%8B%97',
+      },
+      {
+        label: 'Bilibili',
+        value: 'space.bilibili.com/95648542',
+        iconSlug: 'bilibili',
+        href: 'https://space.bilibili.com/95648542',
+      },
     ],
   },
   projectCategories: [

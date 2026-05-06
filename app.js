@@ -76,6 +76,22 @@ export function renderTechnicalStackGroups(groups = []) {
     .join('');
 }
 
+export function renderCertificationItems(items = []) {
+  return items
+    .map((item) => {
+      const titleMarkup = item.href
+        ? `<a class="profile-certification-title profile-certification-link suppressed" href="${item.href}" target="_blank" rel="noreferrer">${item.title}</a>`
+        : `<p class="profile-certification-title">${item.title}</p>`;
+
+      return `
+        <div class="profile-certification-item">
+          ${titleMarkup}
+        </div>
+      `;
+    })
+    .join('');
+}
+
 export function getProjectPageHref(project) {
   if (project.href) {
     return project.href;
@@ -399,6 +415,7 @@ export function renderPortfolio(content = portfolioContent, doc = document) {
   setNodeHTML(doc, 'hero-contact', renderHeroContactLinks(content.contact));
   setNodeHTML(doc, 'education-list', renderEducationItems(content.profile.education));
   setNodeHTML(doc, 'tech-stack-list', renderTechnicalStackGroups(content.profile.technicalStack));
+  setNodeHTML(doc, 'certification-list', renderCertificationItems(content.profile.certifications));
   setNodeHTML(doc, 'project-grid', renderProjectGroups(content.projects, content.projectCategories));
   setNodeHTML(doc, 'about-copy', renderAboutParagraphs(content.about.paragraphs));
   setNodeHTML(doc, 'contact-list', renderContactLinks(content.contact));

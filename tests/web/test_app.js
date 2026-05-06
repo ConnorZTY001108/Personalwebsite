@@ -9,6 +9,7 @@ import {
   registerPortfolioBoot,
   renderHeroContactLinks,
   renderNavigation,
+  renderCertificationItems,
   renderProjectCards,
   renderProjectGroups,
   renderContactLinks,
@@ -34,6 +35,9 @@ import {
   registerContactPageBoot,
 } from '../../contact.js';
 import {
+  bindAboutPlatformActions,
+  copyAboutPlatformValue,
+  renderAboutPersonalItems,
   renderAboutPage,
   registerAboutPageBoot,
 } from '../../about.js';
@@ -53,6 +57,17 @@ test('portfolio content exposes the cloned dekiru-style homepage contract', () =
   assert.match(
     portfolioContent.profile.technicalStack.find((group) => group.label === 'Languages')?.items.join(' '),
     /Python/,
+  );
+  assert.deepEqual(
+    portfolioContent.profile.certifications.map((item) => item.title),
+    ['AWS Machine Learning Foundations', 'CompTIA A+'],
+  );
+  assert.deepEqual(
+    portfolioContent.profile.certifications.map((item) => item.href),
+    [
+      'https://www.credly.com/badges/594233e4-cbe0-4f63-8039-418ee7335fc4/linked_in_profile',
+      'https://www.credly.com/badges/1bd9beb4-8796-4833-aca0-c7aefb83c6da/linked_in_profile',
+    ],
   );
   assert.equal(portfolioContent.navigation.length, 2);
   assert.deepEqual(
@@ -163,6 +178,12 @@ test('homepage shell declares the dekiru-like header, tagline, and logo-wall hoo
   assert.match(html, /src="\.\/assets\/profile\/tianyu-portrait\.svg\?v=20260427-033033"/);
   assert.match(html, /id="education-list"/);
   assert.match(html, /id="tech-stack-list"/);
+  assert.match(html, /<article class="profile-panel profile-certifications">/);
+  assert.match(html, /id="certification-list"/);
+  const techPanelStart = html.indexOf('<article class="profile-panel profile-tech-stack">');
+  const techPanelEnd = html.indexOf('</article>', techPanelStart);
+  const certificationPanelStart = html.indexOf('<article class="profile-panel profile-certifications">');
+  assert.ok(certificationPanelStart > techPanelEnd);
   assert.match(html, /id="project-grid"/);
   assert.doesNotMatch(html, /id="hero-greeting"/);
   assert.doesNotMatch(html, /id="hero-headline"/);
@@ -177,15 +198,38 @@ test('homepage shell declares the dekiru-like header, tagline, and logo-wall hoo
   assert.match(html, /<script type="module" src="\.\/app\.js\?v=20260427-hero-v14"><\/script>/);
 });
 
+test('renderCertificationItems outputs compact certification rows', () => {
+  const markup = renderCertificationItems(portfolioContent.profile.certifications);
+
+  assert.match(markup, /class="profile-certification-item"/);
+  assert.match(
+    markup,
+    /href="https:\/\/www\.credly\.com\/badges\/594233e4-cbe0-4f63-8039-418ee7335fc4\/linked_in_profile"/,
+  );
+  assert.match(
+    markup,
+    /href="https:\/\/www\.credly\.com\/badges\/1bd9beb4-8796-4833-aca0-c7aefb83c6da\/linked_in_profile"/,
+  );
+  assert.match(markup, /target="_blank" rel="noreferrer"/);
+  assert.match(markup, /<a class="profile-certification-title profile-certification-link suppressed"[^>]*>AWS Machine Learning Foundations<\/a>/);
+  assert.match(markup, /<a class="profile-certification-title profile-certification-link suppressed"[^>]*>CompTIA A\+<\/a>/);
+});
+
 test('about page shell declares the shared header and standalone about hooks', () => {
   const html = fs.readFileSync(new URL('../../about.html', import.meta.url), 'utf8');
 
   assert.match(html, /<body class="about-page">/);
+  assert.match(
+    html,
+    /content="Personal links for Tianyu Zhang, including Steam, Discord, League of Legends, and Bilibili profiles\."/
+  );
   assert.match(html, /<div id="dots"><\/div>/);
   assert.match(html, /id="wordmark-primary"/);
   assert.match(html, /id="wordmark-secondary"/);
   assert.match(html, /id="nav-list"/);
   assert.match(html, /id="about-page-copy"/);
+  assert.match(html, /aria-label="Personal links for Tianyu Zhang"/);
+  assert.doesNotMatch(html, /software engineering focus on workflow systems/i);
   assert.doesNotMatch(html, /class="site-footer"/);
   assert.match(html, /src="\.\/assets\/vendor\/three\.min\.js"/);
   assert.match(html, /src="\.\/assets\/vendor\/vanta\.dots\.min\.js"/);
@@ -379,6 +423,10 @@ test('styles define local postmono font faces and cloned homepage/detail layout 
   assert.match(css, /\.hero-contact-label\b/);
   assert.match(css, /grid-template-columns:\s*repeat\(auto-fit,\s*minmax\(92px,\s*1fr\)\)/);
   assert.match(css, /grid-template-columns:\s*minmax\(0,\s*0\.95fr\)\s*minmax\(260px,\s*0\.6fr\)/);
+  assert.match(
+    css,
+    /grid-template-columns:\s*minmax\(220px,\s*0\.9fr\)\s*minmax\(320px,\s*1\.35fr\)\s*minmax\(220px,\s*0\.8fr\)/,
+  );
   assert.match(css, /justify-self:\s*start/);
   const heroContactHoverCss = css.slice(
     css.indexOf('.hero-contact-link:hover::before'),
@@ -390,6 +438,26 @@ test('styles define local postmono font faces and cloned homepage/detail layout 
   assert.match(css, /\.profile-panel\b/);
   assert.match(css, /\.profile-education-list\b/);
   assert.match(css, /\.tech-stack-list\b/);
+  assert.match(css, /\.about-platform-list\b/);
+  assert.match(css, /\.about-platform-icon-row\b/);
+  assert.match(css, /\.about-platform-detail-list\b/);
+  assert.match(css, /\.about-platform-item\b/);
+  assert.match(css, /\.about-platform-copy-button\b/);
+  assert.match(css, /\.about-platform-copy-button\[data-copy-state='copied'\]/);
+  assert.match(css, /\.about-platform-icon-only\b/);
+  assert.match(css, /\.about-platform-icon img\b/);
+  assert.match(css, /\.profile-certifications\b/);
+  assert.match(css, /\.certification-list\b/);
+  assert.match(css, /\.profile-certification-title\b/);
+  const profileCertificationTitleCss = css.slice(
+    css.indexOf('.profile-school,'),
+    css.indexOf('.profile-period {'),
+  );
+  assert.match(profileCertificationTitleCss, /\.profile-certification-title\s*\{/);
+  assert.match(profileCertificationTitleCss, /font-family:\s*'PostMono'/);
+  assert.match(profileCertificationTitleCss, /text-transform:\s*uppercase/);
+  assert.match(profileCertificationTitleCss, /text-shadow:\s*0 0 10px rgba\(255,\s*255,\s*255,\s*0\.75\)/);
+  assert.doesNotMatch(profileCertificationTitleCss, /text-transform:\s*none/);
   assert.match(css, /\.tagline-line\b/);
   assert.match(css, /\.work\b/);
   assert.match(css, /\.project-grid\b/);
@@ -736,7 +804,89 @@ test('renderContactPage mounts the shared wordmark and standalone contact list',
   assert.match(mockDocument.getElementById('contact-page-list').innerHTML, /linkedin\.com\/in\/tianyu-zhang-9470a7266/i);
 });
 
-test('renderAboutPage mounts the shared wordmark and standalone about copy', () => {
+test('renderAboutPersonalItems outputs platform icon rows, profile links, and plain text IDs', () => {
+  const markup = renderAboutPersonalItems(portfolioContent.about.personalItems);
+
+  assert.match(markup, /class="about-platform-list"/);
+  assert.match(markup, /class="about-platform-icon-row"/);
+  assert.match(markup, /class="about-platform-item/);
+  assert.match(markup, /class="about-platform-item about-platform-copy-button about-platform-icon-only"/);
+  assert.match(markup, /class="about-platform-icon"/);
+  assert.match(markup, /src="https:\/\/cdn\.simpleicons\.org\/steam\/00f7ff"/);
+  assert.match(markup, /src="https:\/\/cdn\.simpleicons\.org\/discord\/00f7ff"/);
+  assert.match(markup, /src="https:\/\/cdn\.simpleicons\.org\/leagueoflegends\/00f7ff"/);
+  assert.match(markup, /src="https:\/\/cdn\.simpleicons\.org\/bilibili\/00f7ff"/);
+  assert.match(markup, /href="https:\/\/steamcommunity\.com\/id\/Zty20001108\/"/);
+  assert.match(markup, /href="https:\/\/steamcommunity\.com\/profiles\/76561199104733654\/"/);
+  assert.match(markup, /href="https:\/\/www\.leagueofgraphs\.com\/summoner\/na\/ELO%E4%B8%8D/);
+  assert.match(markup, /href="https:\/\/space\.bilibili\.com\/95648542"/);
+  assert.match(markup, /target="_blank" rel="noreferrer"/);
+  assert.match(markup, /type="button" data-about-platform-copy="edmchzty"/);
+  assert.match(markup, /aria-label="Copy Discord ID: edmchzty"/);
+  assert.match(markup, /about-platform-icon-only/);
+  assert.match(markup, /aria-label="Steam: Zty20001108"/);
+  assert.doesNotMatch(markup, />Zty20001108</);
+  assert.doesNotMatch(markup, />76561199104733654</);
+  assert.doesNotMatch(markup, />space\.bilibili\.com\/95648542</);
+  assert.doesNotMatch(markup, />edmchzty</);
+  assert.match(markup, /edmchzty/);
+  assert.match(markup, /title="Discord: edmchzty"/);
+  assert.match(markup, /title="League of Legends:/);
+});
+
+test('copyAboutPlatformValue writes the requested platform ID to clipboard', async () => {
+  const clipboard = {
+    copiedText: '',
+    async writeText(value) {
+      this.copiedText = value;
+    },
+  };
+
+  await copyAboutPlatformValue('edmchzty', clipboard);
+  assert.equal(clipboard.copiedText, 'edmchzty');
+});
+
+test('bindAboutPlatformActions wires Discord icon copy state', async () => {
+  const button = createMockAboutPlatformCopyButton();
+  let resetHandler;
+  let resetDelay;
+  const clipboard = {
+    copiedText: '',
+    async writeText(value) {
+      this.copiedText = value;
+    },
+  };
+  const doc = {
+    querySelectorAll(selector) {
+      assert.equal(selector, '[data-about-platform-copy]');
+      return [button];
+    },
+  };
+
+  bindAboutPlatformActions(doc, clipboard, {
+    setTimeout(handler, delay) {
+      resetHandler = handler;
+      resetDelay = delay;
+      return 'about-reset-timer';
+    },
+    clearTimeout() {},
+  });
+  await button.listeners.click();
+
+  assert.equal(clipboard.copiedText, 'edmchzty');
+  assert.equal(button.dataset.copyState, 'copied');
+  assert.equal(button.attributes['aria-label'], 'edmchzty copied to clipboard');
+  assert.equal(resetDelay, 2000);
+  assert.equal(button._aboutPlatformResetTimer, 'about-reset-timer');
+
+  resetHandler();
+
+  assert.equal(button.dataset.copyState, undefined);
+  assert.equal(button.attributes['aria-label'], 'Copy Discord ID: edmchzty');
+  assert.equal(button._aboutPlatformResetTimer, undefined);
+});
+
+test('renderAboutPage mounts the shared wordmark and personal about profile', () => {
   const mockDocument = createMockAboutDocument();
 
   renderAboutPage(mockDocument);
@@ -747,12 +897,25 @@ test('renderAboutPage mounts the shared wordmark and standalone about copy', () 
   assert.match(mockDocument.getElementById('nav-list').innerHTML, />About Me</);
   assert.match(
     mockDocument.getElementById('about-page-copy').innerHTML,
-    /software that sits between people, operations, and technical systems/i,
+    /steamcommunity\.com\/id\/Zty20001108/i,
   );
   assert.match(
     mockDocument.getElementById('about-page-copy').innerHTML,
-    /product judgment and engineering rigor/i,
+    /space\.bilibili\.com\/95648542/i,
   );
+  assert.match(mockDocument.getElementById('about-page-copy').innerHTML, /edmchzty/);
+  assert.match(mockDocument.getElementById('about-page-copy').innerHTML, /data-about-platform-copy="edmchzty"/);
+  assert.doesNotMatch(mockDocument.getElementById('about-page-copy').innerHTML, />edmchzty</);
+  assert.match(mockDocument.getElementById('about-page-copy').innerHTML, /leagueofgraphs\.com\/summoner\/na\/ELO%E4%B8%8D/i);
+  assert.doesNotMatch(
+    mockDocument.getElementById('about-page-copy').innerHTML,
+    />ELO不让我赢的我坚决不赢#ELO的狗</,
+  );
+  assert.doesNotMatch(
+    mockDocument.getElementById('about-page-copy').innerHTML,
+    /software that sits between people, operations, and technical systems/i,
+  );
+  assert.doesNotMatch(mockDocument.getElementById('about-page-copy').innerHTML, /product judgment and engineering rigor/i);
 });
 
 test('mountInteractiveBackground appends an animated canvas and registers pointer listeners', () => {
@@ -828,6 +991,10 @@ test('renderPortfolio mounts the dekiru-like wordmark, navigation, tagline, grid
   assert.doesNotMatch(mockDocument.getElementById('hero-contact').innerHTML, /Contact Page/);
   assert.match(mockDocument.getElementById('education-list').innerHTML, /McMaster University/);
   assert.match(mockDocument.getElementById('tech-stack-list').innerHTML, /TypeScript/);
+  assert.match(mockDocument.getElementById('certification-list').innerHTML, /AWS Machine Learning Foundations/);
+  assert.match(mockDocument.getElementById('certification-list').innerHTML, /CompTIA A\+/);
+  assert.match(mockDocument.getElementById('certification-list').innerHTML, /594233e4-cbe0-4f63-8039-418ee7335fc4/);
+  assert.match(mockDocument.getElementById('certification-list').innerHTML, /1bd9beb4-8796-4833-aca0-c7aefb83c6da/);
   assert.match(mockDocument.getElementById('nav-list').innerHTML, /Projects/);
   assert.match(mockDocument.getElementById('project-grid').innerHTML, /project-category-title/);
   assert.match(mockDocument.getElementById('project-grid').innerHTML, /project-card-wordmark/);
@@ -905,7 +1072,7 @@ test('registerAboutPageBoot mounts immediately and via DOMContentLoaded', () => 
   registerAboutPageBoot(loadingDoc);
   assert.equal(typeof loadingHandler, 'function');
   loadingHandler();
-  assert.match(loadingDoc.getElementById('about-page-copy').innerHTML, /workflow platforms/i);
+  assert.match(loadingDoc.getElementById('about-page-copy').innerHTML, /steamcommunity\.com\/profiles\/76561199104733654/i);
 });
 
 test('detail helpers resolve projects, prev-next pagination, and a safe missing-project state', () => {
@@ -1492,6 +1659,7 @@ function createMockHomeDocument() {
     'hero-contact',
     'education-list',
     'tech-stack-list',
+    'certification-list',
     'project-grid',
   ];
 
@@ -1751,6 +1919,27 @@ function createMockInteractiveContactButton() {
     },
     setAttribute(name, value) {
       this.attributes[name] = String(value);
+    },
+  };
+}
+
+function createMockAboutPlatformCopyButton() {
+  return {
+    dataset: {
+      aboutPlatformCopy: 'edmchzty',
+    },
+    listeners: {},
+    attributes: {
+      'aria-label': 'Copy Discord ID: edmchzty',
+    },
+    addEventListener(eventName, handler) {
+      this.listeners[eventName] = handler;
+    },
+    setAttribute(name, value) {
+      this.attributes[name] = String(value);
+    },
+    getAttribute(name) {
+      return this.attributes[name];
     },
   };
 }
