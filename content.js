@@ -54,6 +54,10 @@ export const portfolioContent = {
         title: 'CompTIA A+',
         href: 'https://www.credly.com/badges/1bd9beb4-8796-4833-aca0-c7aefb83c6da/linked_in_profile',
       },
+      {
+        title: 'Machine Learning Foundations',
+        href: 'https://www.credly.com/badges/0b2255d2-c30e-4ffa-a759-f22b184d42a3/print',
+      },
     ],
   },
   navigation: [
