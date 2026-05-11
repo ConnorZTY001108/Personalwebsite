@@ -47,7 +47,7 @@ export const portfolioContent = {
     ],
     certifications: [
       {
-        title: 'AWS Machine Learning Foundations',
+        title: 'AWS Certified Solutions Architect – Associate',
         href: 'https://www.credly.com/badges/594233e4-cbe0-4f63-8039-418ee7335fc4/linked_in_profile',
       },
       {
