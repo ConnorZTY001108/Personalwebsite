@@ -197,46 +197,315 @@ test('process platform development timeline data is complete and public-safe', (
     ],
   );
 
-  const requiredKeys = [
-    'id',
-    'startDate',
-    'dateLabel',
-    'title',
-    'category',
-    'summary',
-    'technicalWork',
-    'impact',
-    'technologies',
-    'commitCount',
-  ];
-  timeline.entries.forEach((entry) => {
-    requiredKeys.forEach((key) => assert.ok(Object.hasOwn(entry, key), `${entry.id} missing ${key}`));
-    assert.match(entry.startDate, /^\d{4}-\d{2}-\d{2}$/);
-    assert.ok(Array.isArray(entry.technicalWork) && entry.technicalWork.length > 0);
-    assert.ok(Array.isArray(entry.technologies) && entry.technologies.length > 0);
+  assertPublicTimelineContract(timeline);
+  assert.equal(timeline.entries.filter(({ category }) => category === 'Documentation').length, 1);
+});
+
+const timelineRequiredEntryKeys = [
+  'id',
+  'startDate',
+  'dateLabel',
+  'title',
+  'category',
+  'summary',
+  'technicalWork',
+  'impact',
+  'technologies',
+  'commitCount',
+];
+
+const timelineStringEntryKeys = [
+  'id',
+  'startDate',
+  'dateLabel',
+  'title',
+  'category',
+  'summary',
+  'impact',
+];
+
+const publicTimelineForbiddenText = [
+  {
+    label: 'email',
+    pattern: /\b[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+\b/i,
+  },
+  {
+    label: 'URL',
+    pattern: /\b(?:https?|ftp|ssh|git):\/\/|(?:^|\s)www\.[^\s]+|git@[a-z0-9.-]+:|\b(?:[a-z0-9-]+\.)+(?:com|org|net|io|dev|app|edu|gov)(?:\/[^\s]*)?/i,
+  },
+  {
+    label: 'filesystem path',
+    pattern: /\b[a-z]:[\\/](?:[^\\/\s]+[\\/])*[^\\/\s]*/i,
+  },
+  {
+    label: 'filesystem path',
+    pattern: /(?:^|[\s("'(])\/(?:Users|home|var|tmp|opt|srv|workspace|repo|src)(?:\/[^\s"',)]+)+/i,
+  },
+  {
+    label: 'source path',
+    pattern: /(?:^|[\s("'(])(?:\.{1,2}[\\/])?(?:src|lib|app|server|client|backend|frontend|tests?|docs?|config|scripts?)[\\/][^\s"',)]+/i,
+  },
+  {
+    label: 'filesystem path',
+    pattern: /(?:^|[\s("'(])(?:\.{1,2}[\\/])?(?:[a-z0-9_.-]+[\\/])+[a-z0-9_.-]+\.[a-z0-9]{1,10}(?=$|[\s"',).;:])/i,
+  },
+  {
+    label: 'Git ref',
+    pattern: /\b(?:refs\/(?:heads|tags|remotes)|(?:origin|upstream))\/[a-z0-9._/-]+\b/i,
+  },
+  {
+    label: 'commit hash',
+    pattern: /(^|[^a-z0-9])[0-9a-f]{7,40}([^a-z0-9]|$)/i,
+  },
+  {
+    label: 'commit metadata',
+    pattern: /(?:^|\n)\s*(?:commit\s+[0-9a-f]{7,40}|author:|authordate:|commit:|commitdate:|committer:|date:|merge:)/im,
+  },
+];
+
+function assertPublicSafeTimelineValue(value, path) {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => assertPublicSafeTimelineValue(item, `${path}[${index}]`));
+    return;
+  }
+
+  if (value !== null && typeof value === 'object') {
+    assert.fail(`${path} contains nested metadata`);
+  }
+
+  if (typeof value !== 'string') return;
+
+  publicTimelineForbiddenText.forEach(({ label, pattern }) => {
+    assert.doesNotMatch(value, pattern, `${path} contains forbidden ${label}`);
+  });
+}
+
+function assertRealIsoDate(value, path) {
+  assert.match(value, /^\d{4}-\d{2}-\d{2}$/, `${path} must use YYYY-MM-DD`);
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  assert.ok(!Number.isNaN(parsed.getTime()), `${path} must be a real date`);
+  assert.equal(parsed.toISOString().slice(0, 10), value, `${path} must be a real date`);
+}
+
+function assertPublicTimelineContract(timeline) {
+  assert.deepEqual(
+    Object.keys(timeline).sort(),
+    ['defaultOrder', 'entries', 'generatedThrough'],
+    'timeline has unexpected keys',
+  );
+  assert.equal(typeof timeline.generatedThrough, 'string');
+  assertRealIsoDate(timeline.generatedThrough, 'timeline.generatedThrough');
+  assert.equal(timeline.defaultOrder, 'desc');
+  assert.ok(Array.isArray(timeline.entries));
+
+  timeline.entries.forEach((entry, index) => {
+    const expectedKeys = [
+      ...timelineRequiredEntryKeys,
+      ...(Object.hasOwn(entry, 'endDate') ? ['endDate'] : []),
+    ].sort();
+    assert.deepEqual(
+      Object.keys(entry).sort(),
+      expectedKeys,
+      `timeline.entries[${index}] has an invalid key schema`,
+    );
+
+    timelineStringEntryKeys.forEach((key) => {
+      assert.equal(typeof entry[key], 'string', `${entry.id}.${key} must be a string`);
+      assert.ok(entry[key].length > 0, `${entry.id}.${key} must not be empty`);
+    });
+    if (Object.hasOwn(entry, 'endDate')) {
+      assert.equal(typeof entry.endDate, 'string', `${entry.id}.endDate must be a string`);
+    }
+
+    assertRealIsoDate(entry.startDate, `${entry.id}.startDate`);
+    assert.ok(
+      entry.startDate <= timeline.generatedThrough,
+      `${entry.id}.startDate must not be after generatedThrough`,
+    );
+    if (Object.hasOwn(entry, 'endDate')) {
+      assertRealIsoDate(entry.endDate, `${entry.id}.endDate`);
+      assert.ok(entry.startDate <= entry.endDate, `${entry.id}.endDate must not precede startDate`);
+      assert.ok(
+        entry.endDate <= timeline.generatedThrough,
+        `${entry.id}.endDate must not be after generatedThrough`,
+      );
+    }
+
+    Object.entries(entry).forEach(([key, value]) => {
+      assertPublicSafeTimelineValue(value, `${entry.id}.${key}`);
+    });
+
+    ['technicalWork', 'technologies'].forEach((key) => {
+      assert.ok(Array.isArray(entry[key]) && entry[key].length > 0, `${entry.id}.${key} must be a non-empty array`);
+      entry[key].forEach((item) => {
+        assert.equal(typeof item, 'string', `${entry.id}.${key} must contain only strings`);
+        assert.ok(item.length > 0, `${entry.id}.${key} must not contain empty strings`);
+      });
+    });
     assert.ok(Number.isInteger(entry.commitCount) && entry.commitCount > 0);
   });
+}
 
-  assert.equal(timeline.entries.filter(({ category }) => category === 'Documentation').length, 1);
+test('development timeline data contract rejects private metadata probes', async (t) => {
+  const project = portfolioContent.projects.find(({ slug }) => slug === 'process-platform');
+  const timeline = project?.developmentTimeline;
+  assert.ok(timeline);
 
-  const forbiddenKeys = new Set([
-    'sha',
-    'commitSha',
-    'commitMessage',
-    'rawMessage',
-    'href',
-    'url',
-    'filePath',
-    'branch',
-  ]);
-  timeline.entries.forEach((entry) => {
-    Object.keys(entry).forEach((key) => assert.equal(forbiddenKeys.has(key), false));
-  });
+  const probes = [
+    {
+      name: 'unexpected entry key',
+      expected: /invalid key schema/,
+      mutate: (entry) => {
+        entry.commitMessage = 'Internal implementation detail';
+      },
+    },
+    {
+      name: 'missing required entry key',
+      expected: /invalid key schema/,
+      mutate: (entry) => {
+        delete entry.impact;
+      },
+    },
+    {
+      name: 'nested metadata',
+      expected: /nested metadata/,
+      mutate: (entry) => {
+        entry.technicalWork.push({ metadata: { rawMessage: 'Internal implementation detail' } });
+      },
+    },
+    {
+      name: 'URL',
+      expected: /forbidden URL/,
+      mutate: (entry) => {
+        entry.summary = 'See https://internal.example.com/private for details.';
+      },
+    },
+    {
+      name: 'email',
+      expected: /forbidden email/,
+      mutate: (entry) => {
+        entry.impact = 'Contact owner@example.com for access.';
+      },
+    },
+    {
+      name: 'filesystem path',
+      expected: /forbidden filesystem path/,
+      mutate: (entry) => {
+        entry.summary = 'Stored at C:\\Users\\owner\\private-repo\\secret.txt.';
+      },
+    },
+    {
+      name: 'source path',
+      expected: /forbidden source path/,
+      mutate: (entry) => {
+        entry.summary = 'Implemented in src/backend/routes/private.ts.';
+      },
+    },
+    {
+      name: 'Git ref',
+      expected: /forbidden Git ref/,
+      mutate: (entry) => {
+        entry.summary = 'Based on refs/heads/private-feature.';
+      },
+    },
+    {
+      name: 'commit hash',
+      expected: /forbidden commit hash/,
+      mutate: (entry) => {
+        entry.summary = 'Derived from commit deadbeef.';
+      },
+    },
+    {
+      name: 'commit metadata',
+      expected: /forbidden commit metadata/,
+      mutate: (entry) => {
+        entry.summary = 'Author: Private Developer\nCommitDate: 2026-07-14';
+      },
+    },
+  ];
 
-  const serialized = JSON.stringify(timeline);
-  assert.doesNotMatch(serialized, /github\.com\/bluehydrogenplant123/i);
-  assert.doesNotMatch(serialized, /src\/src|\.tsx\b|\.prisma\b/i);
-  assert.doesNotMatch(serialized, /(^|[^a-z0-9])[0-9a-f]{7,40}([^a-z0-9]|$)/i);
+  for (const { name, expected, mutate } of probes) {
+    await t.test(name, () => {
+      const candidate = structuredClone(timeline);
+      mutate(candidate.entries[0]);
+      assert.throws(
+        () => assertPublicTimelineContract(candidate),
+        expected,
+        `${name} should be rejected`,
+      );
+    });
+  }
+});
+
+test('development timeline data contract rejects invalid date ranges', async (t) => {
+  const project = portfolioContent.projects.find(({ slug }) => slug === 'process-platform');
+  const timeline = project?.developmentTimeline;
+  assert.ok(timeline);
+
+  const probes = [
+    {
+      name: 'impossible generated-through date',
+      expected: /must be a real date/,
+      mutate: (candidate) => {
+        candidate.generatedThrough = '2026-02-30';
+      },
+    },
+    {
+      name: 'impossible start date',
+      expected: /must be a real date/,
+      mutate: (candidate) => {
+        candidate.entries[0].startDate = '2026-02-30';
+      },
+    },
+    {
+      name: 'malformed end date',
+      expected: /must use YYYY-MM-DD/,
+      mutate: (candidate) => {
+        candidate.entries[0].endDate = 'July 14, 2026';
+      },
+    },
+    {
+      name: 'impossible end date',
+      expected: /must be a real date/,
+      mutate: (candidate) => {
+        candidate.entries[0].endDate = '2026-02-30';
+      },
+    },
+    {
+      name: 'start date after generated-through date',
+      expected: /must not be after generatedThrough/,
+      mutate: (candidate) => {
+        candidate.entries[0].startDate = '2026-07-15';
+      },
+    },
+    {
+      name: 'end date before start date',
+      expected: /must not precede startDate/,
+      mutate: (candidate) => {
+        candidate.entries[0].startDate = '2026-02-02';
+        candidate.entries[0].endDate = '2026-02-01';
+      },
+    },
+    {
+      name: 'end date after generated-through date',
+      expected: /must not be after generatedThrough/,
+      mutate: (candidate) => {
+        candidate.entries[0].endDate = '2026-07-15';
+      },
+    },
+  ];
+
+  for (const { name, expected, mutate } of probes) {
+    await t.test(name, () => {
+      const candidate = structuredClone(timeline);
+      mutate(candidate);
+      assert.throws(
+        () => assertPublicTimelineContract(candidate),
+        expected,
+        `${name} should be rejected`,
+      );
+    });
+  }
 });
 
 test('homepage shell declares the dekiru-like header, tagline, and logo-wall hooks', () => {
