@@ -20,8 +20,10 @@ import {
   bindProjectDetailLightbox,
   getProjectBySlug,
   getProjectDetailState,
+  renderDevelopmentTimeline,
   renderProjectDetail,
   registerProjectDetailBoot,
+  sortDevelopmentTimelineEntries,
 } from '../../project-detail.js';
 import {
   mountInteractiveBackground,
@@ -199,6 +201,122 @@ test('process platform development timeline data is complete and public-safe', (
 
   assertPublicTimelineContract(timeline);
   assert.equal(timeline.entries.filter(({ category }) => category === 'Documentation').length, 1);
+});
+
+test('sortDevelopmentTimelineEntries supports newest and oldest order without mutating data', () => {
+  const entries = [
+    { id: 'middle', startDate: '2026-02-01' },
+    { id: 'oldest', startDate: '2025-11-29' },
+    { id: 'newest', startDate: '2026-07-14' },
+  ];
+
+  assert.deepEqual(
+    sortDevelopmentTimelineEntries(entries, 'desc').map(({ id }) => id),
+    ['newest', 'middle', 'oldest'],
+  );
+  assert.deepEqual(
+    sortDevelopmentTimelineEntries(entries, 'asc').map(({ id }) => id),
+    ['oldest', 'middle', 'newest'],
+  );
+  assert.deepEqual(entries.map(({ id }) => id), ['middle', 'oldest', 'newest']);
+});
+
+test('renderDevelopmentTimeline outputs compact accessible milestone cards', () => {
+  const timeline = {
+    generatedThrough: '2026-07-14',
+    defaultOrder: 'desc',
+    entries: [
+      {
+        id: 'save-performance',
+        startDate: '2026-02-05',
+        endDate: '2026-02-18',
+        dateLabel: 'Feb 2026',
+        title: 'Incremental Save and Autosave',
+        category: 'Performance',
+        summary: 'Reworked diagram persistence around cached diffs.',
+        technicalWork: ['Sent only changed node data.', 'Parallelized node upserts.'],
+        impact: 'Reduced the measured save path to approximately 1.5 seconds.',
+        technologies: ['Node.js', 'MongoDB'],
+        commitCount: 7,
+      },
+      {
+        id: 'summary-only',
+        startDate: '2025-11-29',
+        dateLabel: 'Nov 2025',
+        title: 'Summary Only',
+        category: 'Feature',
+        summary: 'A milestone without expandable detail fields.',
+        technicalWork: [],
+        impact: '',
+        technologies: [],
+        commitCount: 0,
+      },
+    ],
+  };
+  const markup = renderDevelopmentTimeline(timeline);
+  const fallbackMarkup = renderDevelopmentTimeline({ ...timeline, defaultOrder: 'sideways' });
+
+  assert.match(markup, /Development Timeline/);
+  assert.match(markup, /Nov 2025\u2013Feb 2026/);
+  assert.match(markup, /data-development-timeline-order="desc"[\s\S]*aria-pressed="true"/);
+  assert.match(markup, /data-development-timeline-order="asc"[\s\S]*aria-pressed="false"/);
+  assert.match(markup, /data-development-timeline-entry/);
+  assert.match(markup, /data-start-date="2026-02-05"/);
+  assert.match(markup, /aria-expanded="false"/);
+  assert.match(markup, /aria-controls="development-timeline-details-save-performance"/);
+  assert.match(markup, /id="development-timeline-details-save-performance"[\s\S]*hidden/);
+  assert.match(markup, /Incremental Save and Autosave/);
+  assert.match(markup, /7 curated commits/);
+  assert.match(markup, /disabled aria-disabled="true"[\s\S]*Summary Only/);
+  assert.doesNotMatch(markup, /id="development-timeline-details-summary-only"/);
+  assert.match(
+    fallbackMarkup,
+    /data-development-timeline-order="desc"[\s\S]*aria-pressed="true"/,
+  );
+  assert.equal(renderDevelopmentTimeline({ entries: [] }), '');
+});
+
+test('renderDevelopmentTimeline escapes public copy and omits private source metadata', () => {
+  const markup = renderDevelopmentTimeline({
+    entries: [
+      {
+        id: 'escaped" onmouseover="private',
+        startDate: '2026-07-14',
+        dateLabel: 'Jul <em>2026</em>',
+        title: 'Safe <script>copy</script>',
+        category: 'Feature & Reliability',
+        summary: 'Keeps "quoted" public copy readable.',
+        technicalWork: ['Handled <unsafe> values.'],
+        impact: 'Protected users & data.',
+        technologies: ['Node.js <runtime>'],
+        commitCount: 1,
+        commitSha: 'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef',
+        rawCommitMessage: 'feat(private): expose internal history',
+        privatePath: 'C:\\Users\\owner\\private-repo',
+      },
+    ],
+  });
+
+  assert.match(markup, /Jul &lt;em&gt;2026&lt;\/em&gt;/);
+  assert.match(markup, /Safe &lt;script&gt;copy&lt;\/script&gt;/);
+  assert.match(markup, /Feature &amp; Reliability/);
+  assert.match(markup, /data-entry-id="escaped&quot; onmouseover=&quot;private"/);
+  assert.doesNotMatch(markup, /<script>|<em>|<unsafe>|deadbeef|feat\(private\)|C:\\Users/);
+});
+
+test('renderDevelopmentTimeline renders all curated milestones as collapsed native buttons', () => {
+  const project = portfolioContent.projects.find(({ slug }) => slug === 'process-platform');
+  const markup = renderDevelopmentTimeline(project?.developmentTimeline);
+
+  assert.equal(markup.match(/data-development-timeline-entry(?:\s|>)/g)?.length, 22);
+  assert.equal(markup.match(/data-development-timeline-toggle aria-expanded="false"/g)?.length, 22);
+  assert.equal(markup.match(/data-development-timeline-details(?:\s|>)/g)?.length, 22);
+  assert.equal(markup.match(/<button\b/g)?.length, 24);
+  assert.ok(
+    markup.indexOf('data-start-date="2026-06-08"') <
+      markup.indexOf('data-start-date="2025-11-29"'),
+  );
+  assert.doesNotMatch(markup, /https?:\/\/|refs\/|C:\\Users\\|\b[0-9a-f]{40}\b/i);
 });
 
 const timelineRequiredEntryKeys = [

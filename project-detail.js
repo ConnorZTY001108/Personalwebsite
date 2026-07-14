@@ -114,6 +114,172 @@ function renderDisciplineItems(items = []) {
   return items.map((item) => `<li>${item}</li>`).join('');
 }
 
+export function sortDevelopmentTimelineEntries(entries = [], order = 'desc') {
+  const direction = order === 'asc' ? 1 : -1;
+  return [...entries].sort(
+    (left, right) => String(left.startDate).localeCompare(String(right.startDate)) * direction,
+  );
+}
+
+function escapeDevelopmentTimelineHtml(value = '') {
+  const htmlEntities = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  };
+
+  return String(value).replace(/[&<>"']/g, (character) => htmlEntities[character]);
+}
+
+function getDevelopmentTimelinePeriod(entries = []) {
+  const ordered = sortDevelopmentTimelineEntries(entries, 'asc');
+  if (!ordered.length) {
+    return '';
+  }
+
+  const monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+  const formatMonth = (date) => {
+    const [year, month] = String(date).split('-');
+    return `${monthNames[Number(month) - 1]} ${year}`;
+  };
+  const first = ordered[0];
+  const last = ordered[ordered.length - 1];
+  return `${formatMonth(first.startDate)}\u2013${formatMonth(last.endDate || last.startDate)}`;
+}
+
+function hasDevelopmentTimelineDetails(entry) {
+  return Boolean(
+    entry.technicalWork?.length ||
+      entry.impact ||
+      entry.technologies?.length ||
+      entry.commitCount,
+  );
+}
+
+function renderDevelopmentTimelineDetails(entry, detailsId) {
+  if (!hasDevelopmentTimelineDetails(entry)) {
+    return '';
+  }
+
+  const technicalWork = entry.technicalWork?.length
+    ? `<ul class="development-timeline-work">${entry.technicalWork
+        .map((item) => `<li>${escapeDevelopmentTimelineHtml(item)}</li>`)
+        .join('')}</ul>`
+    : '';
+  const impact = entry.impact
+    ? `<p class="development-timeline-impact"><strong>Impact:</strong> ${escapeDevelopmentTimelineHtml(entry.impact)}</p>`
+    : '';
+  const technologies = entry.technologies?.length
+    ? `<ul class="development-timeline-technologies" aria-label="Technologies">${entry.technologies
+        .map((technology) => `<li>${escapeDevelopmentTimelineHtml(technology)}</li>`)
+        .join('')}</ul>`
+    : '';
+  const commitLabel =
+    entry.commitCount === 1
+      ? '1 curated commit'
+      : `${escapeDevelopmentTimelineHtml(entry.commitCount)} curated commits`;
+
+  return `
+    <div
+      class="development-timeline-details"
+      id="${escapeDevelopmentTimelineHtml(detailsId)}"
+      data-development-timeline-details
+      hidden
+    >
+      ${technicalWork}
+      ${impact}
+      ${technologies}
+      <p class="development-timeline-evidence">${commitLabel}</p>
+    </div>
+  `;
+}
+
+function renderDevelopmentTimelineEntry(entry) {
+  const detailsId = `development-timeline-details-${entry.id}`;
+  const expandable = hasDevelopmentTimelineDetails(entry);
+  const toggleAttributes = expandable
+    ? `data-development-timeline-toggle aria-expanded="false" aria-controls="${escapeDevelopmentTimelineHtml(detailsId)}"`
+    : 'disabled aria-disabled="true"';
+
+  return `
+    <li
+      class="development-timeline-entry"
+      data-development-timeline-entry
+      data-start-date="${escapeDevelopmentTimelineHtml(entry.startDate)}"
+      data-entry-id="${escapeDevelopmentTimelineHtml(entry.id)}"
+    >
+      <article class="development-timeline-card">
+        <div class="development-timeline-meta">
+          <time datetime="${escapeDevelopmentTimelineHtml(entry.startDate)}">${escapeDevelopmentTimelineHtml(entry.dateLabel)}</time>
+          <span>${escapeDevelopmentTimelineHtml(entry.category)}</span>
+        </div>
+        <button
+          class="development-timeline-toggle"
+          type="button"
+          ${toggleAttributes}
+        >
+          <span class="development-timeline-card-copy">
+            <strong>${escapeDevelopmentTimelineHtml(entry.title)}</strong>
+            <span>${escapeDevelopmentTimelineHtml(entry.summary)}</span>
+          </span>
+          <span class="development-timeline-arrow" aria-hidden="true">&gt;</span>
+        </button>
+        ${renderDevelopmentTimelineDetails(entry, detailsId)}
+      </article>
+    </li>
+  `;
+}
+
+export function renderDevelopmentTimeline(timeline = {}) {
+  if (!timeline.entries?.length) {
+    return '';
+  }
+
+  const order = timeline.defaultOrder === 'asc' ? 'asc' : 'desc';
+  const entries = sortDevelopmentTimelineEntries(timeline.entries, order);
+  const period = getDevelopmentTimelinePeriod(timeline.entries);
+
+  return `
+    <div class="development-timeline-header">
+      <div>
+        <p class="development-timeline-eyebrow">Personal Contribution</p>
+        <h2>Development Timeline</h2>
+        <p class="development-timeline-period">${escapeDevelopmentTimelineHtml(period)}</p>
+      </div>
+      <div class="development-timeline-order" role="group" aria-label="Timeline order">
+        <button
+          type="button"
+          data-development-timeline-order="desc"
+          aria-pressed="${order === 'desc'}"
+        >Newest</button>
+        <button
+          type="button"
+          data-development-timeline-order="asc"
+          aria-pressed="${order === 'asc'}"
+        >Oldest</button>
+      </div>
+    </div>
+    <ol id="detail-development-timeline-list" class="development-timeline-list">
+      ${entries.map(renderDevelopmentTimelineEntry).join('')}
+    </ol>
+  `;
+}
+
 function renderProjectSectionMarkup(sectionTitle, sectionBodyHtml, bodyId) {
   return `
     <section class="project-section">
