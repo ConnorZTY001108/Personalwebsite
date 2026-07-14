@@ -160,6 +160,85 @@ test('portfolio content exposes the cloned dekiru-style homepage contract', () =
   );
 });
 
+test('process platform development timeline data is complete and public-safe', () => {
+  const project = portfolioContent.projects.find(({ slug }) => slug === 'process-platform');
+  const timeline = project?.developmentTimeline;
+
+  assert.ok(timeline);
+  assert.equal(timeline.generatedThrough, '2026-07-14');
+  assert.equal(timeline.defaultOrder, 'desc');
+  assert.equal(timeline.entries.length, 22);
+  assert.equal(new Set(timeline.entries.map(({ id }) => id)).size, 22);
+  assert.deepEqual(
+    timeline.entries.map(({ title }) => title),
+    [
+      'New Model Metadata Persistence',
+      'Subnetwork Cache Preloading',
+      'Stream Deletion State Preservation',
+      'Subnetwork Port Mapping and Navigation',
+      'Stream Selection and Orthogonal Routing',
+      'Incremental Save and Autosave',
+      'Computation Save Guard',
+      'Save-as-Subnetwork Reliability',
+      'Authentication and Token Recovery',
+      'Run Configuration Portability',
+      'Time-Period and Wrapper Synchronization',
+      'Export and Diagram Duplication Reliability',
+      'Responsive Canvas and Display Filtering',
+      'Computation Result Write-Back Batching',
+      'Model Migration and Version Normalization',
+      'Stream and Computation Data Integrity',
+      'Economic Cost UI and Multi-TP Modeling',
+      'Economic Validation and Solver Integration',
+      'Extract Selection Workflow',
+      'Plant Measurement and Instrument Mapping',
+      'Stream Deduplication and Selection',
+      'Documentation and Knowledge System',
+    ],
+  );
+
+  const requiredKeys = [
+    'id',
+    'startDate',
+    'dateLabel',
+    'title',
+    'category',
+    'summary',
+    'technicalWork',
+    'impact',
+    'technologies',
+    'commitCount',
+  ];
+  timeline.entries.forEach((entry) => {
+    requiredKeys.forEach((key) => assert.ok(Object.hasOwn(entry, key), `${entry.id} missing ${key}`));
+    assert.match(entry.startDate, /^\d{4}-\d{2}-\d{2}$/);
+    assert.ok(Array.isArray(entry.technicalWork) && entry.technicalWork.length > 0);
+    assert.ok(Array.isArray(entry.technologies) && entry.technologies.length > 0);
+    assert.ok(Number.isInteger(entry.commitCount) && entry.commitCount > 0);
+  });
+
+  assert.equal(timeline.entries.filter(({ category }) => category === 'Documentation').length, 1);
+
+  const forbiddenKeys = new Set([
+    'sha',
+    'commitSha',
+    'commitMessage',
+    'rawMessage',
+    'href',
+    'url',
+    'filePath',
+    'branch',
+  ]);
+  timeline.entries.forEach((entry) => {
+    Object.keys(entry).forEach((key) => assert.equal(forbiddenKeys.has(key), false));
+  });
+
+  const serialized = JSON.stringify(timeline);
+  assert.doesNotMatch(serialized, /github\.com\/bluehydrogenplant123/i);
+  assert.doesNotMatch(serialized, /src\/src|\.tsx\b|\.prisma\b/i);
+  assert.doesNotMatch(serialized, /(^|[^a-z0-9])[0-9a-f]{7,40}([^a-z0-9]|$)/i);
+});
+
 test('homepage shell declares the dekiru-like header, tagline, and logo-wall hooks', () => {
   const html = fs.readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
 
