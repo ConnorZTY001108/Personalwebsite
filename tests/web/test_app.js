@@ -881,6 +881,25 @@ test('project detail shells expose pagination, metadata, media, and aside hooks'
   }
 });
 
+test('process platform shell places a timeline beside the project narrative', () => {
+  const processHtml = fs.readFileSync(
+    new URL('../../projects/process-platform.html', import.meta.url),
+    'utf8',
+  );
+  const robotHtml = fs.readFileSync(
+    new URL('../../projects/robot-car.html', import.meta.url),
+    'utf8',
+  );
+
+  assert.match(processHtml, /class="project-narrative-layout"/);
+  assert.match(processHtml, /id="detail-details-body"[\s\S]*id="detail-development-timeline"/);
+  assert.match(
+    processHtml,
+    /id="detail-development-timeline"[\s\S]*aria-label="Personal development timeline"[\s\S]*hidden/,
+  );
+  assert.doesNotMatch(robotHtml, /detail-development-timeline/);
+});
+
 test('secure gateway pdf asset exists for the detail download card', () => {
   assert.equal(
     fs.existsSync(
