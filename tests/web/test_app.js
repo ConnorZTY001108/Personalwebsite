@@ -224,7 +224,19 @@ const timelineStringEntryKeys = [
   'impact',
 ];
 
-const publicTimelineSourceFilenamePattern = /(?:^|[^a-z0-9_.-])(?:[a-z0-9_-]+\.)+(?:c|cc|cjs|cpp|cs|css|cxx|env|go|gql|gradle|graphql|h|hpp|html?|java|jsx?|kt|kts|less|mdx?|mjs|php|prisma|properties|py|rb|rs|sass|scala|scss|sh|sql|svelte|swift|toml|tsx?|vue|xml|ya?ml)(?=$|[^a-z0-9_-])/i;
+const publicTimelineSourceConfigFilenameForm = String.raw`(?:(?:[a-z0-9_-]+\.)+(?:c|cc|cjs|cpp|cs|css|cxx|env|go|gql|gradle|graphql|h|hpp|html?|java|json|jsx?|kt|kts|less|mdx?|mjs|php|prisma|properties|py|rb|rs|sass|scala|scss|sh|sql|svelte|swift|toml|tsx?|vue|xml|ya?ml)|Dockerfile|Makefile|CMakeLists\.txt|\.env)`;
+
+const publicTimelineSourceFilenamePattern = new RegExp(
+  String.raw`(?:^|[^a-z0-9_.-])${publicTimelineSourceConfigFilenameForm}(?=$|[^a-z0-9_-])`,
+  'i',
+);
+
+const publicTimelineSourcePathPattern = new RegExp(
+  String.raw`(?:^|[^a-z0-9_.-])(?:[a-z0-9@_.-]+[\\/])+${publicTimelineSourceConfigFilenameForm}(?=$|[^a-z0-9_-])`,
+  'i',
+);
+
+const publicTimelineAllowedTechnologyNames = new Set(['ASP.NET', 'Socket.IO', 'Node.js']);
 
 const publicTimelinePrivacyPredicates = [
   {
@@ -253,7 +265,7 @@ const publicTimelinePrivacyPredicates = [
   },
   {
     label: 'source path',
-    matches: (value) => /(?:^|[\s"'(\[<{])(?:\.{1,2}[\\/][^\s"'()<>{}\[\]]+|(?:src|lib|app|server|client|backend|frontend|tests?|docs?|config|scripts?)[\\/](?:[^\s\\/]+[\\/])*[a-z0-9_.-]+\.(?:c|cc|cjs|cpp|cs|css|cxx|go|gql|graphql|h|hpp|html?|java|jsx?|kt|kts|mjs|php|prisma|py|rb|rs|scss|sh|sql|svelte|swift|tsx?|vue|xml|ya?ml)\b)/i.test(value),
+    matches: (value) => publicTimelineSourcePathPattern.test(value),
   },
   {
     label: 'Git ref',
@@ -273,9 +285,9 @@ const publicTimelinePrivacyPredicates = [
   },
   {
     label: 'source filename',
-    appliesTo: (field) => field !== 'technologies',
-    matches: (value) => publicTimelineSourceFilenamePattern.test(value)
-      || /(?:^|[^a-z0-9_.-])(?:Dockerfile|Makefile|CMakeLists\.txt|\.env)(?=$|[^a-z0-9_.-])/i.test(value),
+    matches: (value, field) => !(
+      field === 'technologies' && publicTimelineAllowedTechnologyNames.has(value)
+    ) && publicTimelineSourceFilenamePattern.test(value),
   },
 ];
 
@@ -291,9 +303,9 @@ function assertPublicSafeTimelineValue(value, path, field) {
 
   if (typeof value !== 'string') return;
 
-  publicTimelinePrivacyPredicates.forEach(({ label, appliesTo = () => true, matches }) => {
+  publicTimelinePrivacyPredicates.forEach(({ label, matches }) => {
     assert.equal(
-      appliesTo(field) && matches(value),
+      matches(value, field),
       false,
       `${path} contains forbidden ${label}`,
     );
@@ -518,6 +530,30 @@ test('development timeline privacy predicates reject high-confidence variants', 
       expected: /forbidden source path/,
     },
     {
+      name: 'JSON source path in prose',
+      field: 'summary',
+      value: 'Configured through src/private/config.json.',
+      expected: /forbidden source path/,
+    },
+    {
+      name: 'Dockerfile source path in technologies',
+      field: 'technologies',
+      value: ['React', 'src/private/Dockerfile'],
+      expected: /forbidden source path/,
+    },
+    {
+      name: 'environment source path in technologies',
+      field: 'technologies',
+      value: ['React', 'src/private/.env'],
+      expected: /forbidden source path/,
+    },
+    {
+      name: 'package source path in technologies',
+      field: 'technologies',
+      value: ['React', 'packages/api/handler.ts'],
+      expected: /forbidden source path/,
+    },
+    {
       name: 'bare TypeScript source filename',
       field: 'summary',
       value: 'Implemented in PrivateRoute.tsx.',
@@ -576,7 +612,12 @@ test('development timeline privacy predicates allow public technology and archit
     {
       name: 'Socket.IO technology',
       field: 'technologies',
-      value: ['Socket.IO', 'Node.js'],
+      value: ['Socket.IO', 'React'],
+    },
+    {
+      name: 'Node.js technology',
+      field: 'technologies',
+      value: ['Node.js', 'React'],
     },
     {
       name: 'client/server prose',
