@@ -224,48 +224,64 @@ const timelineStringEntryKeys = [
   'impact',
 ];
 
-const publicTimelineForbiddenText = [
+const publicTimelineSourceFilenamePattern = /(?:^|[^a-z0-9_.-])(?:[a-z0-9_-]+\.)+(?:c|cc|cjs|cpp|cs|css|cxx|env|go|gql|gradle|graphql|h|hpp|html?|java|jsx?|kt|kts|less|mdx?|mjs|php|prisma|properties|py|rb|rs|sass|scala|scss|sh|sql|svelte|swift|toml|tsx?|vue|xml|ya?ml)(?=$|[^a-z0-9_-])/i;
+
+const publicTimelinePrivacyPredicates = [
   {
     label: 'email',
-    pattern: /\b[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+\b/i,
+    matches: (value) => /\b[a-z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+\b/i.test(value),
+  },
+  {
+    label: 'filesystem path',
+    matches: (value) => /\b[a-z]:[\\/][^\s"'<>|?*]+/i.test(value),
   },
   {
     label: 'URL',
-    pattern: /\b(?:https?|ftp|ssh|git):\/\/|(?:^|\s)www\.[^\s]+|git@[a-z0-9.-]+:|\b(?:[a-z0-9-]+\.)+(?:com|org|net|io|dev|app|edu|gov)(?:\/[^\s]*)?/i,
+    matches: (value) => /\b(?:https?|ftp|ssh|git):\/\/[^\s"'<>]+|(?:^|\s)www\.[^\s"'<>]+|git@[a-z0-9.-]+:[^\s]+|\b(?:[a-z0-9-]+\.)+(?:com|org|net|io|dev|app|edu|gov)\/[^\s"'<>]*/i.test(value),
+  },
+  {
+    label: 'URI',
+    matches: (value) => /\b[a-z][a-z0-9+.-]*:(?=[^\s])/i.test(value),
   },
   {
     label: 'filesystem path',
-    pattern: /\b[a-z]:[\\/](?:[^\\/\s]+[\\/])*[^\\/\s]*/i,
+    matches: (value) => /\\\\(?:\?\\)?[^\\/\s]+\\[^\\/\s]+|\/\/[^/\s]+\/[^/\s]+/.test(value),
   },
   {
     label: 'filesystem path',
-    pattern: /(?:^|[\s("'(])\/(?:Users|home|var|tmp|opt|srv|workspace|repo|src)(?:\/[^\s"',)]+)+/i,
+    matches: (value) => /(?:^|[\s"'(\[<{])\/(?!\/)[^\s"'()<>{}\[\]]+/.test(value),
   },
   {
     label: 'source path',
-    pattern: /(?:^|[\s("'(])(?:\.{1,2}[\\/])?(?:src|lib|app|server|client|backend|frontend|tests?|docs?|config|scripts?)[\\/][^\s"',)]+/i,
-  },
-  {
-    label: 'filesystem path',
-    pattern: /(?:^|[\s("'(])(?:\.{1,2}[\\/])?(?:[a-z0-9_.-]+[\\/])+[a-z0-9_.-]+\.[a-z0-9]{1,10}(?=$|[\s"',).;:])/i,
+    matches: (value) => /(?:^|[\s"'(\[<{])(?:\.{1,2}[\\/][^\s"'()<>{}\[\]]+|(?:src|lib|app|server|client|backend|frontend|tests?|docs?|config|scripts?)[\\/](?:[^\s\\/]+[\\/])*[a-z0-9_.-]+\.(?:c|cc|cjs|cpp|cs|css|cxx|go|gql|graphql|h|hpp|html?|java|jsx?|kt|kts|mjs|php|prisma|py|rb|rs|scss|sh|sql|svelte|swift|tsx?|vue|xml|ya?ml)\b)/i.test(value),
   },
   {
     label: 'Git ref',
-    pattern: /\b(?:refs\/(?:heads|tags|remotes)|(?:origin|upstream))\/[a-z0-9._/-]+\b/i,
-  },
-  {
-    label: 'commit hash',
-    pattern: /(^|[^a-z0-9])[0-9a-f]{7,40}([^a-z0-9]|$)/i,
+    matches: (value) => /\brefs\/[^\s"'<>~^:?*\[\\\]]+/i.test(value),
   },
   {
     label: 'commit metadata',
-    pattern: /(?:^|\n)\s*(?:commit\s+[0-9a-f]{7,40}|author:|authordate:|commit:|commitdate:|committer:|date:|merge:)/im,
+    matches: (value) => /(?:^|\n)\s*(?:(?:commit|tree|parent)\s+[0-9a-f]{7,64}\b|(?:author|authordate|commit|commitdate|committer|date|merge|subject):\s*\S)/im.test(value),
+  },
+  {
+    label: 'commit metadata',
+    matches: (value) => /(?:^|\n)\s*(?:build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(?:\([a-z0-9._/-]+\))?!?:\s+\S/im.test(value),
+  },
+  {
+    label: 'commit hash',
+    matches: (value) => /(^|[^a-z0-9])[0-9a-f]{7,40}([^a-z0-9]|$)/i.test(value),
+  },
+  {
+    label: 'source filename',
+    appliesTo: (field) => field !== 'technologies',
+    matches: (value) => publicTimelineSourceFilenamePattern.test(value)
+      || /(?:^|[^a-z0-9_.-])(?:Dockerfile|Makefile|CMakeLists\.txt|\.env)(?=$|[^a-z0-9_.-])/i.test(value),
   },
 ];
 
-function assertPublicSafeTimelineValue(value, path) {
+function assertPublicSafeTimelineValue(value, path, field) {
   if (Array.isArray(value)) {
-    value.forEach((item, index) => assertPublicSafeTimelineValue(item, `${path}[${index}]`));
+    value.forEach((item, index) => assertPublicSafeTimelineValue(item, `${path}[${index}]`, field));
     return;
   }
 
@@ -275,8 +291,12 @@ function assertPublicSafeTimelineValue(value, path) {
 
   if (typeof value !== 'string') return;
 
-  publicTimelineForbiddenText.forEach(({ label, pattern }) => {
-    assert.doesNotMatch(value, pattern, `${path} contains forbidden ${label}`);
+  publicTimelinePrivacyPredicates.forEach(({ label, appliesTo = () => true, matches }) => {
+    assert.equal(
+      appliesTo(field) && matches(value),
+      false,
+      `${path} contains forbidden ${label}`,
+    );
   });
 }
 
@@ -332,7 +352,7 @@ function assertPublicTimelineContract(timeline) {
     }
 
     Object.entries(entry).forEach(([key, value]) => {
-      assertPublicSafeTimelineValue(value, `${entry.id}.${key}`);
+      assertPublicSafeTimelineValue(value, `${entry.id}.${key}`, key);
     });
 
     ['technicalWork', 'technologies'].forEach((key) => {
@@ -432,6 +452,146 @@ test('development timeline data contract rejects private metadata probes', async
         () => assertPublicTimelineContract(candidate),
         expected,
         `${name} should be rejected`,
+      );
+    });
+  }
+});
+
+test('development timeline privacy predicates reject high-confidence variants', async (t) => {
+  const project = portfolioContent.projects.find(({ slug }) => slug === 'process-platform');
+  const timeline = project?.developmentTimeline;
+  assert.ok(timeline);
+
+  const probes = [
+    {
+      name: 'custom URI scheme',
+      field: 'summary',
+      value: 'Loaded from artifact+private://team/repository.',
+      expected: /forbidden URI/,
+    },
+    {
+      name: 'opaque URI scheme',
+      field: 'impact',
+      value: 'Tracked by urn:internal:timeline-record.',
+      expected: /forbidden URI/,
+    },
+    {
+      name: 'Windows drive path with forward slashes',
+      field: 'summary',
+      value: 'Stored at D:/work/private-repo/config.json.',
+      expected: /forbidden filesystem path/,
+    },
+    {
+      name: 'UNC share path',
+      field: 'summary',
+      value: 'Stored at \\\\build-server\\private-share\\config.json.',
+      expected: /forbidden filesystem path/,
+    },
+    {
+      name: 'absolute POSIX path outside common roots',
+      field: 'technicalWork',
+      value: ['/data/team/private-repo/config.yaml'],
+      expected: /forbidden filesystem path/,
+    },
+    {
+      name: 'Git notes ref',
+      field: 'summary',
+      value: 'Based on refs/notes/private-review.',
+      expected: /forbidden Git ref/,
+    },
+    {
+      name: 'Git pull ref',
+      field: 'impact',
+      value: 'Validated against refs/pull/42/head.',
+      expected: /forbidden Git ref/,
+    },
+    {
+      name: 'Git ref with a valid special-leading component',
+      field: 'summary',
+      value: 'Based on refs/heads/@private-release.',
+      expected: /forbidden Git ref/,
+    },
+    {
+      name: 'source path in technologies',
+      field: 'technologies',
+      value: ['React', 'src/private/handler.ts'],
+      expected: /forbidden source path/,
+    },
+    {
+      name: 'bare TypeScript source filename',
+      field: 'summary',
+      value: 'Implemented in PrivateRoute.tsx.',
+      expected: /forbidden source filename/,
+    },
+    {
+      name: 'bare Prisma source filename',
+      field: 'technicalWork',
+      value: ['Updated schema.prisma for persistence.'],
+      expected: /forbidden source filename/,
+    },
+    {
+      name: 'scoped conventional commit subject',
+      field: 'summary',
+      value: 'feat(api): expose the internal solver route',
+      expected: /forbidden commit metadata/,
+    },
+    {
+      name: 'breaking conventional commit subject',
+      field: 'impact',
+      value: 'refactor!: replace the private data contract',
+      expected: /forbidden commit metadata/,
+    },
+    {
+      name: 'commit-log subject metadata',
+      field: 'technicalWork',
+      value: ['Subject: fix(auth): recover private tokens'],
+      expected: /forbidden commit metadata/,
+    },
+  ];
+
+  for (const { name, field, value, expected } of probes) {
+    await t.test(name, () => {
+      const candidate = structuredClone(timeline);
+      candidate.entries[0][field] = value;
+      assert.throws(
+        () => assertPublicTimelineContract(candidate),
+        expected,
+        `${name} should be rejected`,
+      );
+    });
+  }
+});
+
+test('development timeline privacy predicates allow public technology and architecture wording', async (t) => {
+  const project = portfolioContent.projects.find(({ slug }) => slug === 'process-platform');
+  const timeline = project?.developmentTimeline;
+  assert.ok(timeline);
+
+  const fixtures = [
+    {
+      name: 'ASP.NET technology',
+      field: 'technologies',
+      value: ['ASP.NET', 'React'],
+    },
+    {
+      name: 'Socket.IO technology',
+      field: 'technologies',
+      value: ['Socket.IO', 'Node.js'],
+    },
+    {
+      name: 'client/server prose',
+      field: 'summary',
+      value: 'Coordinated client/server responsibilities through a stable public API.',
+    },
+  ];
+
+  for (const { name, field, value } of fixtures) {
+    await t.test(name, () => {
+      const candidate = structuredClone(timeline);
+      candidate.entries[0][field] = value;
+      assert.doesNotThrow(
+        () => assertPublicTimelineContract(candidate),
+        `${name} should remain valid public copy`,
       );
     });
   }
