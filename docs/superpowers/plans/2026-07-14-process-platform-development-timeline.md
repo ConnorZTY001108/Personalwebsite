@@ -1523,6 +1523,7 @@ git commit -m "feat: style process development timeline"
 - Verify: `project-detail.js`
 - Verify: `styles.css`
 - Verify: `tests/web/test_app.js`
+- Verify: `design-qa.md` as the required sanitized product-design QA artifact
 
 **Interfaces:**
 - Consumes: all completed timeline tasks.
@@ -1541,7 +1542,7 @@ git status --short --branch
 Expected:
 
 - `git diff --check` prints no errors;
-- implementation changes are limited to the five approved runtime/test files plus the approved design and plan documents;
+- implementation changes are limited to the five approved runtime/test files, the sanitized project-root `design-qa.md` product-design QA artifact, and the approved design and plan documents;
 - no `.superpowers/` visual-companion files are tracked.
 
 - [ ] **Step 2: Re-run every timeline test as a clean focused gate**

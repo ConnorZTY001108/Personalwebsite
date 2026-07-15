@@ -45,6 +45,42 @@ import {
   registerAboutPageBoot,
 } from '../../about.js';
 
+const timelineTrackedDeliverables = [
+  'content.js',
+  'projects/process-platform.html',
+  'project-detail.js',
+  'styles.css',
+  'design-qa.md',
+];
+
+const timelineTrackedDeliverablePrivacyPredicates = [
+  {
+    label: 'absolute Windows path',
+    matches: (value) => /(?:^|[^a-z0-9])[a-z]:[\\/][^\r\n`"'<>|?*]+/i.test(value),
+  },
+  {
+    label: 'localhost URL',
+    matches: (value) => /\bhttps?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?(?:[/?#][^\s`"'<>]*)?/i.test(value),
+  },
+  {
+    label: 'private repository or source path',
+    matches: (value) => /\b(?:bluehydrogenplant123|HYPRONET-GUI)\b|(?:^|[^a-z0-9_.-])src[\\/]src[\\/][^\s`"'<>]*|(?:^|[\s`"'(])(?:src|server|client|backend|frontend)[\\/][^\s`"'<>]+\.(?:cjs|css|html?|js|jsx|mjs|prisma|ts|tsx)\b/i.test(value),
+  },
+  {
+    label: 'full commit SHA',
+    matches: (value) => /(?:^|[^a-f0-9])[a-f0-9]{40}(?=$|[^a-f0-9])/i.test(value),
+  },
+];
+
+function assertTrackedTimelineDeliverablesPublicSafe(deliverables = timelineTrackedDeliverables) {
+  deliverables.forEach((relativePath) => {
+    const value = fs.readFileSync(new URL(`../../${relativePath}`, import.meta.url), 'utf8');
+    timelineTrackedDeliverablePrivacyPredicates.forEach(({ label, matches }) => {
+      assert.equal(matches(value), false, `${relativePath} contains forbidden ${label}`);
+    });
+  });
+}
+
 test('portfolio content exposes the cloned dekiru-style homepage contract', () => {
   assert.equal(portfolioContent.profile.name, 'Tianyu Zhang');
   assert.equal(portfolioContent.profile.wordmark.primary, 'Tianyu');
@@ -202,6 +238,21 @@ test('process platform development timeline data is complete and public-safe', (
 
   assertPublicTimelineContract(timeline);
   assert.equal(timeline.entries.filter(({ category }) => category === 'Documentation').length, 1);
+  assertTrackedTimelineDeliverablesPublicSafe();
+
+  const negativeFixtures = [
+    String.raw`C:\Users\owner\private-worktree`,
+    'http://localhost:4173/projects/process-platform.html',
+    'https://github.com/private-org/bluehydrogenplant123',
+    'src/src/private/schema.prisma',
+    'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef',
+  ];
+  negativeFixtures.forEach((fixture) => {
+    assert.ok(
+      timelineTrackedDeliverablePrivacyPredicates.some(({ matches }) => matches(fixture)),
+      `privacy scan must reject ${fixture}`,
+    );
+  });
 });
 
 test('sortDevelopmentTimelineEntries supports newest and oldest order without mutating data', () => {
@@ -1010,7 +1061,7 @@ test('process platform shell places a timeline beside the project narrative', ()
     'utf8',
   );
 
-  assert.match(processHtml, /class="project-narrative-layout"/);
+  assert.match(processHtml, /id="detail-narrative-layout" class="project-narrative-layout"/);
   assert.match(processHtml, /id="detail-details-body"[\s\S]*id="detail-development-timeline"/);
   assert.match(
     processHtml,
@@ -1021,21 +1072,51 @@ test('process platform shell places a timeline beside the project narrative', ()
 
 test('styles define the process narrative grid and classic development timeline rail', () => {
   const css = fs.readFileSync(new URL('../../styles.css', import.meta.url), 'utf8');
+  const scope = ".detail-page[data-project-slug='process-platform']";
+  const blockMarker = '/* Process platform development timeline */';
+  const timelineCss = css.slice(css.indexOf(blockMarker));
+  const timelineSelectorLines = timelineCss
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(
+      (line) =>
+        /(?:project-narrative-layout|development-timeline|data-development-timeline)/.test(line) &&
+        /[,{]$/.test(line),
+    );
 
-  assert.match(css, /\.project-narrative-layout\s*\{/);
-  assert.match(css, /\.development-timeline-list::before/);
-  assert.match(css, /\.development-timeline-entry::before/);
-  assert.match(css, /\.development-timeline-toggle\[aria-expanded='true'\]/);
-  assert.match(css, /\[data-development-timeline-order\]\[aria-pressed='true'\]/);
-  assert.match(css, /@media \(min-width: 1100px\)[\s\S]*grid-template-columns:\s*minmax\(0, 2fr\) minmax\(240px, 1fr\)/);
-  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*development-timeline/);
+  assert.notEqual(css.indexOf(blockMarker), -1);
+  assert.ok(timelineSelectorLines.length > 30);
+  timelineSelectorLines.forEach((selectorLine) => {
+    assert.ok(
+      selectorLine.startsWith(scope),
+      `timeline CSS must not expose unscoped selector: ${selectorLine}`,
+    );
+  });
+  assert.doesNotMatch(
+    timelineCss,
+    /(?:^|[\n,])\s*(?:\.project-narrative-layout|\.development-timeline|\[data-development-timeline)/m,
+  );
+  assert.match(css, new RegExp(`${scope.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} \\.project-narrative-layout\\s*\\{`));
+  assert.match(timelineCss, /\.development-timeline-list::before/);
+  assert.match(timelineCss, /\.development-timeline-entry::before/);
+  assert.match(timelineCss, /\.development-timeline-toggle\[aria-expanded='true'\]/);
+  assert.match(timelineCss, /\[data-development-timeline-order\]\[aria-pressed='true'\]/);
+  assert.match(
+    timelineCss,
+    /\.project-narrative-layout\s*\{[^}]*grid-template-columns:\s*minmax\(0, 1fr\)/,
+  );
+  assert.match(
+    timelineCss,
+    /@media \(min-width: 1100px\)[\s\S]*\.project-narrative-layout\.has-development-timeline\s*\{[^}]*grid-template-columns:\s*minmax\(0, 2fr\) minmax\(240px, 1fr\)/,
+  );
+  assert.match(timelineCss, /@media \(prefers-reduced-motion: reduce\)[\s\S]*development-timeline/);
 });
 
 test('styles stack detail regions below 1100px without timeline overflow', () => {
   const css = fs.readFileSync(new URL('../../styles.css', import.meta.url), 'utf8');
   const stackMedia = css.match(/@media \(max-width: 1099\.98px\)\s*\{[\s\S]*?\r?\n\}/)?.[0];
 
-  assert.match(css, /\.project-narrative-layout\s*\{[^}]*min-width:\s*0/);
+  assert.match(css, /\.detail-page\[data-project-slug='process-platform'\] \.project-narrative-layout\s*\{[^}]*min-width:\s*0/);
   assert.ok(stackMedia, 'the sub-1100px stack must use a continuous max-width range');
   assert.match(
     stackMedia,
@@ -1050,15 +1131,15 @@ test('styles stack detail regions below 1100px without timeline overflow', () =>
   assert.doesNotMatch(stackMedia, /(?:^|\r?\n)\s*\.project-aside(?:\s*,|\s*\{)/);
   assert.match(
     css,
-    /@media \(max-width: 520px\)[\s\S]*?\.development-timeline-order button,[\s\S]*?\.development-timeline-toggle\s*\{[\s\S]*?min-height:\s*44px/,
+    /@media \(max-width: 520px\)[\s\S]*?\.detail-page\[data-project-slug='process-platform'\] \.development-timeline-order button,[\s\S]*?\.detail-page\[data-project-slug='process-platform'\] \.development-timeline-toggle\s*\{[\s\S]*?min-height:\s*44px/,
   );
 });
 
 test('timeline controls keep the site square border language', () => {
   const css = fs.readFileSync(new URL('../../styles.css', import.meta.url), 'utf8');
 
-  assert.match(css, /\.development-timeline-order button\s*\{[^}]*border-radius:\s*0/);
-  assert.match(css, /\.development-timeline-toggle\s*\{[^}]*border-radius:\s*0/);
+  assert.match(css, /\.detail-page\[data-project-slug='process-platform'\] \.development-timeline-order button\s*\{[^}]*border-radius:\s*0/);
+  assert.match(css, /\.detail-page\[data-project-slug='process-platform'\] \.development-timeline-toggle\s*\{[^}]*border-radius:\s*0/);
 });
 
 test('secure gateway pdf asset exists for the detail download card', () => {
@@ -2248,20 +2329,43 @@ test('renderProjectDetail mounts a timeline only for the process platform', () =
   const processDocument = createMockDetailDocument('process-platform');
   const robotDocument = createMockDetailDocument('robot-car');
   const missingDocument = createMockDetailDocument('missing-project');
+  const emptyTimelineDocument = createMockDetailDocument('process-platform');
+  const contentWithoutTimelineEntries = structuredClone(portfolioContent);
+  const processWithoutEntries = contentWithoutTimelineEntries.projects.find(
+    ({ slug }) => slug === 'process-platform',
+  );
+  processWithoutEntries.developmentTimeline.entries = [];
 
   renderProjectDetail(processDocument);
   renderProjectDetail(robotDocument);
   renderProjectDetail(missingDocument);
+  renderProjectDetail(emptyTimelineDocument, contentWithoutTimelineEntries);
 
   const processTimeline = processDocument.getElementById('detail-development-timeline');
   const robotTimeline = robotDocument.getElementById('detail-development-timeline');
   const missingTimeline = missingDocument.getElementById('detail-development-timeline');
+  const emptyTimeline = emptyTimelineDocument.getElementById('detail-development-timeline');
+  const processLayout = processDocument.getElementById('detail-narrative-layout');
+  const robotLayout = robotDocument.getElementById('detail-narrative-layout');
+  const missingLayout = missingDocument.getElementById('detail-narrative-layout');
+  const emptyLayout = emptyTimelineDocument.getElementById('detail-narrative-layout');
   assert.equal(processTimeline.hasAttribute('hidden'), false);
   assert.match(processTimeline.innerHTML, /Development Timeline/);
+  assert.equal(processLayout.classList.contains('has-development-timeline'), true);
   assert.equal(robotTimeline.getAttribute('hidden'), '');
   assert.equal(robotTimeline.innerHTML, '');
+  assert.equal(robotLayout.classList.contains('has-development-timeline'), false);
   assert.equal(missingTimeline.getAttribute('hidden'), '');
   assert.equal(missingTimeline.innerHTML, '');
+  assert.equal(missingLayout.classList.contains('has-development-timeline'), false);
+  assert.equal(emptyTimeline.getAttribute('hidden'), '');
+  assert.equal(emptyTimeline.innerHTML, '');
+  assert.equal(emptyLayout.classList.contains('has-development-timeline'), false);
+
+  renderProjectDetail(processDocument, contentWithoutTimelineEntries);
+  assert.equal(processTimeline.getAttribute('hidden'), '');
+  assert.equal(processTimeline.innerHTML, '');
+  assert.equal(processLayout.classList.contains('has-development-timeline'), false);
 });
 
 test('bindDevelopmentTimeline expands cards and reverses DOM order without losing state', () => {
@@ -2507,6 +2611,7 @@ function createMockDetailDocument(slug, options = {}) {
     'detail-visit-link',
     'detail-meta-stack',
     'detail-featured-image',
+    'detail-narrative-layout',
     'detail-details-body',
     'detail-development-timeline',
     'detail-project-quote',

@@ -389,6 +389,21 @@ function setNodeHidden(doc, id, hidden) {
   node.removeAttribute('hidden');
 }
 
+function setDevelopmentTimeline(doc, markup) {
+  const hasTimeline = Boolean(markup);
+  const layout = doc.getElementById('detail-narrative-layout');
+
+  setNodeHTML(doc, 'detail-development-timeline', markup);
+  setNodeHidden(doc, 'detail-development-timeline', !hasTimeline);
+
+  if (hasTimeline) {
+    layout?.classList?.add('has-development-timeline');
+    return;
+  }
+
+  layout?.classList?.remove('has-development-timeline');
+}
+
 function setNodeLink(doc, id, href, label) {
   const node = doc.getElementById(id);
 
@@ -807,8 +822,7 @@ export function renderProjectDetail(doc = document, content = portfolioContent) 
   if (state.isMissing) {
     setNodeHTML(doc, 'detail-meta-stack', '');
     setNodeHTML(doc, 'detail-details-body', state.detailsHtml);
-    setNodeHTML(doc, 'detail-development-timeline', '');
-    setNodeHidden(doc, 'detail-development-timeline', true);
+    setDevelopmentTimeline(doc, '');
     setNodeText(doc, 'detail-quote-body', '');
     setNodeText(doc, 'detail-quote-credit', '');
     setNodeHidden(doc, 'detail-project-quote', true);
@@ -837,8 +851,7 @@ export function renderProjectDetail(doc = document, content = portfolioContent) 
     ),
   );
   const timelineMarkup = renderDevelopmentTimeline(project.developmentTimeline);
-  setNodeHTML(doc, 'detail-development-timeline', timelineMarkup);
-  setNodeHidden(doc, 'detail-development-timeline', !timelineMarkup);
+  setDevelopmentTimeline(doc, timelineMarkup);
   setNodeText(doc, 'detail-quote-body', quote.body);
   setNodeText(doc, 'detail-quote-credit', quote.credit);
   setNodeHidden(doc, 'detail-project-quote', !quote.body && !quote.credit);

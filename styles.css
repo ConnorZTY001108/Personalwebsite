@@ -2168,18 +2168,20 @@ blockquote {
   }
 }
 
-.project-narrative-layout {
+/* Process platform development timeline */
+.detail-page[data-project-slug='process-platform'] .project-narrative-layout {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 48px;
   min-width: 0;
   width: 100%;
 }
 
-.project-narrative-layout .project-details {
+.detail-page[data-project-slug='process-platform'] .project-narrative-layout .project-details {
   width: 100%;
 }
 
-.development-timeline {
+.detail-page[data-project-slug='process-platform'] .development-timeline {
   min-width: 0;
   padding: 24px;
   border: 1px solid var(--panel-border);
@@ -2187,11 +2189,11 @@ blockquote {
   backdrop-filter: blur(6px);
 }
 
-.development-timeline[hidden] {
+.detail-page[data-project-slug='process-platform'] .development-timeline[hidden] {
   display: none;
 }
 
-.development-timeline-header {
+.detail-page[data-project-slug='process-platform'] .development-timeline-header {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
@@ -2200,22 +2202,22 @@ blockquote {
   margin-bottom: 28px;
 }
 
-.development-timeline-eyebrow,
-.development-timeline-period,
-.development-timeline-evidence {
+.detail-page[data-project-slug='process-platform'] .development-timeline-eyebrow,
+.detail-page[data-project-slug='process-platform'] .development-timeline-period,
+.detail-page[data-project-slug='process-platform'] .development-timeline-evidence {
   margin: 0;
   font-family: 'PostMono', sans-serif;
   color: var(--muted);
 }
 
-.development-timeline-eyebrow {
+.detail-page[data-project-slug='process-platform'] .development-timeline-eyebrow {
   margin-bottom: 6px;
   font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
-.development-timeline-header h2 {
+.detail-page[data-project-slug='process-platform'] .development-timeline-header h2 {
   margin: 0;
   font-family: 'PostMono', sans-serif;
   font-size: clamp(22px, 2.1vw, 34px);
@@ -2224,18 +2226,18 @@ blockquote {
   text-shadow: 0 0 10px rgba(0, 247, 255, 0.7);
 }
 
-.development-timeline-period {
+.detail-page[data-project-slug='process-platform'] .development-timeline-period {
   margin-top: 6px;
   font-size: 13px;
 }
 
-.development-timeline-order {
+.detail-page[data-project-slug='process-platform'] .development-timeline-order {
   display: inline-grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   border: 1px solid var(--panel-border);
 }
 
-.development-timeline-order button {
+.detail-page[data-project-slug='process-platform'] .development-timeline-order button {
   min-height: 36px;
   padding: 7px 10px;
   border: 0;
@@ -2246,23 +2248,23 @@ blockquote {
   cursor: pointer;
 }
 
-.development-timeline-order button + button {
+.detail-page[data-project-slug='process-platform'] .development-timeline-order button + button {
   border-left: 1px solid var(--panel-border);
 }
 
-[data-development-timeline-order][aria-pressed='true'] {
+.detail-page[data-project-slug='process-platform'] [data-development-timeline-order][aria-pressed='true'] {
   color: #001113;
   background: var(--accent);
   text-shadow: none;
 }
 
-.development-timeline-order button:focus-visible,
-.development-timeline-toggle:focus-visible {
+.detail-page[data-project-slug='process-platform'] .development-timeline-order button:focus-visible,
+.detail-page[data-project-slug='process-platform'] .development-timeline-toggle:focus-visible {
   outline: 2px solid var(--accent-hot);
   outline-offset: 3px;
 }
 
-.development-timeline-list {
+.detail-page[data-project-slug='process-platform'] .development-timeline-list {
   position: relative;
   display: grid;
   gap: 18px;
@@ -2271,7 +2273,7 @@ blockquote {
   list-style: none;
 }
 
-.development-timeline-list::before {
+.detail-page[data-project-slug='process-platform'] .development-timeline-list::before {
   content: '';
   position: absolute;
   top: 7px;
@@ -2282,11 +2284,11 @@ blockquote {
   box-shadow: 0 0 9px rgba(0, 247, 255, 0.52);
 }
 
-.development-timeline-entry {
+.detail-page[data-project-slug='process-platform'] .development-timeline-entry {
   position: relative;
 }
 
-.development-timeline-entry::before {
+.detail-page[data-project-slug='process-platform'] .development-timeline-entry::before {
   content: '';
   position: absolute;
   top: 19px;
@@ -2299,12 +2301,12 @@ blockquote {
   box-shadow: 0 0 9px rgba(0, 247, 255, 0.8);
 }
 
-.development-timeline-card {
+.detail-page[data-project-slug='process-platform'] .development-timeline-card {
   border: 1px solid rgba(0, 247, 255, 0.2);
   background: rgba(0, 12, 14, 0.78);
 }
 
-.development-timeline-meta {
+.detail-page[data-project-slug='process-platform'] .development-timeline-meta {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -2317,7 +2319,7 @@ blockquote {
   text-transform: uppercase;
 }
 
-.development-timeline-toggle {
+.detail-page[data-project-slug='process-platform'] .development-timeline-toggle {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: start;
@@ -2332,66 +2334,66 @@ blockquote {
   cursor: pointer;
 }
 
-.development-timeline-toggle:disabled {
+.detail-page[data-project-slug='process-platform'] .development-timeline-toggle:disabled {
   cursor: default;
 }
 
-.development-timeline-card-copy {
+.detail-page[data-project-slug='process-platform'] .development-timeline-card-copy {
   display: grid;
   gap: 6px;
 }
 
-.development-timeline-card-copy strong {
+.detail-page[data-project-slug='process-platform'] .development-timeline-card-copy strong {
   font-family: 'PostMono', sans-serif;
   font-size: 17px;
   font-weight: 300;
   color: rgba(255, 255, 255, 0.98);
 }
 
-.development-timeline-card-copy > span {
+.detail-page[data-project-slug='process-platform'] .development-timeline-card-copy > span {
   color: var(--muted);
   line-height: 1.55;
 }
 
-.development-timeline-arrow {
+.detail-page[data-project-slug='process-platform'] .development-timeline-arrow {
   color: var(--accent);
   transform: rotate(90deg);
   transition: transform 0.18s ease;
 }
 
-.development-timeline-toggle[aria-expanded='true'] .development-timeline-arrow {
+.detail-page[data-project-slug='process-platform'] .development-timeline-toggle[aria-expanded='true'] .development-timeline-arrow {
   transform: rotate(-90deg);
 }
 
-.development-timeline-details {
+.detail-page[data-project-slug='process-platform'] .development-timeline-details {
   padding: 0 14px 16px;
   border-top: 1px solid rgba(0, 247, 255, 0.12);
 }
 
-.development-timeline-details[hidden] {
+.detail-page[data-project-slug='process-platform'] .development-timeline-details[hidden] {
   display: none;
 }
 
-.development-timeline-work {
+.detail-page[data-project-slug='process-platform'] .development-timeline-work {
   margin: 14px 0;
   padding-left: 18px;
   color: var(--muted);
 }
 
-.development-timeline-work li + li {
+.detail-page[data-project-slug='process-platform'] .development-timeline-work li + li {
   margin-top: 7px;
 }
 
-.development-timeline-impact {
+.detail-page[data-project-slug='process-platform'] .development-timeline-impact {
   margin: 14px 0;
   color: var(--muted);
 }
 
-.development-timeline-impact strong {
+.detail-page[data-project-slug='process-platform'] .development-timeline-impact strong {
   color: rgba(255, 255, 255, 0.96);
 }
 
-.development-timeline-technologies {
+.detail-page[data-project-slug='process-platform'] .development-timeline-technologies {
   display: flex;
   flex-wrap: wrap;
   gap: 7px;
@@ -2400,7 +2402,7 @@ blockquote {
   list-style: none;
 }
 
-.development-timeline-technologies li {
+.detail-page[data-project-slug='process-platform'] .development-timeline-technologies li {
   padding: 4px 7px;
   border: 1px solid rgba(0, 247, 255, 0.26);
   font-family: 'PostMono', sans-serif;
@@ -2408,12 +2410,12 @@ blockquote {
   color: var(--accent);
 }
 
-.development-timeline-evidence {
+.detail-page[data-project-slug='process-platform'] .development-timeline-evidence {
   font-size: 11px;
 }
 
 @media (min-width: 1100px) {
-  .project-narrative-layout {
+  .detail-page[data-project-slug='process-platform'] .project-narrative-layout.has-development-timeline {
     grid-template-columns: minmax(0, 2fr) minmax(240px, 1fr);
     align-items: start;
   }
@@ -2429,32 +2431,32 @@ blockquote {
     width: 100%;
   }
 
-  .development-timeline {
+  .detail-page[data-project-slug='process-platform'] .development-timeline {
     margin-top: 6px;
   }
 }
 
 @media (max-width: 520px) {
-  .development-timeline {
+  .detail-page[data-project-slug='process-platform'] .development-timeline {
     padding: 18px 14px;
   }
 
-  .development-timeline-header {
+  .detail-page[data-project-slug='process-platform'] .development-timeline-header {
     align-items: stretch;
   }
 
-  .development-timeline-order {
+  .detail-page[data-project-slug='process-platform'] .development-timeline-order {
     width: 100%;
   }
 
-  .development-timeline-order button,
-  .development-timeline-toggle {
+  .detail-page[data-project-slug='process-platform'] .development-timeline-order button,
+  .detail-page[data-project-slug='process-platform'] .development-timeline-toggle {
     min-height: 44px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .development-timeline-arrow {
+  .detail-page[data-project-slug='process-platform'] .development-timeline-arrow {
     transition: none;
   }
 }
