@@ -64,7 +64,7 @@ const timelineTrackedDeliverablePrivacyPredicates = [
   },
   {
     label: 'private repository or source path',
-    matches: (value) => /\b(?:bluehydrogenplant123|HYPRONET-GUI)\b|(?:^|[^a-z0-9_.-])src[\\/]src[\\/][^\s`"'<>]*|(?:^|[\s`"'(])(?:src|server|client|backend|frontend)[\\/][^\s`"'<>]+\.(?:cjs|css|html?|js|jsx|mjs|prisma|ts|tsx)\b/i.test(value),
+    matches: (value) => /\b(?:bluehydrogenplant123|HYPRONET-GUI)\b|(?:^|[^a-z0-9_.-])src[\\/]src[\\/][^\s`"'<>]*|(?:^|[\s`"'(])(?:src|server|client|backend|frontend|packages)[\\/][^\s`"'<>]+\.(?:cjs|css|html?|js|jsx|mjs|prisma|ts|tsx)\b|(?:^|[^a-z0-9_.-])[a-z][a-z0-9_.-]*\.(?:prisma|tsx)(?=$|[^a-z0-9_.-])/i.test(value),
   },
   {
     label: 'full commit SHA',
@@ -245,12 +245,24 @@ test('process platform development timeline data is complete and public-safe', (
     'http://localhost:4173/projects/process-platform.html',
     'https://github.com/private-org/bluehydrogenplant123',
     'src/src/private/schema.prisma',
+    'PrivateRoute.tsx',
+    'schema.prisma',
+    'packages/api/handler.ts',
     'deadbeefdeadbeefdeadbeefdeadbeefdeadbeef',
   ];
   negativeFixtures.forEach((fixture) => {
     assert.ok(
       timelineTrackedDeliverablePrivacyPredicates.some(({ matches }) => matches(fixture)),
       `privacy scan must reject ${fixture}`,
+    );
+  });
+
+  const positiveFixtures = ['projects/process-platform.html', 'Node.js'];
+  positiveFixtures.forEach((fixture) => {
+    assert.equal(
+      timelineTrackedDeliverablePrivacyPredicates.some(({ matches }) => matches(fixture)),
+      false,
+      `privacy scan must allow ${fixture}`,
     );
   });
 });
