@@ -2419,13 +2419,13 @@ blockquote {
   }
 }
 
-@media (max-width: 1099px) {
-  .detail-page .site-main {
+@media (max-width: 1099.98px) {
+  .detail-page[data-project-slug='process-platform'] .site-main {
     flex-direction: column;
   }
 
-  .project-content,
-  .project-aside {
+  .detail-page[data-project-slug='process-platform'] .project-content,
+  .detail-page[data-project-slug='process-platform'] .project-aside {
     width: 100%;
   }
 

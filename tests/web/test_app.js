@@ -1033,12 +1033,21 @@ test('styles define the process narrative grid and classic development timeline 
 
 test('styles stack detail regions below 1100px without timeline overflow', () => {
   const css = fs.readFileSync(new URL('../../styles.css', import.meta.url), 'utf8');
+  const stackMedia = css.match(/@media \(max-width: 1099\.98px\)\s*\{[\s\S]*?\r?\n\}/)?.[0];
 
   assert.match(css, /\.project-narrative-layout\s*\{[^}]*min-width:\s*0/);
+  assert.ok(stackMedia, 'the sub-1100px stack must use a continuous max-width range');
   assert.match(
-    css,
-    /@media \(max-width: 1099px\)[\s\S]*?\.detail-page \.site-main\s*\{[\s\S]*?flex-direction:\s*column;[\s\S]*?\.project-content,[\s\S]*?\.project-aside\s*\{[\s\S]*?width:\s*100%/,
+    stackMedia,
+    /\.detail-page\[data-project-slug='process-platform'\] \.site-main\s*\{[^}]*flex-direction:\s*column/,
   );
+  assert.match(
+    stackMedia,
+    /\.detail-page\[data-project-slug='process-platform'\] \.project-content,\s*\.detail-page\[data-project-slug='process-platform'\] \.project-aside\s*\{[^}]*width:\s*100%/,
+  );
+  assert.doesNotMatch(stackMedia, /(?:^|\r?\n)\s*\.detail-page\s+\.site-main\s*\{/);
+  assert.doesNotMatch(stackMedia, /(?:^|\r?\n)\s*\.project-content(?:\s*,|\s*\{)/);
+  assert.doesNotMatch(stackMedia, /(?:^|\r?\n)\s*\.project-aside(?:\s*,|\s*\{)/);
   assert.match(
     css,
     /@media \(max-width: 520px\)[\s\S]*?\.development-timeline-order button,[\s\S]*?\.development-timeline-toggle\s*\{[\s\S]*?min-height:\s*44px/,
