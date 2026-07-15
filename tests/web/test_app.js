@@ -1019,6 +1019,39 @@ test('process platform shell places a timeline beside the project narrative', ()
   assert.doesNotMatch(robotHtml, /detail-development-timeline/);
 });
 
+test('styles define the process narrative grid and classic development timeline rail', () => {
+  const css = fs.readFileSync(new URL('../../styles.css', import.meta.url), 'utf8');
+
+  assert.match(css, /\.project-narrative-layout\s*\{/);
+  assert.match(css, /\.development-timeline-list::before/);
+  assert.match(css, /\.development-timeline-entry::before/);
+  assert.match(css, /\.development-timeline-toggle\[aria-expanded='true'\]/);
+  assert.match(css, /\[data-development-timeline-order\]\[aria-pressed='true'\]/);
+  assert.match(css, /@media \(min-width: 1100px\)[\s\S]*grid-template-columns:\s*minmax\(0, 2fr\) minmax\(240px, 1fr\)/);
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\)[\s\S]*development-timeline/);
+});
+
+test('styles stack detail regions below 1100px without timeline overflow', () => {
+  const css = fs.readFileSync(new URL('../../styles.css', import.meta.url), 'utf8');
+
+  assert.match(css, /\.project-narrative-layout\s*\{[^}]*min-width:\s*0/);
+  assert.match(
+    css,
+    /@media \(max-width: 1099px\)[\s\S]*?\.detail-page \.site-main\s*\{[\s\S]*?flex-direction:\s*column;[\s\S]*?\.project-content,[\s\S]*?\.project-aside\s*\{[\s\S]*?width:\s*100%/,
+  );
+  assert.match(
+    css,
+    /@media \(max-width: 520px\)[\s\S]*?\.development-timeline-order button,[\s\S]*?\.development-timeline-toggle\s*\{[\s\S]*?min-height:\s*44px/,
+  );
+});
+
+test('timeline controls keep the site square border language', () => {
+  const css = fs.readFileSync(new URL('../../styles.css', import.meta.url), 'utf8');
+
+  assert.match(css, /\.development-timeline-order button\s*\{[^}]*border-radius:\s*0/);
+  assert.match(css, /\.development-timeline-toggle\s*\{[^}]*border-radius:\s*0/);
+});
+
 test('secure gateway pdf asset exists for the detail download card', () => {
   assert.equal(
     fs.existsSync(
