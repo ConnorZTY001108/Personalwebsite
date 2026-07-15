@@ -16,6 +16,7 @@ import {
   renderPortfolio,
 } from '../../app.js';
 import {
+  bindDevelopmentTimeline,
   bindProjectDetailSectionToggles,
   bindProjectDetailLightbox,
   getProjectBySlug,
@@ -2201,6 +2202,83 @@ test('bindProjectDetailSectionToggles collapses and re-expands a detail section 
   assert.equal(body.style.overflow, '');
 });
 
+test('renderProjectDetail mounts a timeline only for the process platform', () => {
+  const processDocument = createMockDetailDocument('process-platform');
+  const robotDocument = createMockDetailDocument('robot-car');
+  const missingDocument = createMockDetailDocument('missing-project');
+
+  renderProjectDetail(processDocument);
+  renderProjectDetail(robotDocument);
+  renderProjectDetail(missingDocument);
+
+  const processTimeline = processDocument.getElementById('detail-development-timeline');
+  const robotTimeline = robotDocument.getElementById('detail-development-timeline');
+  const missingTimeline = missingDocument.getElementById('detail-development-timeline');
+  assert.equal(processTimeline.hasAttribute('hidden'), false);
+  assert.match(processTimeline.innerHTML, /Development Timeline/);
+  assert.equal(robotTimeline.getAttribute('hidden'), '');
+  assert.equal(robotTimeline.innerHTML, '');
+  assert.equal(missingTimeline.getAttribute('hidden'), '');
+  assert.equal(missingTimeline.innerHTML, '');
+});
+
+test('bindDevelopmentTimeline expands cards and reverses DOM order without losing state', () => {
+  const details = createMockNode('development-timeline-details-save');
+  details.setAttribute('hidden', '');
+  const toggle = createMockTimelineToggleButton(details.id);
+  const newest = createMockTimelineOrderButton('desc', true);
+  const oldest = createMockTimelineOrderButton('asc', false);
+  const entries = [
+    createMockTimelineEntry('newest', '2026-07-14'),
+    createMockTimelineEntry('oldest', '2025-11-29'),
+  ];
+  const list = createMockTimelineList(entries);
+  const doc = {
+    getElementById(id) {
+      if (id === details.id) return details;
+      if (id === 'detail-development-timeline-list') return list;
+      return null;
+    },
+    querySelectorAll(selector) {
+      if (selector === '[data-development-timeline-toggle]') return [toggle];
+      if (selector === '[data-development-timeline-order]') return [newest, oldest];
+      return [];
+    },
+  };
+
+  bindDevelopmentTimeline(doc);
+  bindDevelopmentTimeline(doc);
+  assert.equal(toggle.listenerCount, 1);
+  assert.equal(newest.listenerCount, 1);
+  assert.equal(oldest.listenerCount, 1);
+
+  toggle.listeners.click();
+  assert.equal(toggle.getAttribute('aria-expanded'), 'true');
+  assert.equal(details.hasAttribute('hidden'), false);
+
+  oldest.listeners.click();
+  assert.deepEqual(list.children.map(({ dataset }) => dataset.entryId), ['oldest', 'newest']);
+  assert.equal(list.children[0], entries[1]);
+  assert.equal(list.children[1], entries[0]);
+  assert.equal(newest.getAttribute('aria-pressed'), 'false');
+  assert.equal(oldest.getAttribute('aria-pressed'), 'true');
+  assert.equal(toggle.getAttribute('aria-expanded'), 'true');
+  assert.equal(details.hasAttribute('hidden'), false);
+
+  newest.listeners.click();
+  assert.deepEqual(list.children.map(({ dataset }) => dataset.entryId), ['newest', 'oldest']);
+  assert.equal(list.children[0], entries[0]);
+  assert.equal(list.children[1], entries[1]);
+  assert.equal(newest.getAttribute('aria-pressed'), 'true');
+  assert.equal(oldest.getAttribute('aria-pressed'), 'false');
+  assert.equal(toggle.getAttribute('aria-expanded'), 'true');
+  assert.equal(details.hasAttribute('hidden'), false);
+
+  toggle.listeners.click();
+  assert.equal(toggle.getAttribute('aria-expanded'), 'false');
+  assert.equal(details.getAttribute('hidden'), '');
+});
+
 test('renderProjectDetail mounts a safe fallback when the slug is unknown', () => {
   const mockDocument = createMockDetailDocument('missing-project');
 
@@ -2388,6 +2466,7 @@ function createMockDetailDocument(slug, options = {}) {
     'detail-meta-stack',
     'detail-featured-image',
     'detail-details-body',
+    'detail-development-timeline',
     'detail-project-quote',
     'detail-quote-body',
     'detail-quote-credit',
@@ -2418,6 +2497,13 @@ function createMockDetailDocument(slug, options = {}) {
 
     if (selector === '[data-project-section-toggle]') {
       return sectionToggleButtons;
+    }
+
+    if (
+      selector === '[data-development-timeline-toggle]' ||
+      selector === '[data-development-timeline-order]'
+    ) {
+      return [];
     }
 
     assert.fail(`Unexpected selector: ${selector}`);
@@ -2522,6 +2608,42 @@ function createMockProjectDetailSectionToggleButton(controlsId) {
     },
     getAttribute(name) {
       return this.attributes[name];
+    },
+  };
+}
+
+function createMockTimelineToggleButton(controlsId) {
+  const button = createMockNode('timeline-toggle');
+  button.setAttribute('aria-controls', controlsId);
+  button.setAttribute('aria-expanded', 'false');
+  return button;
+}
+
+function createMockTimelineOrderButton(order, pressed) {
+  const button = createMockNode(`timeline-order-${order}`);
+  button.dataset.developmentTimelineOrder = order;
+  button.setAttribute('aria-pressed', String(pressed));
+  return button;
+}
+
+function createMockTimelineEntry(id, startDate) {
+  const entry = createMockNode(`timeline-entry-${id}`);
+  entry.dataset.entryId = id;
+  entry.dataset.startDate = startDate;
+  return entry;
+}
+
+function createMockTimelineList(entries) {
+  return {
+    children: [...entries],
+    querySelectorAll(selector) {
+      assert.equal(selector, '[data-development-timeline-entry]');
+      return [...this.children];
+    },
+    appendChild(entry) {
+      this.children = this.children.filter((item) => item !== entry);
+      this.children.push(entry);
+      return entry;
     },
   };
 }
@@ -2675,9 +2797,11 @@ function createMockNode(id) {
     dataset: {},
     style: {},
     listeners: {},
+    listenerCount: 0,
     scrollHeight: 320,
     classList: createClassList(),
     addEventListener(eventName, handler) {
+      this.listenerCount += 1;
       this.listeners[eventName] = handler;
     },
     removeEventListener(eventName) {

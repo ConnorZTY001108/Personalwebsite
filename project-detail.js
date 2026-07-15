@@ -515,6 +515,69 @@ export function bindProjectDetailSectionToggles(doc = document) {
   });
 }
 
+function setDevelopmentTimelineExpanded(button, details, expanded) {
+  button.setAttribute('aria-expanded', String(expanded));
+  if (expanded) {
+    details.removeAttribute('hidden');
+    return;
+  }
+  details.setAttribute('hidden', '');
+}
+
+export function bindDevelopmentTimeline(doc = document) {
+  if (!doc?.querySelectorAll || !doc?.getElementById) {
+    return;
+  }
+
+  const toggleButtons = doc.querySelectorAll('[data-development-timeline-toggle]');
+  toggleButtons.forEach((button) => {
+    const detailsId = button.getAttribute('aria-controls');
+    const details = detailsId ? doc.getElementById(detailsId) : null;
+    if (!details || button.dataset.bound === 'true') {
+      return;
+    }
+
+    button.dataset.bound = 'true';
+    button.addEventListener('click', () => {
+      const expanded = button.getAttribute('aria-expanded') !== 'true';
+      setDevelopmentTimelineExpanded(button, details, expanded);
+    });
+  });
+
+  const list = doc.getElementById('detail-development-timeline-list');
+  const orderButtons = doc.querySelectorAll('[data-development-timeline-order]');
+  if (!list) {
+    return;
+  }
+
+  orderButtons.forEach((button) => {
+    if (button.dataset.bound === 'true') {
+      return;
+    }
+
+    button.dataset.bound = 'true';
+    button.addEventListener('click', () => {
+      const order = button.dataset.developmentTimelineOrder === 'asc' ? 'asc' : 'desc';
+      const entries = Array.from(list.querySelectorAll('[data-development-timeline-entry]'));
+      const direction = order === 'asc' ? 1 : -1;
+
+      entries
+        .sort(
+          (left, right) =>
+            String(left.dataset.startDate).localeCompare(String(right.dataset.startDate)) * direction,
+        )
+        .forEach((entry) => list.appendChild(entry));
+
+      orderButtons.forEach((candidate) => {
+        candidate.setAttribute(
+          'aria-pressed',
+          String(candidate.dataset.developmentTimelineOrder === order),
+        );
+      });
+    });
+  });
+}
+
 export function bindProjectDetailLightbox(doc = document) {
   if (!doc?.getElementById) {
     return;
@@ -744,6 +807,8 @@ export function renderProjectDetail(doc = document, content = portfolioContent) 
   if (state.isMissing) {
     setNodeHTML(doc, 'detail-meta-stack', '');
     setNodeHTML(doc, 'detail-details-body', state.detailsHtml);
+    setNodeHTML(doc, 'detail-development-timeline', '');
+    setNodeHidden(doc, 'detail-development-timeline', true);
     setNodeText(doc, 'detail-quote-body', '');
     setNodeText(doc, 'detail-quote-credit', '');
     setNodeHidden(doc, 'detail-project-quote', true);
@@ -771,6 +836,9 @@ export function renderProjectDetail(doc = document, content = portfolioContent) 
       project.detailLeadSections ?? (project.detailLeadSection ? [project.detailLeadSection] : []),
     ),
   );
+  const timelineMarkup = renderDevelopmentTimeline(project.developmentTimeline);
+  setNodeHTML(doc, 'detail-development-timeline', timelineMarkup);
+  setNodeHidden(doc, 'detail-development-timeline', !timelineMarkup);
   setNodeText(doc, 'detail-quote-body', quote.body);
   setNodeText(doc, 'detail-quote-credit', quote.credit);
   setNodeHidden(doc, 'detail-project-quote', !quote.body && !quote.credit);
@@ -800,6 +868,7 @@ export function renderProjectDetail(doc = document, content = portfolioContent) 
   }
 
   bindProjectDetailSectionToggles(doc);
+  bindDevelopmentTimeline(doc);
   bindProjectDetailLightbox(doc);
 }
 
